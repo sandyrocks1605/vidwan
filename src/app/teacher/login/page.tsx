@@ -38,7 +38,7 @@ export default function TeacherLoginPage() {
   };
 
   return (
-    <main className="relative flex min-h-screen items-center overflow-hidden bg-[#071321] px-5 py-8 text-white sm:px-8">
+    <main className="relative flex min-h-[100dvh] items-center overflow-hidden bg-[#071321] px-4 py-6 text-white sm:min-h-screen sm:px-8 sm:py-8">
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -50,26 +50,26 @@ export default function TeacherLoginPage() {
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[650px] w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/10" />
 
       <div className="relative mx-auto w-full max-w-md">
-        <div className="mb-10 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between gap-4 sm:mb-10">
           <Link href="/" className="text-sm font-black tracking-[0.18em]">
             VIDWAN<span className="text-[#2387ff]">.</span>
           </Link>
           <Link
             href="/"
-            className="text-[10px] uppercase tracking-[0.2em] text-white/45 transition hover:text-white"
+            className="text-right text-[9px] uppercase tracking-[0.16em] text-white/45 transition hover:text-white sm:text-[10px] sm:tracking-[0.2em]"
           >
             ← Back to Vidwan
           </Link>
         </div>
 
-        <section className="rounded-[2rem] border border-white/10 bg-[#0a1b2e]/90 p-7 shadow-[0_0_100px_rgba(35,135,255,0.1)] backdrop-blur-xl sm:p-10">
+        <section className="rounded-[2rem] border border-white/10 bg-[#0a1b2e]/90 p-5 shadow-[0_0_100px_rgba(35,135,255,0.1)] backdrop-blur-xl sm:p-10">
           <p className="text-[10px] uppercase tracking-[0.42em] text-[#78b8ff]">
             Restricted access
           </p>
-          <h1 className="mt-4 text-5xl font-bold tracking-[-0.07em]">
+          <h1 className="mt-4 text-4xl font-bold tracking-[-0.07em] sm:text-5xl">
             TEACHER LOGIN
           </h1>
-          <p className="mt-5 border-l border-[#2387ff]/60 pl-4 text-sm leading-6 text-white/55">
+          <p className="mt-5 border-l border-[#2387ff]/60 pl-4 text-[15px] leading-6 text-white/55">
             Teachers only. This area is restricted to authorized Vidwan teachers and staff.
           </p>
 

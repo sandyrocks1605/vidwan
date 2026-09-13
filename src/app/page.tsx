@@ -49,6 +49,7 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [active, setActive] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [mouse, setMouse] = useState({
     x: 50,
@@ -180,7 +181,7 @@ export default function Home() {
       ========================================================= */}
 
       <nav
-        className={`fixed left-1/2 top-0 z-50 flex w-[calc(100%-28px)] max-w-7xl -translate-x-1/2 items-center justify-between rounded-full px-5 py-3 transition-all duration-700 ${
+        className={`fixed left-1/2 top-0 z-50 flex w-[calc(100%-24px)] max-w-7xl -translate-x-1/2 items-center justify-between rounded-full px-4 py-3 transition-all duration-700 sm:w-[calc(100%-28px)] sm:px-5 ${
           scrolled
             ? "mt-4 border border-white/10 bg-[#071321]/80 shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl"
             : "mt-3"
@@ -223,10 +224,55 @@ export default function Home() {
 
         </div>
 
+        <button
+          type="button"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-navigation"
+          aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          className="grid h-11 w-11 place-items-center rounded-full border border-white/10 text-white/75 transition hover:border-[#2387ff]/50 md:hidden"
+        >
+          <span className="sr-only">{mobileMenuOpen ? "Close menu" : "Open menu"}</span>
+          <span className="flex w-4 flex-col gap-1.5">
+            <span className={`h-px w-full bg-current transition-transform ${mobileMenuOpen ? "translate-y-1 rotate-45" : ""}`} />
+            <span className={`h-px w-full bg-current transition-opacity ${mobileMenuOpen ? "opacity-0" : ""}`} />
+            <span className={`h-px w-full bg-current transition-transform ${mobileMenuOpen ? "-translate-y-1 -rotate-45" : ""}`} />
+          </span>
+        </button>
+
+        {mobileMenuOpen && (
+          <div
+            id="mobile-navigation"
+            className="absolute left-0 right-0 top-[calc(100%+8px)] rounded-3xl border border-white/10 bg-[#071321]/95 p-3 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl md:hidden"
+          >
+            {[
+              ["About", "#about"],
+              ["Experience", "#experience"],
+              ["Journey", "#journey"],
+            ].map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block rounded-2xl px-4 py-3.5 text-[10px] uppercase tracking-[0.22em] text-white/65 transition hover:bg-white/[0.06] hover:text-white"
+              >
+                {label}
+              </a>
+            ))}
+            <a
+              href="/register"
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-1 block rounded-2xl bg-white px-4 py-3.5 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[#071321]"
+            >
+              Get started →
+            </a>
+          </div>
+        )}
+
 
         <a
           href="/register"
-          className="group relative overflow-hidden rounded-full bg-white px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#071321]"
+          className="group relative hidden overflow-hidden rounded-full bg-white px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#071321] md:block"
         >
           <span className="relative z-10 whitespace-nowrap transition-colors group-hover:text-white">
             Get Started →
@@ -244,13 +290,13 @@ export default function Home() {
 
       <section
         id="top"
-        className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-center"
+        className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-5 py-24 text-center sm:px-6 md:min-h-screen md:py-0"
       >
 
         {/* Cursor glow */}
 
         <div
-          className="pointer-events-none absolute inset-0 transition-all duration-300"
+          className="pointer-events-none absolute inset-0 hidden transition-all duration-300 sm:block"
           style={{
             background: `radial-gradient(
               650px circle at ${mouse.x}% ${mouse.y}%,
@@ -264,7 +310,7 @@ export default function Home() {
         {/* Ambient glow */}
 
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2387ff]/10 blur-[120px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2387ff]/10 blur-[80px] sm:h-[700px] sm:w-[700px] sm:blur-[120px]"
           style={{
             transform: `translate(-50%, -50%) scale(${
               1 + scrollProgress * 0.25
@@ -276,7 +322,7 @@ export default function Home() {
         {/* Orbital rings */}
 
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[680px] w-[680px] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/15"
+          className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[680px] w-[680px] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/15 sm:block"
           style={{
             transform: `translate(-50%, -50%) rotate(${
               scrollProgress * 25
@@ -285,7 +331,7 @@ export default function Home() {
         />
 
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[460px] w-[460px] max-w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]"
+          className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[460px] w-[460px] max-w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06] sm:block"
           style={{
             transform: `translate(-50%, -50%) rotate(${
               -scrollProgress * 40
@@ -299,7 +345,7 @@ export default function Home() {
         {particles.map((particle) => (
           <div
             key={particle.id}
-            className="pointer-events-none absolute rounded-full bg-[#58a9ff]/40"
+            className="pointer-events-none absolute hidden rounded-full bg-[#58a9ff]/40 sm:block"
             style={{
               left: particle.left,
               top: particle.top,
@@ -318,7 +364,7 @@ export default function Home() {
         {/* Hero content */}
 
         <div
-          className="relative z-10 max-w-7xl"
+          className="touch-tilt relative z-10 w-full max-w-7xl"
           style={{
             transform: `translate3d(
               ${(mouse.x - 50) * 0.35}px,
@@ -328,32 +374,32 @@ export default function Home() {
           }}
         >
 
-          <h1 className="bg-gradient-to-r from-white via-[#b8d9ff] to-[#2387ff] bg-clip-text text-[20vw] font-black leading-[0.8] tracking-[-0.085em] text-transparent sm:text-[15vw] lg:text-[14rem]">
+          <h1 className="bg-gradient-to-r from-white via-[#b8d9ff] to-[#2387ff] bg-clip-text text-[17vw] font-black leading-[0.8] tracking-[-0.085em] text-transparent sm:text-[15vw] lg:text-[14rem]">
             VIDWAN
           </h1>
 
 
-          <p className="mt-8 text-[10px] uppercase tracking-[0.5em] text-[#78b8ff] sm:text-xs">
+          <p className="mt-7 text-[9px] uppercase tracking-[0.34em] text-[#78b8ff] sm:mt-8 sm:text-xs sm:tracking-[0.5em]">
             MUN • DEBATE • LEADERSHIP
           </p>
 
 
-          <p className="mx-auto mt-8 max-w-3xl text-2xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
+          <p className="mx-auto mt-7 max-w-3xl text-[1.65rem] font-semibold leading-tight tracking-[-0.03em] text-white sm:mt-8 sm:text-4xl">
             Become the delegate people remember.
           </p>
 
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/60 sm:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-7 text-white/60 sm:mt-6 sm:text-lg sm:leading-8">
             Model United Nations isn&apos;t about knowing everything.
             It&apos;s about learning how to think, speak, negotiate and lead.
           </p>
 
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:mt-10 sm:flex-row">
 
             <a
               href="/register"
-              className="group rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white"
+              className="group inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white sm:w-auto"
             >
               Start your journey
               <span className="ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1">
@@ -364,7 +410,7 @@ export default function Home() {
 
             <a
               href="#experience"
-              className="rounded-full border border-white/15 px-7 py-3.5 text-xs uppercase tracking-[0.16em] text-white/70 transition-all duration-500 hover:border-[#2387ff]/50 hover:bg-[#2387ff]/10 hover:text-white"
+              className="inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full border border-white/15 px-7 py-3.5 text-xs uppercase tracking-[0.16em] text-white/70 transition-all duration-500 hover:border-[#2387ff]/50 hover:bg-[#2387ff]/10 hover:text-white sm:w-auto"
             >
               Experience MUN
             </a>
@@ -377,7 +423,7 @@ export default function Home() {
         {/* Scroll indicator */}
 
         <div
-          className="absolute bottom-7 flex flex-col items-center gap-3 transition-opacity duration-500"
+          className="absolute bottom-5 hidden flex-col items-center gap-3 transition-opacity duration-500 sm:flex"
           style={{
             opacity: Math.max(0, 1 - scrollProgress * 8),
           }}
@@ -404,7 +450,7 @@ export default function Home() {
 
       <section
         id="about"
-        className="relative flex min-h-screen items-center overflow-hidden bg-[#0a1b2e] px-6 py-32"
+        className="relative flex min-h-[auto] items-center overflow-hidden bg-[#0a1b2e] px-5 py-24 sm:px-6 sm:py-32 md:min-h-screen"
       >
 
         <div
@@ -417,7 +463,7 @@ export default function Home() {
           </p>
 
 
-          <h2 className="max-w-6xl text-5xl font-bold leading-[0.9] tracking-[-0.06em] sm:text-7xl lg:text-[8rem]">
+          <h2 className="max-w-6xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl lg:text-[8rem]">
 
             MUN can be
 
@@ -428,14 +474,14 @@ export default function Home() {
           </h2>
 
 
-          <p className="mt-10 max-w-2xl text-lg leading-8 text-white/55">
+          <p className="mt-8 max-w-2xl text-base leading-7 text-white/55 sm:mt-10 sm:text-lg sm:leading-8">
             New committees. New rules. New people.
             A room full of delegates who seem like they already
             know exactly what they&apos;re doing.
           </p>
 
 
-          <div className="mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-3 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4">
 
             {[
               "Research.",
@@ -450,7 +496,7 @@ export default function Home() {
 
               <div
                 key={item}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-6 transition-all duration-500 hover:-translate-y-2 hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10"
+                className="group relative min-h-16 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 transition-all duration-500 hover:-translate-y-2 hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 sm:p-6"
                 style={{
                   transitionDelay: `${index * 60}ms`,
                 }}
@@ -469,7 +515,7 @@ export default function Home() {
           </div>
 
 
-          <p className="mt-16 text-3xl font-semibold tracking-[-0.03em] sm:text-5xl">
+          <p className="mt-12 text-2xl font-semibold leading-tight tracking-[-0.03em] sm:mt-16 sm:text-5xl">
 
             <span className="text-[#58a9ff]">
               Good. That&apos;s where you grow.
@@ -498,7 +544,7 @@ export default function Home() {
             <article
               key={item.number}
               data-journey-stage={index}
-              className="relative flex min-h-screen items-center overflow-hidden px-6 py-24"
+              className="relative flex min-h-[680px] items-center overflow-hidden px-5 py-16 sm:px-6 sm:py-24 md:min-h-screen"
             >
 
             {/* Background glow */}
@@ -539,7 +585,7 @@ export default function Home() {
                   Start your journey
                 </p>
 
-                <h2 className="max-w-5xl text-5xl font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl lg:text-[6.5rem]">
+                <h2 className="max-w-5xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl lg:text-[6.5rem]">
 
                   From first-timer
 
@@ -555,7 +601,7 @@ export default function Home() {
 
               {/* Main journey */}
 
-              <div className="grid items-center gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+              <div className="grid items-center gap-7 lg:grid-cols-[0.7fr_1.3fr] lg:gap-10">
 
 
                 {/* LEFT */}
@@ -578,7 +624,7 @@ export default function Home() {
                               block: "center",
                             });
                         }}
-                        className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition-all duration-500 ${
+                        className={`group relative min-h-14 overflow-hidden rounded-2xl border p-4 text-left transition-all duration-500 sm:p-5 ${
                           isActive
                             ? "scale-[1.01] border-[#2387ff]/60 bg-[#2387ff]/15 shadow-[0_0_35px_rgba(35,135,255,0.12)]"
                             : "border-white/10 bg-white/[0.025] hover:border-white/20 hover:bg-white/[0.05]"
@@ -632,7 +678,7 @@ export default function Home() {
 
                   {/* Journey progress */}
 
-                  <div className="mt-5 flex items-center gap-2 px-2">
+                  <div className="mt-4 flex items-center gap-1.5 px-1 sm:mt-5 sm:gap-2 sm:px-2">
 
                     {journey.map((item, index) => (
 
@@ -640,14 +686,14 @@ export default function Home() {
                         key={item.number}
                         className={`h-1 rounded-full transition-all duration-700 ${
                           index <= active
-                            ? "w-12 bg-[#2387ff]"
+                            ? "w-8 bg-[#2387ff] sm:w-12"
                             : "w-2 bg-white/15"
                         }`}
                       />
 
                     ))}
 
-                    <span className="ml-3 text-[9px] uppercase tracking-[0.25em] text-white/25">
+                    <span className="ml-2 text-[8px] uppercase tracking-[0.18em] text-white/25 sm:ml-3 sm:text-[9px] sm:tracking-[0.25em]">
                       {journey[active].number} / 05
                     </span>
 
@@ -659,7 +705,7 @@ export default function Home() {
                 {/* RIGHT CARD */}
 
                 <div
-                  className={`group relative min-h-[440px] overflow-hidden rounded-[2.5rem] border p-8 shadow-[0_0_100px_rgba(35,135,255,0.08)] transition-all duration-700 sm:min-h-[500px] sm:p-12 ${
+                  className={`group relative min-h-[360px] overflow-hidden rounded-[2rem] border p-6 shadow-[0_0_70px_rgba(35,135,255,0.08)] transition-all duration-700 sm:min-h-[500px] sm:rounded-[2.5rem] sm:p-12 ${
                     index === active
                       ? "border-[#2387ff]/40 bg-[#071525]"
                       : "border-white/10 bg-[#071525]/80"
@@ -694,7 +740,7 @@ export default function Home() {
                   {/* Large number */}
 
                   <div
-                    className="pointer-events-none absolute right-0 top-0 select-none text-[12rem] font-black leading-none tracking-[-0.1em] text-white/[0.04] transition-all duration-700 sm:text-[15rem]"
+                    className="pointer-events-none absolute right-0 top-0 select-none text-[8rem] font-black leading-none tracking-[-0.1em] text-white/[0.04] transition-all duration-700 sm:text-[15rem]"
                     style={{
                       transform:
                         index === active
@@ -720,7 +766,7 @@ export default function Home() {
                   {/* Content */}
 
                   <div
-                    className={`relative flex min-h-[350px] flex-col justify-end transition-all duration-700 ${
+                    className={`relative flex min-h-[280px] flex-col justify-end transition-all duration-700 sm:min-h-[350px] ${
                       index === active
                         ? "translate-y-0 opacity-100"
                         : "translate-y-5 opacity-50"
@@ -747,12 +793,12 @@ export default function Home() {
                       </p>
 
 
-                      <h3 className="mt-3 text-5xl font-bold tracking-[-0.07em] sm:text-7xl">
+                      <h3 className="mt-3 text-4xl font-bold tracking-[-0.07em] sm:text-7xl">
                         {item.title}
                       </h3>
 
 
-                      <p className="mt-5 max-w-xl text-base leading-8 text-white/55 sm:text-lg">
+                      <p className="mt-4 max-w-xl text-[15px] leading-7 text-white/55 sm:mt-5 sm:text-lg sm:leading-8">
                         {item.text}
                       </p>
 
@@ -777,7 +823,7 @@ export default function Home() {
           MARQUEE
       ========================================================= */}
 
-      <section className="overflow-hidden border-y border-white/10 bg-[#081525] py-7">
+      <section className="w-full overflow-hidden border-y border-white/10 bg-[#081525] py-5 sm:py-7">
 
         <div className="flex w-max animate-[marquee_25s_linear_infinite]">
 
@@ -799,7 +845,7 @@ export default function Home() {
 
                 <div
                   key={`${group}-${item}`}
-                  className="mx-8 flex items-center gap-8 whitespace-nowrap"
+                  className="mx-5 flex items-center gap-5 whitespace-nowrap sm:mx-8 sm:gap-8"
                 >
 
                   <span className="text-xs font-bold uppercase tracking-[0.3em] text-white/30">
@@ -829,7 +875,7 @@ export default function Home() {
 
       <section
         id="experience"
-        className="relative overflow-hidden bg-[#071321] px-6 py-36"
+        className="relative overflow-hidden bg-[#071321] px-5 py-24 sm:px-6 sm:py-36"
       >
 
         <div
@@ -848,7 +894,7 @@ export default function Home() {
             </p>
 
 
-            <h2 className="max-w-3xl text-5xl font-bold leading-[0.9] tracking-[-0.06em] sm:text-7xl lg:text-[6.5rem]">
+            <h2 className="max-w-3xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl lg:text-[6.5rem]">
 
               Don&apos;t just
 
@@ -863,14 +909,14 @@ export default function Home() {
             </h2>
 
 
-            <p className="mt-9 max-w-xl text-lg leading-8 text-white/55">
+            <p className="mt-7 max-w-xl text-base leading-7 text-white/55 sm:mt-9 sm:text-lg sm:leading-8">
               Step into a simulated committee, find your voice,
               navigate diplomacy, and discover what it feels like
               when the floor is yours.
             </p>
 
 
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-2 sm:mt-10 sm:gap-3">
 
               {[
                 "Confidence",
@@ -881,7 +927,7 @@ export default function Home() {
 
                 <span
                   key={item}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[10px] uppercase tracking-[0.18em] text-white/45 transition hover:border-[#2387ff]/40 hover:text-white"
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2.5 text-[9px] uppercase tracking-[0.15em] text-white/45 transition hover:border-[#2387ff]/40 hover:text-white sm:px-4 sm:text-[10px] sm:tracking-[0.18em]"
                 >
                   {item}
                 </span>
@@ -896,7 +942,7 @@ export default function Home() {
           {/* COMMITTEE */}
 
           <div
-            className="group relative mx-auto w-full max-w-2xl"
+            className="touch-tilt group relative mx-auto w-full max-w-2xl"
             style={{
               transform: `perspective(1000px) rotateX(${
                 (mouse.y - 50) * -0.025
@@ -1001,7 +1047,7 @@ export default function Home() {
           PROMISE
       ========================================================= */}
 
-      <section className="relative overflow-hidden border-t border-white/10 bg-[#0a1b2e] px-6 py-40 text-center">
+      <section className="relative overflow-hidden border-t border-white/10 bg-[#0a1b2e] px-5 py-24 text-center sm:px-6 sm:py-40">
 
         <div
           data-reveal="promise"
@@ -1015,7 +1061,7 @@ export default function Home() {
           </p>
 
 
-          <h2 className="mt-8 text-5xl font-bold leading-[0.9] tracking-[-0.07em] sm:text-7xl lg:text-[7.5rem]">
+          <h2 className="mt-7 text-[2.75rem] font-bold leading-[0.92] tracking-[-0.07em] sm:mt-8 sm:text-7xl lg:text-[7.5rem]">
 
             YOU DON&apos;T NEED TO BE
 
@@ -1032,7 +1078,7 @@ export default function Home() {
           </h2>
 
 
-          <p className="mx-auto mt-10 max-w-2xl text-lg leading-8 text-white/55">
+          <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-white/55 sm:mt-10 sm:text-lg sm:leading-8">
             We&apos;ll give you the tools, confidence, and practical
             skills to walk into your first committee ready.
           </p>
@@ -1055,7 +1101,7 @@ export default function Home() {
 
       <section
         id="start"
-        className="relative overflow-hidden bg-[#071321] px-6 py-24"
+        className="relative overflow-hidden bg-[#071321] px-5 py-16 sm:px-6 sm:py-24"
       >
 
         <div
@@ -1065,7 +1111,7 @@ export default function Home() {
           )}`}
         >
 
-          <div className="relative overflow-hidden rounded-[3rem] border border-[#2387ff]/30 bg-gradient-to-br from-[#153a65] via-[#0c223c] to-[#081525] px-7 py-24 text-center shadow-[0_30px_120px_rgba(35,135,255,0.08)] sm:px-12 sm:py-32">
+          <div className="relative overflow-hidden rounded-[2rem] border border-[#2387ff]/30 bg-gradient-to-br from-[#153a65] via-[#0c223c] to-[#081525] px-5 py-16 text-center shadow-[0_30px_120px_rgba(35,135,255,0.08)] sm:rounded-[3rem] sm:px-12 sm:py-32">
 
 
             {/* Glow */}
@@ -1082,7 +1128,7 @@ export default function Home() {
               </p>
 
 
-              <h2 className="mt-7 text-5xl font-bold leading-[0.9] tracking-[-0.07em] sm:text-7xl lg:text-[7rem]">
+              <h2 className="mt-6 text-[2.75rem] font-bold leading-[0.92] tracking-[-0.07em] sm:mt-7 sm:text-7xl lg:text-[7rem]">
 
                 Ready to become the
 
@@ -1097,7 +1143,7 @@ export default function Home() {
 
               <a
                 href="/register"
-                className="group mt-12 inline-flex items-center gap-4 rounded-full bg-white px-8 py-4 text-xs font-bold uppercase tracking-[0.18em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white"
+                className="group mt-9 inline-flex min-h-12 w-full max-w-xs items-center justify-center gap-4 rounded-full bg-white px-8 py-4 text-xs font-bold uppercase tracking-[0.18em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white sm:mt-12 sm:w-auto"
               >
 
                 Start your journey
@@ -1119,13 +1165,13 @@ export default function Home() {
             FOOTER
         ===================================================== */}
 
-        <footer className="mx-auto flex max-w-7xl flex-col gap-4 px-2 py-10 text-[9px] uppercase tracking-[0.2em] text-white/30 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="mx-auto flex max-w-7xl flex-col gap-5 px-2 py-8 text-[9px] uppercase tracking-[0.16em] text-white/30 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-10 sm:tracking-[0.2em]">
 
           <span>
             © {new Date().getFullYear()} Vidwan
           </span>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <span>Experiment. Debate. Lead.</span>
 
             <Link href="/teacher/login" className="transition hover:text-white">

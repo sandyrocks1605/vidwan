@@ -140,7 +140,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-[#071321] px-5 py-5 text-white sm:px-8 sm:py-8">
+    <main className="relative min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-4 text-white sm:min-h-screen sm:px-8 sm:py-8">
       <div
         className="pointer-events-none absolute inset-0 opacity-80"
         style={{
@@ -153,7 +153,7 @@ export default function RegisterPage() {
       <div className="pointer-events-none absolute left-1/2 top-80 h-[460px] w-[460px] -translate-x-1/2 rounded-full border border-white/[0.05]" />
 
       <div className="relative mx-auto w-full max-w-6xl">
-        <nav className="flex items-center justify-between">
+        <nav className="flex items-center justify-between gap-4">
           <Link
             href="/"
             className="group text-sm font-black tracking-[0.18em] text-white"
@@ -172,29 +172,29 @@ export default function RegisterPage() {
           </Link>
         </nav>
 
-        <header className="mx-auto mt-20 max-w-4xl text-center sm:mt-28">
+        <header className="mx-auto mt-16 max-w-4xl text-center sm:mt-28">
           <p className="animate-[registrationRise_700ms_ease-out_both] text-[10px] uppercase tracking-[0.45em] text-[#78b8ff] sm:text-xs">
             Start your journey
           </p>
 
-          <h1 className="mt-6 animate-[registrationRise_800ms_ease-out_both] text-5xl font-bold leading-[0.9] tracking-[-0.065em] sm:text-7xl lg:text-[6.5rem]">
+          <h1 className="mt-6 animate-[registrationRise_800ms_ease-out_both] text-[2.75rem] font-bold leading-[0.92] tracking-[-0.065em] sm:text-7xl lg:text-[6.5rem]">
             Your first MUN
             <span className="block bg-gradient-to-r from-white via-[#b8d9ff] to-[#2387ff] bg-clip-text text-transparent">
               starts here.
             </span>
           </h1>
 
-          <p className="mx-auto mt-8 max-w-2xl animate-[registrationRise_900ms_ease-out_both] text-base leading-8 text-white/55 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl animate-[registrationRise_900ms_ease-out_both] text-[15px] leading-7 text-white/55 sm:mt-8 sm:text-lg sm:leading-8">
             Tell us a little about yourself and we&apos;ll help you find the
             right starting point.
           </p>
         </header>
 
-        <section className="relative mx-auto mt-14 max-w-5xl pb-12 sm:mt-20 sm:pb-20">
+        <section className="relative mx-auto mt-10 max-w-5xl pb-8 sm:mt-20 sm:pb-20">
           <div className="pointer-events-none absolute -inset-8 rounded-[3rem] bg-[#2387ff]/10 blur-3xl" />
 
           {isSubmitted ? (
-            <div className="relative overflow-hidden rounded-[2rem] border border-[#2387ff]/30 bg-[#0a1b2e]/90 px-6 py-20 text-center shadow-[0_0_100px_rgba(35,135,255,0.12)] backdrop-blur-xl sm:px-14 sm:py-28">
+            <div className="relative overflow-hidden rounded-[2rem] border border-[#2387ff]/30 bg-[#0a1b2e]/90 px-5 py-16 text-center shadow-[0_0_100px_rgba(35,135,255,0.12)] backdrop-blur-xl sm:px-14 sm:py-28">
               <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/20 animate-[successRing_2.4s_ease-in-out_infinite]" />
 
               <div className="relative">
@@ -206,7 +206,7 @@ export default function RegisterPage() {
                   Vidwan
                 </p>
 
-                <h2 className="mt-4 text-5xl font-bold tracking-[-0.06em] sm:text-7xl">
+                <h2 className="mt-4 text-4xl font-bold tracking-[-0.06em] sm:text-7xl">
                   YOU&apos;RE IN.
                 </h2>
 
@@ -230,7 +230,7 @@ export default function RegisterPage() {
             <form
               noValidate
               onSubmit={handleSubmit}
-              className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#0a1b2e]/90 p-6 shadow-[0_0_100px_rgba(35,135,255,0.1)] backdrop-blur-xl animate-[registrationRise_900ms_ease-out_both] sm:p-10 lg:p-14"
+              className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#0a1b2e]/90 p-5 shadow-[0_0_100px_rgba(35,135,255,0.1)] backdrop-blur-xl animate-[registrationRise_900ms_ease-out_both] sm:p-10 lg:p-14"
             >
               <div className="pointer-events-none absolute inset-0 opacity-[0.025]">
                 <div
@@ -244,12 +244,12 @@ export default function RegisterPage() {
               </div>
 
               <div className="relative">
-                <div className="flex flex-col gap-3 border-b border-white/10 pb-8 sm:flex-row sm:items-end sm:justify-between">
+                <div className="flex flex-col gap-3 border-b border-white/10 pb-6 sm:flex-row sm:items-end sm:justify-between sm:pb-8">
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.42em] text-[#78b8ff]">
                       About you
                     </p>
-                    <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+                    <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] sm:text-4xl">
                       Let&apos;s find your starting point.
                     </h2>
                   </div>
@@ -257,7 +257,7 @@ export default function RegisterPage() {
                   <p className="text-sm text-white/40">* Required fields</p>
                 </div>
 
-                <div className="mt-9 grid gap-x-6 gap-y-7 sm:grid-cols-2">
+                <div className="mt-7 grid gap-x-6 gap-y-6 sm:mt-9 sm:grid-cols-2 sm:gap-y-7">
                   <label className="block animate-[formFieldIn_600ms_ease-out_both]">
                     <span className="text-[10px] font-semibold tracking-[0.2em] text-white/55">
                       PARENT / GUARDIAN NAME *
@@ -462,7 +462,7 @@ export default function RegisterPage() {
                   </label>
                 </div>
 
-                <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 sm:mt-10 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
                   <p aria-live="polite" className="text-sm leading-6 text-white/35">
                     {submitError ||
                       "We&apos;ll use these details only to guide your Vidwan journey."}
@@ -471,7 +471,7 @@ export default function RegisterPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white hover:shadow-[0_0_30px_rgba(35,135,255,0.25)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+                    className="group inline-flex min-h-12 w-full shrink-0 items-center justify-center gap-3 rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white hover:shadow-[0_0_30px_rgba(35,135,255,0.25)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 sm:w-auto"
                   >
                     {isSubmitting ? "Submitting…" : "Start my journey"}
                     {!isSubmitting && (
