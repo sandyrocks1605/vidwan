@@ -280,7 +280,7 @@ export default function TeacherDashboardPage() {
       <header className="flex flex-col gap-6 border-b border-white/10 pb-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.42em] text-[#78b8ff]">Teacher dashboard</p>
-          <h1 className="mt-3 text-4xl font-bold tracking-[-0.06em] sm:text-6xl">Welcome, {profile?.name || "Teacher"}.</h1>
+          <h1 className="mt-3 text-4xl font-bold tracking-[-0.06em] sm:text-6xl">Welcome</h1>
         </div>
         <button onClick={logOut} className="self-start rounded-full border border-white/15 px-5 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/65 transition hover:border-[#2387ff]/50 hover:text-white">Log out</button>
       </header>
