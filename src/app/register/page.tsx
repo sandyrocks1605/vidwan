@@ -135,6 +135,37 @@ export default function RegisterPage() {
       return;
     }
 
+    try {
+      console.info("Registration notification request starting.");
+      const notificationResponse = await fetch(
+        "/api/registration-notification",
+        {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            parentName: form.parentName.trim(),
+            studentName: form.studentName.trim(),
+            age: Number(form.age),
+            track: form.track,
+            email: form.email.trim(),
+            phone: form.phone.trim(),
+            experience: form.experience,
+            referral: form.referral || null,
+            additionalInfo: form.additionalInfo.trim() || null,
+          }),
+        }
+      );
+
+      if (!notificationResponse.ok) {
+        console.error("Registration notification request failed.");
+      }
+    } catch {
+      console.error("Registration notification request failed.");
+    }
+
     setForm(initialValues);
     setIsSubmitted(true);
   };
