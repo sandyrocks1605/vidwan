@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
@@ -51,8 +52,14 @@ export default function TeacherLoginPage() {
 
       <div className="relative mx-auto w-full max-w-md">
         <div className="mb-8 flex items-center justify-between gap-4 sm:mb-10">
-          <Link href="/" className="text-sm font-black tracking-[0.18em]">
-            VIDWAN<span className="text-[#2387ff]">.</span>
+          <Link href="/" aria-label="Vidwan home" className="flex items-center">
+            <Image
+              src="/images/vidwan-logo.png"
+              alt="Vidwan"
+              width={128}
+              height={128}
+              className="h-10 w-10 object-contain"
+            />
           </Link>
           <Link
             href="/"

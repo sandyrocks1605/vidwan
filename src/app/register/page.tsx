@@ -2,6 +2,7 @@
 
 import { type FormEvent, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { getSupabaseClient } from "@/lib/supabase/client";
 
@@ -187,12 +188,16 @@ export default function RegisterPage() {
         <nav className="flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="group text-sm font-black tracking-[0.18em] text-white"
+            aria-label="Vidwan home"
+            className="group flex items-center text-white"
           >
-            VIDWAN
-            <span className="text-[#2387ff] transition-colors duration-300 group-hover:text-white">
-              .
-            </span>
+            <Image
+              src="/images/vidwan-logo.png"
+              alt="Vidwan"
+              width={128}
+              height={128}
+              className="h-10 w-10 object-contain"
+            />
           </Link>
 
           <Link

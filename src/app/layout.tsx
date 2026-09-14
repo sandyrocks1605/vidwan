@@ -14,8 +14,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vidwan",
-  description: "MUN • Debate • Leadership",
+  metadataBase: new URL(
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000"
+  ),
+  title: "Vidwan — MUN • Debate • Leadership",
+  description:
+    "A platform helping students build the skills, confidence and perspective to become future leaders.",
+  icons: {
+    icon: "/images/vidwan-logo.png",
+    apple: "/images/vidwan-logo.png",
+  },
+  openGraph: {
+    title: "Vidwan — MUN • Debate • Leadership",
+    description:
+      "A platform helping students build the skills, confidence and perspective to become future leaders.",
+    type: "website",
+    images: ["/images/vidwan-experience.png"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

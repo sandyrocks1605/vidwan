@@ -46,11 +46,44 @@ const particles = Array.from({ length: 28 }, (_, i) => ({
   duration: `${5 + (i % 5)}s`,
 }));
 
+const simulationTabs = [
+  {
+    label: "COMMITTEE",
+    value: "UN Security Council",
+    text: "A room where every sentence can shift the balance.",
+  },
+  {
+    label: "ROLE",
+    value: "Represent Japan",
+    text: "You are responsible for a position, not just an opinion.",
+  },
+  {
+    label: "CRISIS",
+    value: "A diplomatic crisis has erupted.",
+    text: "The room is waiting. Your response starts the next move.",
+  },
+  {
+    label: "DEBATE",
+    value: "90 seconds to respond",
+    text: "Think clearly, speak precisely, and move the room forward.",
+  },
+];
+
+const learningSkills = [
+  ["01", "Research", "Build arguments from evidence."],
+  ["02", "Public Speaking", "Make people remember the point."],
+  ["03", "Negotiation", "Find the overlap between positions."],
+  ["04", "Critical Thinking", "Respond with clarity under pressure."],
+  ["05", "Leadership", "Know when to speak and what to say."],
+  ["06", "Confidence", "Carry the skill beyond the room."],
+];
+
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [active, setActive] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [simulationTab, setSimulationTab] = useState(0);
 
   const [mouse, setMouse] = useState({
     x: 50,
@@ -191,12 +224,16 @@ export default function Home() {
 
         <a
           href="#top"
-          className="group text-sm font-black tracking-[0.18em]"
+          aria-label="Vidwan home"
+          className="group flex items-center"
         >
-          VIDWAN
-          <span className="text-[#2387ff] transition-all duration-300 group-hover:text-white">
-            .
-          </span>
+          <Image
+            src="/images/vidwan-logo.png"
+            alt="Vidwan"
+            width={128}
+            height={128}
+            className="h-10 w-10 object-contain sm:h-11 sm:w-11"
+          />
         </a>
 
 
@@ -402,7 +439,7 @@ export default function Home() {
               href="/register"
               className="group inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white sm:w-auto"
             >
-              Start your journey
+              Start Your Journey
               <span className="ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1">
                 →
               </span>
@@ -413,7 +450,7 @@ export default function Home() {
               href="#experience"
               className="inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full border border-white/15 px-7 py-3.5 text-xs uppercase tracking-[0.16em] text-white/70 transition-all duration-500 hover:border-[#2387ff]/50 hover:bg-[#2387ff]/10 hover:text-white sm:w-auto"
             >
-              Experience MUN
+              Explore Vidwan
             </a>
 
           </div>
@@ -948,13 +985,21 @@ export default function Home() {
               "experience-image"
             )}`}
           >
-            <div className="relative aspect-[16/9] w-full">
+            <div className="relative aspect-[941/1671] w-full md:aspect-[1672/941]">
               <Image
                 src="/images/vidwan-experience.png"
                 alt="The Vidwan Experience: more than MUN, a platform for what&apos;s next"
                 fill
-                sizes="(max-width: 768px) calc(100vw - 40px), 1200px"
-                className="object-cover"
+                sizes="(min-width: 768px) calc(100vw - 48px), 1200px"
+                className="hidden object-contain md:block"
+                priority={false}
+              />
+              <Image
+                src="/images/vidwan-experience-mobile.png"
+                alt=""
+                fill
+                sizes="calc(100vw - 40px)"
+                className="object-contain md:hidden"
                 priority={false}
               />
             </div>
@@ -985,73 +1030,62 @@ export default function Home() {
               <div className="relative flex h-full flex-col rounded-[2rem] border border-white/10 bg-[#06111f]/80 p-6 backdrop-blur-xl">
 
 
-                {/* Header */}
-
                 <div className="flex items-center justify-between border-b border-white/10 pb-5">
-
                   <div>
-
                     <p className="text-[8px] uppercase tracking-[0.3em] text-white/35">
-                      United Nations
+                      Experience MUN
                     </p>
-
-                    <p className="mt-1 text-xs font-semibold">
-                      Committee in session
-                    </p>
-
+                    <p className="mt-1 text-xs font-semibold">Committee in session</p>
                   </div>
-
-
                   <div className="flex items-center gap-2">
-
                     <span className="h-2 w-2 animate-pulse rounded-full bg-[#2387ff]" />
-
                     <span className="text-[8px] uppercase tracking-[0.2em] text-white/35">
                       LIVE
                     </span>
-
                   </div>
-
                 </div>
 
-
-                {/* Center */}
-
-                <div className="grid flex-1 place-items-center">
-
-                  <div className="relative grid h-48 w-48 place-items-center rounded-full border border-[#2387ff]/30 bg-[#2387ff]/5 shadow-[0_0_100px_rgba(35,135,255,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:border-[#2387ff]/60">
-
-                    <div className="absolute inset-3 rounded-full border border-white/5" />
-
-                    <div className="text-center">
-
-                      <div className="text-4xl">
-                        🎤
-                      </div>
-
-                      <p className="mt-3 text-[9px] uppercase tracking-[0.25em] text-[#68afff]">
-                        The floor
-                      </p>
-
-                    </div>
-
-                  </div>
-
+                <div className="mt-5 grid grid-cols-4 gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+                  {simulationTabs.map((simulation, index) => (
+                    <button
+                      key={simulation.label}
+                      type="button"
+                      onClick={() => setSimulationTab(index)}
+                      className={`min-h-10 rounded-lg px-1 text-[8px] font-bold uppercase tracking-[0.08em] transition sm:text-[9px] ${
+                        simulationTab === index
+                          ? "bg-[#2387ff]/20 text-[#8bc3ff]"
+                          : "text-white/35 hover:text-white"
+                      }`}
+                    >
+                      {simulation.label}
+                    </button>
+                  ))}
                 </div>
 
-
-                {/* Chair */}
+                <div className="grid flex-1 place-items-center py-8 text-center sm:py-10">
+                  <div>
+                    <p className="text-[9px] uppercase tracking-[0.3em] text-[#68afff]">
+                      {simulationTabs[simulationTab].label}
+                    </p>
+                    <h3 className="mt-3 text-2xl font-bold leading-tight tracking-[-0.04em] sm:text-3xl">
+                      {simulationTabs[simulationTab].value}
+                    </h3>
+                    <p className="mx-auto mt-4 max-w-sm text-sm leading-6 text-white/50">
+                      {simulationTabs[simulationTab].text}
+                    </p>
+                  </div>
+                </div>
 
                 <div className="rounded-2xl border border-[#2387ff]/25 bg-[#2387ff]/10 p-5">
-
                   <p className="text-[8px] uppercase tracking-[0.3em] text-[#68afff]">
                     The Chair
                   </p>
-
                   <p className="mt-2 text-base leading-6">
-                    The delegate of your country has the floor.
+                    What would you do?
                   </p>
-
+                  <p className="mt-1 text-xs leading-5 text-white/45">
+                    Choose a chapter above and practice your next move.
+                  </p>
                 </div>
 
               </div>
@@ -1062,6 +1096,103 @@ export default function Home() {
 
         </div>
 
+      </section>
+
+
+      {/* =========================================================
+          WHAT YOU ACTUALLY LEARN
+      ========================================================= */}
+
+      <section className="relative overflow-hidden border-t border-white/10 bg-[#0a1b2e] px-5 py-24 sm:px-6 sm:py-36">
+        <div
+          data-reveal="learning"
+          className={`mx-auto max-w-7xl transform transition-all duration-1000 ${reveal(
+            "learning"
+          )}`}
+        >
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
+                The real curriculum
+              </p>
+              <h2 className="mt-6 max-w-xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl">
+                You don&apos;t just learn MUN.
+              </h2>
+              <p className="mt-7 max-w-md text-base leading-7 text-white/55 sm:text-lg sm:leading-8">
+                You learn how to think, speak, negotiate and lead in any room
+                that comes next.
+              </p>
+            </div>
+
+            <div className="grid gap-x-6 gap-y-8 sm:grid-cols-2">
+              {learningSkills.map(([number, title, text], index) => (
+                <div
+                  key={title}
+                  className="group border-t border-white/10 pt-4 transition-all duration-500 hover:border-[#2387ff]/60"
+                  style={{ transitionDelay: `${index * 60}ms` }}
+                >
+                  <div className="flex items-baseline justify-between gap-4">
+                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-white/85 transition-colors group-hover:text-white">
+                      {title}
+                    </h3>
+                    <span className="font-mono text-[10px] text-[#5da8ff]">
+                      {number}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-white/45">{text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* =========================================================
+          CREDIBILITY
+      ========================================================= */}
+
+      <section className="relative overflow-hidden bg-[#071321] px-5 py-24 sm:px-6 sm:py-36">
+        <div
+          data-reveal="credibility"
+          className={`mx-auto max-w-7xl transform transition-all duration-1000 ${reveal(
+            "credibility"
+          )}`}
+        >
+          <div className="max-w-3xl">
+            <p className="text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
+              Built for what&apos;s next
+            </p>
+            <h2 className="mt-6 text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl">
+              Built for students who want to go further.
+            </h2>
+            <p className="mt-7 max-w-2xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8">
+              Practical training. Real simulations. Skills that last beyond
+              the conference room.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-3 sm:grid-cols-3 sm:mt-16">
+            {[
+              ["Student voices", "Verified stories from the people doing the work."],
+              ["Mentor perspective", "A place for the coaches shaping the room."],
+              ["Partners in progress", "Future collaborations, shared when confirmed."],
+            ].map(([title, text]) => (
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 sm:p-6"
+              >
+                <p className="text-[10px] uppercase tracking-[0.22em] text-[#78b8ff]">
+                  {title}
+                </p>
+                <p className="mt-4 text-sm leading-6 text-white/45">{text}</p>
+                <p className="mt-8 text-[9px] uppercase tracking-[0.18em] text-white/25">
+                  Coming soon
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
 
@@ -1168,7 +1299,7 @@ export default function Home() {
                 className="group mt-9 inline-flex min-h-12 w-full max-w-xs items-center justify-center gap-4 rounded-full bg-white px-8 py-4 text-xs font-bold uppercase tracking-[0.18em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white sm:mt-12 sm:w-auto"
               >
 
-                Start your journey
+                Start Your Journey
 
                 <span className="transition-transform duration-300 group-hover:translate-x-1">
                   →
@@ -1189,9 +1320,16 @@ export default function Home() {
 
         <footer className="mx-auto flex max-w-7xl flex-col gap-5 px-2 py-8 text-[9px] uppercase tracking-[0.16em] text-white/30 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-10 sm:tracking-[0.2em]">
 
-          <span>
-            © {new Date().getFullYear()} Vidwan
-          </span>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/images/vidwan-logo.png"
+              alt="Vidwan"
+              width={128}
+              height={128}
+              className="h-9 w-9 object-contain"
+            />
+            <span>© {new Date().getFullYear()} Vidwan</span>
+          </div>
 
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <span>Experiment. Debate. Lead.</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
 import { getSupabaseClient } from "@/lib/supabase/client";
@@ -331,7 +332,7 @@ export default function TeacherDashboardPage() {
 }
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
-  return <main className="min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-white sm:min-h-screen sm:px-8 sm:py-8"><div className="pointer-events-none fixed inset-0 bg-[radial-gradient(700px_circle_at_80%_15%,rgba(35,135,255,0.14),transparent_55%)]" /><div className="relative mx-auto w-full max-w-7xl"><nav className="flex items-center justify-between gap-4"><Link href="/" className="text-sm font-black tracking-[0.18em]">VIDWAN<span className="text-[#2387ff]">.</span></Link><span className="text-right text-[9px] uppercase tracking-[0.2em] text-white/35 sm:text-[10px] sm:tracking-[0.28em]">Internal workspace</span></nav><div className="mt-10 sm:mt-14">{children}</div></div></main>;
+  return <main className="min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-white sm:min-h-screen sm:px-8 sm:py-8"><div className="pointer-events-none fixed inset-0 bg-[radial-gradient(700px_circle_at_80%_15%,rgba(35,135,255,0.14),transparent_55%)]" /><div className="relative mx-auto w-full max-w-7xl"><nav className="flex items-center justify-between gap-4"><Link href="/" aria-label="Vidwan home" className="flex items-center"><Image src="/images/vidwan-logo.png" alt="Vidwan" width={128} height={128} className="h-10 w-10 object-contain" /></Link><span className="text-right text-[9px] uppercase tracking-[0.2em] text-white/35 sm:text-[10px] sm:tracking-[0.28em]">Internal workspace</span></nav><div className="mt-10 sm:mt-14">{children}</div></div></main>;
 }
 
 function LoadingState() {
