@@ -40,11 +40,8 @@ textarea:focus-visible {
 }
 
 html {
-  scroll-behavior: smooth;
-}
-
-html {
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 @media (hover: none) {

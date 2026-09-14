@@ -190,8 +190,8 @@ export default function Home() {
 
   const reveal = (id: string) =>
     visible[id]
-      ? "translate-y-0 opacity-100"
-      : "translate-y-12 opacity-0";
+      ? "translate-y-0 scale-100 opacity-100 blur-0"
+      : "translate-y-8 scale-[0.99] opacity-0 blur-[2px]";
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#071321] text-white">
@@ -412,7 +412,7 @@ export default function Home() {
           }}
         >
 
-          <h1 className="bg-gradient-to-r from-white via-[#b8d9ff] to-[#2387ff] bg-clip-text text-[17vw] font-black leading-[0.8] tracking-[-0.085em] text-transparent sm:text-[15vw] lg:text-[14rem]">
+          <h1 className="bg-gradient-to-r from-white via-[#d4e7ff] to-[#2387ff] bg-clip-text text-[17vw] font-black leading-[0.82] tracking-[-0.075em] text-transparent sm:text-[15vw] lg:text-[14rem]">
             VIDWAN
           </h1>
 
@@ -422,7 +422,7 @@ export default function Home() {
           </p>
 
 
-          <p className="mx-auto mt-7 max-w-3xl text-[1.65rem] font-semibold leading-tight tracking-[-0.03em] text-white sm:mt-8 sm:text-4xl">
+          <p className="mx-auto mt-7 max-w-3xl text-[1.65rem] font-semibold leading-[1.08] tracking-[-0.025em] text-white sm:mt-8 sm:text-4xl">
             Become the delegate people remember.
           </p>
 
@@ -501,7 +501,7 @@ export default function Home() {
           </p>
 
 
-          <h2 className="max-w-6xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl lg:text-[8rem]">
+          <h2 className="max-w-6xl text-[2.75rem] font-bold leading-[0.94] tracking-[-0.055em] sm:text-7xl lg:text-[8rem]">
 
             MUN can be
 
@@ -534,7 +534,7 @@ export default function Home() {
 
               <div
                 key={item}
-                className="group relative min-h-16 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 transition-all duration-500 hover:-translate-y-2 hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 sm:p-6"
+                className="group relative min-h-16 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-1 hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:shadow-[0_18px_40px_rgba(0,0,0,0.18)] sm:p-6"
                 style={{
                   transitionDelay: `${index * 60}ms`,
                 }}
@@ -662,9 +662,9 @@ export default function Home() {
                               block: "center",
                             });
                         }}
-                        className={`group relative min-h-14 overflow-hidden rounded-2xl border p-4 text-left transition-all duration-500 sm:p-5 ${
+                        className={`group relative min-h-14 overflow-hidden rounded-2xl border p-4 text-left shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-500 sm:p-5 ${
                           isActive
-                            ? "scale-[1.01] border-[#2387ff]/60 bg-[#2387ff]/15 shadow-[0_0_35px_rgba(35,135,255,0.12)]"
+                            ? "scale-[1.01] border-[#2387ff]/60 bg-[#2387ff]/15 shadow-[0_0_35px_rgba(35,135,255,0.16)]"
                             : "border-white/10 bg-white/[0.025] hover:border-white/20 hover:bg-white/[0.05]"
                         }`}
                       >
@@ -743,7 +743,7 @@ export default function Home() {
                 {/* RIGHT CARD */}
 
                 <div
-                  className={`group relative min-h-[360px] overflow-hidden rounded-[2rem] border p-6 shadow-[0_0_70px_rgba(35,135,255,0.08)] transition-all duration-700 sm:min-h-[500px] sm:rounded-[2.5rem] sm:p-12 ${
+                  className={`group relative min-h-[360px] overflow-hidden rounded-[2rem] border p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)] transition-all duration-700 sm:min-h-[500px] sm:rounded-[2.5rem] sm:p-12 ${
                     index === active
                       ? "border-[#2387ff]/40 bg-[#071525]"
                       : "border-white/10 bg-[#071525]/80"
@@ -1020,7 +1020,7 @@ export default function Home() {
             }}
           >
 
-            <div className="relative min-h-0 rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#173d68] via-[#0c2037] to-[#06101c] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.35)] sm:aspect-square sm:rounded-[2.5rem] sm:p-7">
+            <div className="relative min-h-0 rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#173d68] via-[#0c2037] to-[#06101c] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.35)] transition-shadow duration-700 group-hover:shadow-[0_35px_110px_rgba(0,0,0,0.42)] sm:aspect-square sm:rounded-[2.5rem] sm:p-7">
 
               {/* Outer glow */}
 
@@ -1128,7 +1128,7 @@ export default function Home() {
               {learningSkills.map(([number, title, text], index) => (
                 <div
                   key={title}
-                  className="group border-t border-white/10 pt-4 transition-all duration-500 hover:border-[#2387ff]/60"
+                  className="group border-t border-white/10 pt-4 transition-all duration-500 hover:-translate-y-1 hover:border-[#2387ff]/60"
                   style={{ transitionDelay: `${index * 60}ms` }}
                 >
                   <div className="flex items-baseline justify-between gap-4">
@@ -1264,7 +1264,7 @@ export default function Home() {
           )}`}
         >
 
-          <div className="relative overflow-hidden rounded-[2rem] border border-[#2387ff]/30 bg-gradient-to-br from-[#153a65] via-[#0c223c] to-[#081525] px-5 py-16 text-center shadow-[0_30px_120px_rgba(35,135,255,0.08)] sm:rounded-[3rem] sm:px-12 sm:py-32">
+          <div className="relative overflow-hidden rounded-[2rem] border border-[#2387ff]/35 bg-gradient-to-br from-[#153a65] via-[#0c223c] to-[#081525] px-5 py-16 text-center shadow-[0_30px_120px_rgba(35,135,255,0.12)] sm:rounded-[3rem] sm:px-12 sm:py-32">
 
 
             {/* Glow */}
