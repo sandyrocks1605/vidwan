@@ -9,31 +9,31 @@ const journey = [
     number: "01",
     title: "RESEARCH",
     short: "KNOW THE ISSUE",
-    text: "Know your country. Understand the problem. Build arguments from facts.",
+    text: "Find what matters before you enter the room.",
   },
   {
     number: "02",
     title: "SPEAK",
     short: "FIND YOUR VOICE",
-    text: "Turn research into arguments people remember.",
+    text: "Turn preparation into confidence at the podium.",
   },
   {
     number: "03",
     title: "DEBATE",
     short: "CHALLENGE IDEAS",
-    text: "Think on your feet. Respond. Make your voice count.",
+    text: "Challenge ideas without losing the room.",
   },
   {
     number: "04",
     title: "NEGOTIATE",
     short: "BUILD CONSENSUS",
-    text: "Find common ground. Build coalitions. Move ideas forward.",
+    text: "Build consensus when everyone wants something different.",
   },
   {
     number: "05",
     title: "LEAD",
     short: "MOVE THE ROOM",
-    text: "Confidence isn’t about being the loudest person in the room. It’s about knowing when to speak — and knowing what to say.",
+    text: "Take what you learn beyond the committee room.",
   },
 ];
 
@@ -70,12 +70,22 @@ const simulationTabs = [
 ];
 
 const learningSkills = [
-  ["01", "Research", "Build arguments from evidence."],
-  ["02", "Public Speaking", "Make people remember the point."],
-  ["03", "Negotiation", "Find the overlap between positions."],
-  ["04", "Critical Thinking", "Respond with clarity under pressure."],
-  ["05", "Leadership", "Know when to speak and what to say."],
-  ["06", "Confidence", "Carry the skill beyond the room."],
+  ["01", "Research", "Find the evidence before you take a position."],
+  ["02", "Public Speaking", "Make a clear point when the room is listening."],
+  ["03", "Argumentation", "Build a case people can follow and challenge."],
+  ["04", "Critical Thinking", "Separate the signal from the noise under pressure."],
+  ["05", "Negotiation", "Find a workable path when interests collide."],
+  ["06", "Decision-making", "Choose your next move with limited time and information."],
+  ["07", "Leadership", "Move a group forward without needing the loudest voice."],
+  ["08", "Confidence", "Carry these skills into presentations, interviews and teamwork."],
+];
+
+const howVidwanWorks = [
+  ["01", "JOIN", "Tell us where you are in your MUN journey."],
+  ["02", "TRAIN", "Build the fundamentals through structured learning."],
+  ["03", "SIMULATE", "Practice through realistic MUN situations."],
+  ["04", "COMPETE", "Take those skills into real conferences."],
+  ["05", "GROW", "Carry the skills beyond MUN."],
 ];
 
 export default function Home() {
@@ -428,8 +438,8 @@ export default function Home() {
 
 
           <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-7 text-white/60 sm:mt-6 sm:text-lg sm:leading-8">
-            Model United Nations isn&apos;t about knowing everything.
-            It&apos;s about learning how to think, speak, negotiate and lead.
+            Vidwan helps students master MUN, debate and leadership through
+            practical training, simulations and real-world experiences.
           </p>
 
 
@@ -513,9 +523,8 @@ export default function Home() {
 
 
           <p className="mt-8 max-w-2xl text-base leading-7 text-white/55 sm:mt-10 sm:text-lg sm:leading-8">
-            New committees. New rules. New people.
-            A room full of delegates who seem like they already
-            know exactly what they&apos;re doing.
+            New committees. New rules. New people. Vidwan gives you a place
+            to prepare before the room asks you to perform.
           </p>
 
 
@@ -948,9 +957,8 @@ export default function Home() {
 
 
             <p className="mt-7 max-w-xl text-base leading-7 text-white/55 sm:mt-9 sm:text-lg sm:leading-8">
-              Step into a simulated committee, find your voice,
-              navigate diplomacy, and discover what it feels like
-              when the floor is yours.
+              Research a situation. Step into a role. Defend a position,
+              debate, negotiate and respond when the situation changes.
             </p>
 
 
@@ -974,6 +982,39 @@ export default function Home() {
 
             </div>
 
+          </div>
+
+
+          <div
+            data-reveal="how-it-works"
+            className={`relative mt-16 overflow-hidden rounded-[2rem] border border-white/10 bg-[#0a1b2e]/70 p-5 shadow-[0_25px_80px_rgba(0,0,0,0.16)] transform transition-all duration-1000 sm:mt-24 sm:p-8 ${reveal(
+              "how-it-works"
+            )}`}
+          >
+            <div className="flex flex-col gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
+                  How Vidwan works
+                </p>
+                <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] sm:text-3xl">
+                  Practice first. Perform with purpose.
+                </h3>
+              </div>
+              <p className="max-w-sm text-sm leading-6 text-white/40">
+                MUN is the environment. Leadership is the outcome.
+              </p>
+            </div>
+            <div className="mt-6 grid gap-5 sm:grid-cols-5 sm:gap-4">
+              {howVidwanWorks.map(([number, title, text]) => (
+                <div key={number} className="relative border-l border-[#2387ff]/35 pl-4">
+                  <p className="font-mono text-[10px] text-[#78b8ff]">{number}</p>
+                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-white/80">
+                    {title}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-white/45">{text}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
 
@@ -1119,8 +1160,8 @@ export default function Home() {
                 You don&apos;t just learn MUN.
               </h2>
               <p className="mt-7 max-w-md text-base leading-7 text-white/55 sm:text-lg sm:leading-8">
-                You learn how to think, speak, negotiate and lead in any room
-                that comes next.
+                You learn the practical skills behind a strong delegate:
+                clear thinking, clear language and better decisions under pressure.
               </p>
             </div>
 
@@ -1232,8 +1273,8 @@ export default function Home() {
 
 
           <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-white/55 sm:mt-10 sm:text-lg sm:leading-8">
-            We&apos;ll give you the tools, confidence, and practical
-            skills to walk into your first committee ready.
+            MUN is the training ground. The goal is communication,
+            decision-making and leadership that travel with you.
           </p>
 
         </div>
@@ -1278,6 +1319,11 @@ export default function Home() {
 
               <p className="text-[10px] uppercase tracking-[0.4em] text-[#78b8ff]">
                 Your first MUN starts here
+              </p>
+
+              <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/55">
+                Tell us a little about yourself and we&apos;ll help you find the
+                right Vidwan experience.
               </p>
 
 
