@@ -170,24 +170,46 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      // TEMPORARY: expose safe Resend diagnostics for production diagnosis.
+      const diagnostic = getErrorDiagnostics(error);
       console.error(
         "Resend registration notification failed.",
-        getErrorDiagnostics(error)
+        diagnostic
       );
       return NextResponse.json(
-        { error: "Unable to send registration notification." },
+        {
+          error: "Unable to send registration notification.",
+          diagnostic: {
+            name: diagnostic.name,
+            message: diagnostic.message,
+            status: diagnostic.statusCode,
+            resendName: diagnostic.resendError?.name,
+            resendMessage: diagnostic.resendError?.message,
+          },
+        },
         { status: 502 }
       );
     }
 
     return NextResponse.json({ sent: true });
   } catch (error) {
+    // TEMPORARY: expose safe Resend diagnostics for production diagnosis.
+    const diagnostic = getErrorDiagnostics(error);
     console.error(
       "Resend registration notification failed.",
-      getErrorDiagnostics(error)
+      diagnostic
     );
     return NextResponse.json(
-      { error: "Unable to send registration notification." },
+      {
+        error: "Unable to send registration notification.",
+        diagnostic: {
+          name: diagnostic.name,
+          message: diagnostic.message,
+          status: diagnostic.statusCode,
+          resendName: diagnostic.resendError?.name,
+          resendMessage: diagnostic.resendError?.message,
+        },
+      },
       { status: 502 }
     );
   }
