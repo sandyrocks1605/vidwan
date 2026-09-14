@@ -55,6 +55,47 @@ const isValidRegistration = (
 const displayValue = (value: string | null) =>
   value?.trim() ? escapeHtml(value.trim()) : "Not provided";
 
+const getErrorDiagnostics = (value: unknown) => {
+  if (!value || typeof value !== "object") {
+    return { name: typeof value, message: String(value) };
+  }
+
+  const error = value as {
+    name?: unknown;
+    message?: unknown;
+    statusCode?: unknown;
+    status?: unknown;
+    error?: {
+      name?: unknown;
+      message?: unknown;
+    };
+  };
+
+  return {
+    name: typeof error.name === "string" ? error.name : undefined,
+    message: typeof error.message === "string" ? error.message : undefined,
+    statusCode:
+      typeof error.statusCode === "number"
+        ? error.statusCode
+        : typeof error.status === "number"
+          ? error.status
+          : undefined,
+    resendError:
+      error.error && typeof error.error === "object"
+        ? {
+            name:
+              typeof error.error.name === "string"
+                ? error.error.name
+                : undefined,
+            message:
+              typeof error.error.message === "string"
+                ? error.error.message
+                : undefined,
+          }
+        : undefined,
+  };
+};
+
 export async function POST(request: Request) {
   console.info("Registration notification route called.");
 
@@ -129,7 +170,10 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error("Resend registration notification failed.");
+      console.error(
+        "Resend registration notification failed.",
+        getErrorDiagnostics(error)
+      );
       return NextResponse.json(
         { error: "Unable to send registration notification." },
         { status: 502 }
@@ -137,8 +181,11 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ sent: true });
-  } catch {
-    console.error("Resend registration notification failed.");
+  } catch (error) {
+    console.error(
+      "Resend registration notification failed.",
+      getErrorDiagnostics(error)
+    );
     return NextResponse.json(
       { error: "Unable to send registration notification." },
       { status: 502 }
