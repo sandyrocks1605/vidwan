@@ -215,7 +215,7 @@ export default function Home() {
       ========================================================= */}
 
       <nav
-        className={`fixed left-1/2 top-0 z-50 flex w-[calc(100%-24px)] max-w-7xl -translate-x-1/2 items-center justify-between rounded-full px-4 py-3 transition-all duration-700 sm:w-[calc(100%-28px)] sm:px-5 ${
+        className={`fixed left-1/2 top-0 z-50 flex w-[calc(100%-24px)] max-w-7xl -translate-x-1/2 items-center justify-between rounded-full px-4 py-2 transition-all duration-700 sm:w-[calc(100%-28px)] sm:px-5 sm:py-3 ${
           scrolled
             ? "mt-4 border border-white/10 bg-[#071321]/80 shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl"
             : "mt-3"
@@ -232,7 +232,7 @@ export default function Home() {
             alt="Vidwan"
             width={128}
             height={128}
-            className="h-10 w-10 object-contain sm:h-11 sm:w-11"
+            className="h-11 w-11 object-contain sm:h-11 sm:w-11"
           />
         </a>
 
@@ -1020,17 +1020,17 @@ export default function Home() {
             }}
           >
 
-            <div className="relative aspect-square rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-[#173d68] via-[#0c2037] to-[#06101c] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.35)] sm:p-7">
+            <div className="relative min-h-0 rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#173d68] via-[#0c2037] to-[#06101c] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.35)] sm:aspect-square sm:rounded-[2.5rem] sm:p-7">
 
               {/* Outer glow */}
 
               <div className="pointer-events-none absolute -inset-5 rounded-[3rem] bg-[#2387ff]/5 opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
 
 
-              <div className="relative flex h-full flex-col rounded-[2rem] border border-white/10 bg-[#06111f]/80 p-6 backdrop-blur-xl">
+              <div className="relative flex flex-col rounded-[1.5rem] border border-white/10 bg-[#06111f]/80 p-4 backdrop-blur-xl sm:h-full sm:rounded-[2rem] sm:p-6">
 
 
-                <div className="flex items-center justify-between border-b border-white/10 pb-5">
+                <div className="flex items-center justify-between border-b border-white/10 pb-4 sm:pb-5">
                   <div>
                     <p className="text-[8px] uppercase tracking-[0.3em] text-white/35">
                       Experience MUN
@@ -1045,13 +1045,13 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="mt-5 grid grid-cols-4 gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+                <div className="mt-4 grid grid-cols-4 gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1 sm:mt-5">
                   {simulationTabs.map((simulation, index) => (
                     <button
                       key={simulation.label}
                       type="button"
                       onClick={() => setSimulationTab(index)}
-                      className={`min-h-10 rounded-lg px-1 text-[8px] font-bold uppercase tracking-[0.08em] transition sm:text-[9px] ${
+                      className={`min-h-11 rounded-lg px-0.5 text-[8px] font-bold uppercase tracking-[0.06em] transition sm:min-h-10 sm:px-1 sm:text-[9px] sm:tracking-[0.08em] ${
                         simulationTab === index
                           ? "bg-[#2387ff]/20 text-[#8bc3ff]"
                           : "text-white/35 hover:text-white"
@@ -1062,21 +1062,21 @@ export default function Home() {
                   ))}
                 </div>
 
-                <div className="grid flex-1 place-items-center py-8 text-center sm:py-10">
+                <div className="grid place-items-center py-5 text-center sm:flex-1 sm:py-10">
                   <div>
                     <p className="text-[9px] uppercase tracking-[0.3em] text-[#68afff]">
                       {simulationTabs[simulationTab].label}
                     </p>
-                    <h3 className="mt-3 text-2xl font-bold leading-tight tracking-[-0.04em] sm:text-3xl">
+                    <h3 className="mt-2 text-xl font-bold leading-tight tracking-[-0.04em] sm:mt-3 sm:text-3xl">
                       {simulationTabs[simulationTab].value}
                     </h3>
-                    <p className="mx-auto mt-4 max-w-sm text-sm leading-6 text-white/50">
+                    <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/50 sm:mt-4">
                       {simulationTabs[simulationTab].text}
                     </p>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-[#2387ff]/25 bg-[#2387ff]/10 p-5">
+                <div className="rounded-2xl border border-[#2387ff]/25 bg-[#2387ff]/10 p-4 sm:p-5">
                   <p className="text-[8px] uppercase tracking-[0.3em] text-[#68afff]">
                     The Chair
                   </p>
