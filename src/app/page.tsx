@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 const journey = [
@@ -936,6 +937,27 @@ export default function Home() {
 
             </div>
 
+          </div>
+
+
+          {/* VIDWAN EXPERIENCE IMAGE */}
+
+          <div
+            data-reveal="experience-image"
+            className={`relative mt-12 transform overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#06111f] shadow-[0_30px_100px_rgba(0,0,0,0.35)] transition-all duration-1000 sm:mt-16 sm:rounded-[2.5rem] ${reveal(
+              "experience-image"
+            )}`}
+          >
+            <div className="relative aspect-[16/9] w-full">
+              <Image
+                src="/images/vidwan-experience.png"
+                alt="The Vidwan Experience: more than MUN, a platform for what&apos;s next"
+                fill
+                sizes="(max-width: 768px) calc(100vw - 40px), 1200px"
+                className="object-cover"
+                priority={false}
+              />
+            </div>
           </div>
 
 
