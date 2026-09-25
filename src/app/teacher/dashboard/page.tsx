@@ -332,7 +332,71 @@ export default function TeacherDashboardPage() {
 }
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
-  return <main className="min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-white sm:min-h-screen sm:px-8 sm:py-8"><div className="pointer-events-none fixed inset-0 bg-[radial-gradient(700px_circle_at_80%_15%,rgba(35,135,255,0.14),transparent_55%)]" /><div className="relative mx-auto w-full max-w-7xl"><nav className="flex items-center justify-between gap-4"><Link href="/" aria-label="Vidwan home" className="flex items-center"><Image src="/images/vidwan-logo.png" alt="Vidwan" width={128} height={128} className="h-10 w-10 object-contain" /></Link><span className="text-right text-[9px] uppercase tracking-[0.2em] text-white/35 sm:text-[10px] sm:tracking-[0.28em]">Internal workspace</span></nav><div className="mt-10 sm:mt-14">{children}</div></div></main>;
+  return (
+    <main className="min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-white sm:min-h-screen sm:px-8 sm:py-8">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(700px_circle_at_80%_15%,rgba(35,135,255,0.14),transparent_55%)]" />
+
+      <div className="relative mx-auto w-full max-w-7xl">
+
+        {/* Top bar */}
+        <nav className="flex flex-col gap-5 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+
+          <Link
+            href="/"
+            aria-label="Vidwan home"
+            className="flex items-center"
+          >
+            <Image
+              src="/images/vidwan-logo.png"
+              alt="Vidwan"
+              width={128}
+              height={128}
+              className="h-10 w-10 object-contain"
+            />
+          </Link>
+
+          {/* Teacher navigation */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/teacher/dashboard"
+              className="rounded-full bg-[#2387ff]/15 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8bc3ff] transition hover:bg-[#2387ff]/25"
+            >
+              Dashboard
+            </Link>
+
+            <Link
+              href="/teacher/students"
+              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+            >
+              Students
+            </Link>
+
+            <Link
+              href="/teacher/meetings"
+              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+            >
+              Meetings
+            </Link>
+
+            <Link
+              href="/teacher/announcements"
+              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+            >
+              Announcements
+            </Link>
+          </div>
+
+          <span className="hidden text-right text-[9px] uppercase tracking-[0.2em] text-white/35 sm:block sm:text-[10px] sm:tracking-[0.28em]">
+            Internal workspace
+          </span>
+        </nav>
+
+        <div className="mt-8 sm:mt-12">
+          {children}
+        </div>
+      </div>
+    </main>
+  );
 }
 
 function LoadingState() {

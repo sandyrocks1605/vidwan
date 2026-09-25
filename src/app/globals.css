@@ -37,6 +37,30 @@ p {
   text-wrap: pretty;
 }
 
+.field-label {
+  display: block;
+  color: rgb(255 255 255 / 0.55);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.field-input {
+  margin-top: 0.5rem;
+  width: 100%;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 0.75rem;
+  background: #071321;
+  padding: 0.875rem 1rem;
+  color: white;
+  outline: none;
+  transition: border-color 300ms ease;
+}
+
+.field-input:focus {
+  border-color: rgb(35 135 255 / 0.6);
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
