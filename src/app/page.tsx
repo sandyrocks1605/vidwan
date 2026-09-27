@@ -1,1460 +1,3213 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
 const journey = [
   {
     number: "01",
     title: "RESEARCH",
-    short: "KNOW THE ISSUE",
-    text: "Find what matters before you enter the room.",
+    subtitle: "KNOW THE ISSUE.",
+    description:
+      "Understand the room before you enter it. Research the issue, the evidence, the interests and the details that shape a position.",
+    keywords: ["ISSUE", "EVIDENCE", "CONTEXT", "POSITION"],
   },
   {
     number: "02",
     title: "SPEAK",
-    short: "FIND YOUR VOICE",
-    text: "Turn preparation into confidence at the podium.",
+    subtitle: "OWN THE ROOM.",
+    description:
+      "Turn preparation into presence. Structure ideas clearly and communicate them with confidence when the room is listening.",
+    keywords: ["VOICE", "CLARITY", "PRESENCE", "IMPACT"],
   },
   {
     number: "03",
     title: "DEBATE",
-    short: "CHALLENGE IDEAS",
-    text: "Challenge ideas without losing the room.",
+    subtitle: "CHALLENGE IDEAS.",
+    description:
+      "Listen, respond and defend your position. Strong debate is not about speaking the most — it is about thinking the fastest.",
+    keywords: ["ARGUMENT", "RESPONSE", "LOGIC", "DEFENCE"],
   },
   {
     number: "04",
     title: "NEGOTIATE",
-    short: "BUILD CONSENSUS",
-    text: "Build consensus when everyone wants something different.",
+    subtitle: "FIND COMMON GROUND.",
+    description:
+      "Move beyond opposing positions. Learn how alliances form, compromises happen and agreements are built.",
+    keywords: ["ALLIANCE", "COMPROMISE", "TRUST", "AGREEMENT"],
   },
   {
     number: "05",
     title: "LEAD",
-    short: "MOVE THE ROOM",
-    text: "Take what you learn beyond the committee room.",
+    subtitle: "MOVE THE ROOM.",
+    description:
+      "Bring everything together. Leadership is preparation, communication, judgment and the ability to move people forward.",
+    keywords: ["VISION", "DECISION", "DIRECTION", "LEADERSHIP"],
   },
 ];
 
-const particles = Array.from({ length: 28 }, (_, i) => ({
-  id: i,
-  left: `${(i * 37) % 100}%`,
-  top: `${(i * 61) % 100}%`,
-  size: 2 + (i % 3),
-  delay: `${(i % 8) * 0.7}s`,
-  duration: `${5 + (i % 5)}s`,
-}));
+function clamp(value: number, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value));
+}
 
-const simulationTabs = [
-  {
-    label: "COMMITTEE",
-    value: "UN Security Council",
-    text: "A room where every sentence can shift the balance.",
-  },
-  {
-    label: "ROLE",
-    value: "Represent Japan",
-    text: "You are responsible for a position, not just an opinion.",
-  },
-  {
-    label: "CRISIS",
-    value: "A diplomatic crisis has erupted.",
-    text: "The room is waiting. Your response starts the next move.",
-  },
-  {
-    label: "DEBATE",
-    value: "90 seconds to respond",
-    text: "Think clearly, speak precisely, and move the room forward.",
-  },
-];
+function ease(value: number) {
+  const x = clamp(value);
+  return x * x * (3 - 2 * x);
+}
 
-const learningSkills = [
-  ["01", "Research", "Find the evidence before you take a position."],
-  ["02", "Public Speaking", "Make a clear point when the room is listening."],
-  ["03", "Argumentation", "Build a case people can follow and challenge."],
-  ["04", "Critical Thinking", "Separate the signal from the noise under pressure."],
-  ["05", "Negotiation", "Find a workable path when interests collide."],
-  ["06", "Decision-making", "Choose your next move with limited time and information."],
-  ["07", "Leadership", "Move a group forward without needing the loudest voice."],
-  ["08", "Confidence", "Carry these skills into presentations, interviews and teamwork."],
-];
-
-const howVidwanWorks = [
-  ["01", "JOIN", "Tell us where you are in your MUN journey."],
-  ["02", "TRAIN", "Build the fundamentals through structured learning."],
-  ["03", "SIMULATE", "Practice through realistic MUN situations."],
-  ["04", "COMPETE", "Take those skills into real conferences."],
-  ["05", "GROW", "Carry the skills beyond MUN."],
-];
-
-export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
+export default function HomePage() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [active, setActive] = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [simulationTab, setSimulationTab] = useState(0);
+  const [journeyProgress, setJourneyProgress] = useState(0);
+  const [mobileMenu, setMobileMenu] = useState(false);
 
-  const [mouse, setMouse] = useState({
-    x: 50,
-    y: 50,
-  });
-
-  const [heroOffset, setHeroOffset] = useState(0);
-
-  const [visible, setVisible] = useState<Record<string, boolean>>({});
-
-  const journeyRef = useRef<HTMLElement | null>(null);
-
+  /* KEEPING THE WORKING SCROLL ENGINE EXACTLY INTACT */
   useEffect(() => {
-    const handleScroll = () => {
+    let raf = 0;
+
+    const update = () => {
+      raf = 0;
+
       const scrollY = window.scrollY;
+
       const documentHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
+        document.documentElement.scrollHeight -
+        window.innerHeight;
 
-      const progress =
-        documentHeight > 0 ? scrollY / documentHeight : 0;
+      const overallProgress =
+        documentHeight > 0
+          ? clamp(scrollY / documentHeight)
+          : 0;
 
-      setScrollProgress(Math.min(1, Math.max(0, progress)));
-      setScrolled(scrollY > 30);
+      setScrollProgress(overallProgress);
 
-      setHeroOffset(Math.min(scrollY * 0.22, 180));
+      const journeyElement =
+        document.getElementById("journey");
 
-      const stages = document.querySelectorAll<HTMLElement>(
-        "[data-journey-stage]"
+      if (!journeyElement) {
+        setJourneyProgress(0);
+        return;
+      }
+
+      const rect =
+        journeyElement.getBoundingClientRect();
+
+      const journeyDistance =
+        journeyElement.offsetHeight -
+        window.innerHeight;
+
+      if (journeyDistance <= 0) {
+        setJourneyProgress(0);
+        return;
+      }
+
+      const travelled = -rect.top;
+
+      setJourneyProgress(
+        clamp(
+          travelled / journeyDistance
+        )
       );
-
-      if (stages.length > 0) {
-        const viewportCenter = window.innerHeight / 2;
-        let closestIndex = 0;
-        let closestDistance = Infinity;
-
-        stages.forEach((stage, index) => {
-          const rect = stage.getBoundingClientRect();
-          const stageCenter = rect.top + rect.height / 2;
-          const distance = Math.abs(stageCenter - viewportCenter);
-
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIndex = index;
-          }
-        });
-
-        setActive(closestIndex);
-      }
     };
 
-    const handleMouseMove = (event: MouseEvent) => {
-      setMouse({
-        x: (event.clientX / window.innerWidth) * 100,
-        y: (event.clientY / window.innerHeight) * 100,
-      });
+    const onScroll = () => {
+      if (raf) return;
+
+      raf =
+        window.requestAnimationFrame(
+          update
+        );
     };
 
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
+    const onResize = () => {
+      if (raf) return;
 
-    window.addEventListener("mousemove", handleMouseMove);
-
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("mousemove", handleMouseMove);
+      raf =
+        window.requestAnimationFrame(
+          update
+        );
     };
-  }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.getAttribute("data-reveal");
-
-            if (id) {
-              setVisible((current) => ({
-                ...current,
-                [id]: true,
-              }));
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-      }
+    window.addEventListener(
+      "scroll",
+      onScroll,
+      { passive: true }
     );
 
-    const elements =
-      document.querySelectorAll("[data-reveal]");
+    window.addEventListener(
+      "resize",
+      onResize
+    );
 
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
+    update();
 
     return () => {
-      observer.disconnect();
+      window.removeEventListener(
+        "scroll",
+        onScroll
+      );
+
+      window.removeEventListener(
+        "resize",
+        onResize
+      );
+
+      if (raf) {
+        window.cancelAnimationFrame(raf);
+      }
     };
   }, []);
 
-  const reveal = (id: string) =>
-    visible[id]
-      ? "translate-y-0 scale-100 opacity-100 blur-0"
-      : "translate-y-8 scale-[0.99] opacity-0 blur-[2px]";
+  /* FORCE NORMAL BROWSER SCROLLING */
+  useEffect(() => {
+    const html =
+      document.documentElement;
+
+    const previous =
+      html.style.scrollBehavior;
+
+    html.style.scrollBehavior = "auto";
+
+    return () => {
+      html.style.scrollBehavior =
+        previous;
+    };
+  }, []);
+
+  const journeyState = useMemo(() => {
+    const position =
+      journeyProgress *
+      (journey.length - 1);
+
+    const currentIndex = Math.min(
+      journey.length - 1,
+      Math.floor(position)
+    );
+
+    const nextIndex = Math.min(
+      journey.length - 1,
+      currentIndex + 1
+    );
+
+    const localProgress =
+      position - currentIndex;
+
+    return {
+      position,
+      currentIndex,
+      nextIndex,
+      localProgress,
+      current: journey[currentIndex],
+      next: journey[nextIndex],
+    };
+  }, [journeyProgress]);
+
+  const goToStage = (index: number) => {
+    const section =
+      document.getElementById("journey");
+
+    if (!section) return;
+
+    const distance =
+      section.offsetHeight -
+      window.innerHeight;
+
+    const sectionTop =
+      window.scrollY +
+      section.getBoundingClientRect().top;
+
+    const target =
+      sectionTop +
+      (index /
+        (journey.length - 1)) *
+        distance;
+
+    window.scrollTo({
+      top: target,
+      behavior: "auto",
+    });
+  };
+
+  const transition = ease(
+    journeyState.localProgress
+  );
+
+  const currentOpacity =
+    1 - transition * 0.92;
+
+  const nextOpacity =
+    transition;
+
+  const currentY =
+    -transition * 70;
+
+  const nextY =
+    80 -
+    transition * 80;
+
+  const currentScale =
+    1 -
+    transition * 0.08;
+
+  const nextScale =
+    0.92 +
+    transition * 0.08;
+
+  /*
+   * VISUAL PROGRESS
+   *
+   * These values only affect the graphics.
+   * They never modify scroll position.
+   */
+  const visualStage =
+    journeyState.currentIndex;
+
+  const visualLocal =
+    journeyState.localProgress;
+
+  const researchRotation =
+    journeyProgress * 180;
+
+  const researchSignal =
+    visualStage === 0
+      ? 1 - visualLocal * 0.5
+      : 0.5;
+
+  const speakIntensity =
+    0.55 +
+    Math.sin(journeyProgress * 18) *
+      0.2;
+
+  const debateDistance =
+    150 -
+    visualLocal * 150;
+
+  const negotiateDistance =
+    150 -
+    visualLocal * 150;
+
+  const leadConvergence =
+    visualStage === 4
+      ? journeyState.localProgress
+      : 0;
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#071321] text-white">
+    <main className="vidwan-page">
 
-      {/* =========================================================
-          GLOBAL SCROLL PROGRESS
-      ========================================================= */}
+      <div
+        className="global-progress"
+        style={{
+          width:
+            `${scrollProgress * 100}%`,
+        }}
+      />
 
-      <div className="fixed left-0 top-0 z-[100] h-[2px] w-full bg-transparent">
-        <div
-          className="h-full origin-left bg-[#2387ff] shadow-[0_0_15px_rgba(35,135,255,0.8)]"
-          style={{
-            transform: `scaleX(${scrollProgress})`,
-          }}
-        />
+      <div className="global-background">
+        <div className="global-grid" />
+        <div className="background-orb background-orb-one" />
+        <div className="background-orb background-orb-two" />
       </div>
 
+      {/* NAV */}
 
-      {/* =========================================================
-          NAVBAR
-      ========================================================= */}
+      <header className="site-header">
+        <nav className="site-nav">
 
-      <nav
-        className={`fixed left-1/2 top-0 z-50 flex w-[calc(100%-24px)] max-w-7xl -translate-x-1/2 items-center justify-between rounded-full px-4 py-2 transition-all duration-700 sm:w-[calc(100%-28px)] sm:px-5 sm:py-3 ${
-          scrolled
-            ? "mt-4 border border-white/10 bg-[#071321]/80 shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl"
-            : "mt-3"
-        }`}
-      >
-
-        <a
-          href="#top"
-          aria-label="Vidwan home"
-          className="group flex items-center"
-        >
-          <Image
-            src="/images/vidwan-logo.png"
-            alt="Vidwan"
-            width={128}
-            height={128}
-            className="h-11 w-11 object-contain sm:h-11 sm:w-11"
-          />
-        </a>
-
-
-        <div className="hidden items-center gap-9 text-[10px] uppercase tracking-[0.22em] text-white/50 md:flex">
-
-          <a
-            href="#about"
-            className="relative transition hover:text-white"
+          <Link
+            href="/"
+            aria-label="Vidwan home"
+            className="logo-link"
           >
-            About
-          </a>
-
-          <a
-            href="#experience"
-            className="relative transition hover:text-white"
-          >
-            Experience
-          </a>
-
-          <a
-            href="#journey"
-            className="relative transition hover:text-white"
-          >
-            Journey
-          </a>
-
-        </div>
-
-        <button
-          type="button"
-          aria-expanded={mobileMenuOpen}
-          aria-controls="mobile-navigation"
-          aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-          onClick={() => setMobileMenuOpen((open) => !open)}
-          className="grid h-11 w-11 place-items-center rounded-full border border-white/10 text-white/75 transition hover:border-[#2387ff]/50 md:hidden"
-        >
-          <span className="sr-only">{mobileMenuOpen ? "Close menu" : "Open menu"}</span>
-          <span className="flex w-4 flex-col gap-1.5">
-            <span className={`h-px w-full bg-current transition-transform ${mobileMenuOpen ? "translate-y-1 rotate-45" : ""}`} />
-            <span className={`h-px w-full bg-current transition-opacity ${mobileMenuOpen ? "opacity-0" : ""}`} />
-            <span className={`h-px w-full bg-current transition-transform ${mobileMenuOpen ? "-translate-y-1 -rotate-45" : ""}`} />
-          </span>
-        </button>
-
-        {mobileMenuOpen && (
-          <div
-            id="mobile-navigation"
-            className="absolute left-0 right-0 top-[calc(100%+8px)] rounded-3xl border border-white/10 bg-[#071321]/95 p-3 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl md:hidden"
-          >
-            {[
-              ["About", "#about"],
-              ["Experience", "#experience"],
-              ["Journey", "#journey"],
-            ].map(([label, href]) => (
-              <a
-                key={href}
-                href={href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block rounded-2xl px-4 py-3.5 text-[10px] uppercase tracking-[0.22em] text-white/65 transition hover:bg-white/[0.06] hover:text-white"
-              >
-                {label}
-              </a>
-            ))}
-            <a
-              href="/register"
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-1 block rounded-2xl bg-white px-4 py-3.5 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[#071321]"
-            >
-              Get started →
-            </a>
-          </div>
-        )}
-
-
-        <a
-          href="/register"
-          className="group relative hidden overflow-hidden rounded-full bg-white px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#071321] md:block"
-        >
-          <span className="relative z-10 whitespace-nowrap transition-colors group-hover:text-white">
-            Get Started →
-          </span>
-
-          <span className="absolute inset-0 -translate-x-full bg-[#2387ff] transition-transform duration-500 group-hover:translate-x-0" />
-        </a>
-
-      </nav>
-
-
-      {/* =========================================================
-          HERO
-      ========================================================= */}
-
-      <section
-        id="top"
-        className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-5 py-24 text-center sm:px-6 md:min-h-screen md:py-0"
-      >
-
-        {/* Cursor glow */}
-
-        <div
-          className="pointer-events-none absolute inset-0 hidden transition-all duration-300 sm:block"
-          style={{
-            background: `radial-gradient(
-              650px circle at ${mouse.x}% ${mouse.y}%,
-              rgba(35,135,255,0.18),
-              transparent 65%
-            )`,
-          }}
-        />
-
-
-        {/* Ambient glow */}
-
-        <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2387ff]/10 blur-[80px] sm:h-[700px] sm:w-[700px] sm:blur-[120px]"
-          style={{
-            transform: `translate(-50%, -50%) scale(${
-              1 + scrollProgress * 0.25
-            })`,
-          }}
-        />
-
-
-        {/* Orbital rings */}
-
-        <div
-          className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[680px] w-[680px] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/15 sm:block"
-          style={{
-            transform: `translate(-50%, -50%) rotate(${
-              scrollProgress * 25
-            }deg)`,
-          }}
-        />
-
-        <div
-          className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[460px] w-[460px] max-w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06] sm:block"
-          style={{
-            transform: `translate(-50%, -50%) rotate(${
-              -scrollProgress * 40
-            }deg)`,
-          }}
-        />
-
-
-        {/* Particles */}
-
-        {particles.map((particle) => (
-          <div
-            key={particle.id}
-            className="pointer-events-none absolute hidden rounded-full bg-[#58a9ff]/40 sm:block"
-            style={{
-              left: particle.left,
-              top: particle.top,
-              width: particle.size,
-              height: particle.size,
-              animationName: "floatParticle",
-              animationDuration: particle.duration,
-              animationDelay: particle.delay,
-              animationIterationCount: "infinite",
-              animationTimingFunction: "ease-in-out",
-            }}
-          />
-        ))}
-
-
-        {/* Hero content */}
-
-        <div
-          className="touch-tilt relative z-10 w-full max-w-7xl"
-          style={{
-            transform: `translate3d(
-              ${(mouse.x - 50) * 0.35}px,
-              ${(mouse.y - 50) * 0.35 - heroOffset}px,
-              0
-            )`,
-          }}
-        >
-
-          <h1 className="bg-gradient-to-r from-white via-[#d4e7ff] to-[#2387ff] bg-clip-text text-[17vw] font-black leading-[0.82] tracking-[-0.075em] text-transparent sm:text-[15vw] lg:text-[14rem]">
-            VIDWAN
-          </h1>
-
-
-          <p className="mt-7 text-[9px] uppercase tracking-[0.34em] text-[#78b8ff] sm:mt-8 sm:text-xs sm:tracking-[0.5em]">
-            MUN • DEBATE • LEADERSHIP
-          </p>
-
-
-          <p className="mx-auto mt-7 max-w-3xl text-[1.65rem] font-semibold leading-[1.08] tracking-[-0.025em] text-white sm:mt-8 sm:text-4xl">
-            Become the delegate people remember.
-          </p>
-
-
-          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-7 text-white/60 sm:mt-6 sm:text-lg sm:leading-8">
-            Vidwan helps students master MUN, debate and leadership through
-            practical training, simulations and real-world experiences.
-          </p>
-
-
-          <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:mt-10 sm:flex-row">
-
-            <a
-              href="/register"
-              className="group inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white sm:w-auto"
-            >
-              Start Your Journey
-              <span className="ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1">
-                →
-              </span>
-            </a>
-
-
-            <a
-              href="#experience"
-              className="inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full border border-white/15 px-7 py-3.5 text-xs uppercase tracking-[0.16em] text-white/70 transition-all duration-500 hover:border-[#2387ff]/50 hover:bg-[#2387ff]/10 hover:text-white sm:w-auto"
-            >
-              Explore Vidwan
-            </a>
-
-          </div>
-
-        </div>
-
-
-        {/* Scroll indicator */}
-
-        <div
-          className="absolute bottom-5 hidden flex-col items-center gap-3 transition-opacity duration-500 sm:flex"
-          style={{
-            opacity: Math.max(0, 1 - scrollProgress * 8),
-          }}
-        >
-
-          <span className="text-[9px] uppercase tracking-[0.4em] text-white/35">
-            Scroll to enter
-          </span>
-
-          <div className="relative h-12 w-px overflow-hidden bg-white/10">
-
-            <div className="absolute left-0 top-0 h-1/2 w-full animate-[scrollLine_1.8s_ease-in-out_infinite] bg-[#2387ff]" />
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          INTRO
-      ========================================================= */}
-
-      <section
-        id="about"
-        className="relative flex min-h-[auto] items-center overflow-hidden bg-[#0a1b2e] px-5 py-24 sm:px-6 sm:py-32 md:min-h-screen"
-      >
-
-        <div
-          data-reveal="intro"
-          className={`mx-auto w-full max-w-7xl transform transition-all duration-1000 ${reveal("intro")}`}
-        >
-
-          <p className="mb-7 text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
-            The first step
-          </p>
-
-
-          <h2 className="max-w-6xl text-[2.75rem] font-bold leading-[0.94] tracking-[-0.055em] sm:text-7xl lg:text-[8rem]">
-
-            MUN can be
-
-            <span className="text-white/25">
-              {" "}intimidating.
-            </span>
-
-          </h2>
-
-
-          <p className="mt-8 max-w-2xl text-base leading-7 text-white/55 sm:mt-10 sm:text-lg sm:leading-8">
-            New committees. New rules. New people. Vidwan gives you a place
-            to prepare before the room asks you to perform.
-          </p>
-
-
-          <div className="mt-10 grid gap-3 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4">
-
-            {[
-              "Research.",
-              "Speeches.",
-              "Caucuses.",
-              "Resolutions.",
-              "Diplomacy.",
-              "Negotiation.",
-              "Confidence.",
-              "Leadership.",
-            ].map((item, index) => (
-
-              <div
-                key={item}
-                className="group relative min-h-16 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-1 hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:shadow-[0_18px_40px_rgba(0,0,0,0.18)] sm:p-6"
-                style={{
-                  transitionDelay: `${index * 60}ms`,
-                }}
-              >
-
-                <span className="relative z-10 text-lg text-white/60 transition-colors duration-300 group-hover:text-white">
-                  {item}
-                </span>
-
-                <div className="absolute -bottom-10 -right-10 h-24 w-24 rounded-full bg-[#2387ff]/20 blur-2xl transition-all duration-500 group-hover:scale-150" />
-
-              </div>
-
-            ))}
-
-          </div>
-
-
-          <p className="mt-12 text-2xl font-semibold leading-tight tracking-[-0.03em] sm:mt-16 sm:text-5xl">
-
-            <span className="text-[#58a9ff]">
-              Good. That&apos;s where you grow.
-            </span>
-
-          </p>
-
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          SCROLL JOURNEY
-      ========================================================= */}
-
-      <section
-        id="journey"
-        ref={journeyRef}
-        className="relative bg-[#0d2138]"
-      >
-
-        <div className="relative">
-
-          {journey.map((item, index) => (
-            <article
-              key={item.number}
-              data-journey-stage={index}
-              className="relative flex min-h-[680px] items-center overflow-hidden px-5 py-16 sm:px-6 sm:py-24 md:min-h-screen"
-            >
-
-            {/* Background glow */}
-
-            <div
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[650px] w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2387ff]/10 blur-[140px] transition-all duration-1000"
-              style={{
-                transform: `translate(-50%, -50%) scale(${
-                  index === active ? 1.15 : 0.75
-                })`,
-                opacity: index === active ? 1 : 0.35,
-              }}
-            />
-
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.025]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-                backgroundSize: "70px 70px",
-              }}
-            />
-
-
-            <div className="relative z-10 mx-auto w-full max-w-7xl">
-
-              {/* Header */}
-
-              {index === 0 && (
-                <div
-                  data-reveal="journey-heading"
-                  className={`mb-12 transform transition-all duration-1000 ${reveal(
-                    "journey-heading"
-                  )}`}
-                >
-
-                <p className="mb-5 text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
-                  Start your journey
-                </p>
-
-                <h2 className="max-w-5xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl lg:text-[6.5rem]">
-
-                  From first-timer
-
-                  <span className="text-white/25">
-                    {" "}to delegate.
-                  </span>
-
-                </h2>
-
-                </div>
-              )}
-
-
-              {/* Main journey */}
-
-              <div className="grid items-center gap-7 lg:grid-cols-[0.7fr_1.3fr] lg:gap-10">
-
-
-                {/* LEFT */}
-
-                <div className="flex flex-col justify-center gap-2">
-
-                  {journey.map((navItem, navIndex) => {
-                    const isActive = navIndex === active;
-
-                    return (
-                      <button
-                        key={navItem.number}
-                        onClick={() => {
-                          document
-                            .querySelector<HTMLElement>(
-                              `[data-journey-stage="${navIndex}"]`
-                            )
-                            ?.scrollIntoView({
-                              behavior: "smooth",
-                              block: "center",
-                            });
-                        }}
-                        className={`group relative min-h-14 overflow-hidden rounded-2xl border p-4 text-left shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-500 sm:p-5 ${
-                          isActive
-                            ? "scale-[1.01] border-[#2387ff]/60 bg-[#2387ff]/15 shadow-[0_0_35px_rgba(35,135,255,0.16)]"
-                            : "border-white/10 bg-white/[0.025] hover:border-white/20 hover:bg-white/[0.05]"
-                        }`}
-                      >
-                        <div
-                          className={`absolute inset-y-0 left-0 w-1 bg-[#2387ff] transition-transform duration-500 ${
-                            isActive
-                              ? "translate-x-0"
-                              : "-translate-x-full"
-                          }`}
-                        />
-
-                        <div className="relative z-10 flex items-center justify-between">
-                          <div className="flex items-center gap-5">
-                            <span
-                              className={`font-mono text-[10px] ${
-                                isActive
-                                  ? "text-[#78b8ff]"
-                                  : "text-white/30"
-                              }`}
-                            >
-                              {navItem.number}
-                            </span>
-
-                            <span
-                              className={`text-lg font-semibold tracking-tight transition-all duration-500 sm:text-xl ${
-                                isActive
-                                  ? "translate-x-1 text-white"
-                                  : "text-white/55"
-                              }`}
-                            >
-                              {navItem.title}
-                            </span>
-                          </div>
-
-                          <span
-                            className={`transition-all duration-500 ${
-                              isActive
-                                ? "translate-x-0 text-[#78b8ff]"
-                                : "-translate-x-2 text-white/20"
-                            }`}
-                          >
-                            →
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-
-
-                  {/* Journey progress */}
-
-                  <div className="mt-4 flex items-center gap-1.5 px-1 sm:mt-5 sm:gap-2 sm:px-2">
-
-                    {journey.map((item, index) => (
-
-                      <div
-                        key={item.number}
-                        className={`h-1 rounded-full transition-all duration-700 ${
-                          index <= active
-                            ? "w-8 bg-[#2387ff] sm:w-12"
-                            : "w-2 bg-white/15"
-                        }`}
-                      />
-
-                    ))}
-
-                    <span className="ml-2 text-[8px] uppercase tracking-[0.18em] text-white/25 sm:ml-3 sm:text-[9px] sm:tracking-[0.25em]">
-                      {journey[active].number} / 05
-                    </span>
-
-                  </div>
-
-                </div>
-
-
-                {/* RIGHT CARD */}
-
-                <div
-                  className={`group relative min-h-[360px] overflow-hidden rounded-[2rem] border p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)] transition-all duration-700 sm:min-h-[500px] sm:rounded-[2.5rem] sm:p-12 ${
-                    index === active
-                      ? "border-[#2387ff]/40 bg-[#071525]"
-                      : "border-white/10 bg-[#071525]/80"
-                  }`}
-                  style={{
-                    transform:
-                      index === active
-                        ? `perspective(1200px) rotateX(${
-                            (mouse.y - 50) * -0.018
-                          }deg) rotateY(${(mouse.x - 50) * 0.018}deg) scale(1.01)`
-                        : "scale(0.97)",
-                  }}
-                >
-
-
-                  {/* Grid */}
-
-                  <div className="pointer-events-none absolute inset-0 opacity-[0.035]">
-
-                    <div
-                      className="h-full w-full"
-                      style={{
-                        backgroundImage:
-                          "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-                        backgroundSize: "50px 50px",
-                      }}
-                    />
-
-                  </div>
-
-
-                  {/* Large number */}
-
-                  <div
-                    className="pointer-events-none absolute right-0 top-0 select-none text-[8rem] font-black leading-none tracking-[-0.1em] text-white/[0.04] transition-all duration-700 sm:text-[15rem]"
-                    style={{
-                      transform:
-                        index === active
-                          ? "translate(-8px, 8px) scale(1.025)"
-                          : "translate(18px, 0) scale(0.95)",
-                    }}
-                  >
-                    {item.number}
-                  </div>
-
-
-                  {/* Glow */}
-
-                  <div
-                    className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[#2387ff]/20 blur-3xl transition-all duration-1000"
-                    style={{
-                      transform: `scale(${index === active ? 1.15 : 0.8})`,
-                      opacity: index === active ? 1 : 0.3,
-                    }}
-                  />
-
-
-                  {/* Content */}
-
-                  <div
-                    className={`relative flex min-h-[280px] flex-col justify-end transition-all duration-700 sm:min-h-[350px] ${
-                      index === active
-                        ? "translate-y-0 opacity-100"
-                        : "translate-y-5 opacity-50"
-                    }`}
-                  >
-
-                    <div className="mb-auto">
-
-                      <div className="inline-flex rounded-full border border-[#2387ff]/25 bg-[#2387ff]/10 px-3 py-1.5">
-
-                        <span className="text-[9px] uppercase tracking-[0.3em] text-[#78b8ff]">
-                          {item.short}
-                        </span>
-
-                      </div>
-
-                    </div>
-
-
-                    <div>
-
-                      <p className="text-[10px] uppercase tracking-[0.35em] text-[#68afff]">
-                        {item.number} / 05
-                      </p>
-
-
-                      <h3 className="mt-3 text-4xl font-bold tracking-[-0.07em] sm:text-7xl">
-                        {item.title}
-                      </h3>
-
-
-                      <p className="mt-4 max-w-xl text-[15px] leading-7 text-white/55 sm:mt-5 sm:text-lg sm:leading-8">
-                        {item.text}
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            </article>
-          ))}
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          MARQUEE
-      ========================================================= */}
-
-      <section className="w-full overflow-hidden border-y border-white/10 bg-[#081525] py-5 sm:py-7">
-
-        <div className="flex w-max animate-[marquee_25s_linear_infinite]">
-
-          {[...Array(2)].map((_, group) => (
-
-            <div
-              key={group}
-              className="flex items-center"
-            >
-
-              {[
-                "MODEL UNITED NATIONS",
-                "RESEARCH",
-                "DEBATE",
-                "DIPLOMACY",
-                "LEADERSHIP",
-                "CONFIDENCE",
-              ].map((item) => (
-
-                <div
-                  key={`${group}-${item}`}
-                  className="mx-5 flex items-center gap-5 whitespace-nowrap sm:mx-8 sm:gap-8"
-                >
-
-                  <span className="text-xs font-bold uppercase tracking-[0.3em] text-white/30">
-                    {item}
-                  </span>
-
-                  <span className="text-[#2387ff]">
-                    ✦
-                  </span>
-
-                </div>
-
-              ))}
-
-            </div>
-
-          ))}
-
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          EXPERIENCE
-      ========================================================= */}
-
-      <section
-        id="experience"
-        className="relative overflow-hidden bg-[#071321] px-5 py-24 sm:px-6 sm:py-36"
-      >
-
-        <div
-          data-reveal="experience"
-          className={`mx-auto grid max-w-7xl items-center gap-20 transform transition-all duration-1000 ${reveal(
-            "experience"
-          )}`}
-        >
-
-          {/* TEXT */}
-
-          <div>
-
-            <p className="mb-7 text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
-              Experience MUN
-            </p>
-
-
-            <h2 className="max-w-3xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl lg:text-[6.5rem]">
-
-              Don&apos;t just
-
-              <span className="text-white/25">
-                {" "}learn MUN.
-              </span>
-
-              <span className="block text-[#5da8ff]">
-                Experience it.
-              </span>
-
-            </h2>
-
-
-            <p className="mt-7 max-w-xl text-base leading-7 text-white/55 sm:mt-9 sm:text-lg sm:leading-8">
-              Research a situation. Step into a role. Defend a position,
-              debate, negotiate and respond when the situation changes.
-            </p>
-
-
-            <div className="mt-8 flex flex-wrap gap-2 sm:mt-10 sm:gap-3">
-
-              {[
-                "Confidence",
-                "Communication",
-                "Diplomacy",
-                "Leadership",
-              ].map((item) => (
-
-                <span
-                  key={item}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2.5 text-[9px] uppercase tracking-[0.15em] text-white/45 transition hover:border-[#2387ff]/40 hover:text-white sm:px-4 sm:text-[10px] sm:tracking-[0.18em]"
-                >
-                  {item}
-                </span>
-
-              ))}
-
-            </div>
-
-          </div>
-
-
-          <div
-            data-reveal="how-it-works"
-            className={`relative mt-16 overflow-hidden rounded-[2rem] border border-white/10 bg-[#0a1b2e]/70 p-5 shadow-[0_25px_80px_rgba(0,0,0,0.16)] transform transition-all duration-1000 sm:mt-24 sm:p-8 ${reveal(
-              "how-it-works"
-            )}`}
-          >
-            <div className="flex flex-col gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
-                  How Vidwan works
-                </p>
-                <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] sm:text-3xl">
-                  Practice first. Perform with purpose.
-                </h3>
-              </div>
-              <p className="max-w-sm text-sm leading-6 text-white/40">
-                MUN is the environment. Leadership is the outcome.
-              </p>
-            </div>
-            <div className="mt-6 grid gap-5 sm:grid-cols-5 sm:gap-4">
-              {howVidwanWorks.map(([number, title, text]) => (
-                <div key={number} className="relative border-l border-[#2387ff]/35 pl-4">
-                  <p className="font-mono text-[10px] text-[#78b8ff]">{number}</p>
-                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-white/80">
-                    {title}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-white/45">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-
-          {/* VIDWAN EXPERIENCE IMAGE */}
-
-          <div
-            data-reveal="experience-image"
-            className={`relative mt-12 transform overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#06111f] shadow-[0_30px_100px_rgba(0,0,0,0.35)] transition-all duration-1000 sm:mt-16 sm:rounded-[2.5rem] ${reveal(
-              "experience-image"
-            )}`}
-          >
-            <div className="relative aspect-[941/1671] w-full md:aspect-[1672/941]">
-              <Image
-                src="/images/vidwan-experience.png"
-                alt="The Vidwan Experience: more than MUN, a platform for what&apos;s next"
-                fill
-                sizes="(min-width: 768px) calc(100vw - 48px), 1200px"
-                className="hidden object-contain md:block"
-                priority={false}
-              />
-              <Image
-                src="/images/vidwan-experience-mobile.png"
-                alt=""
-                fill
-                sizes="calc(100vw - 40px)"
-                className="object-contain md:hidden"
-                priority={false}
-              />
-            </div>
-          </div>
-
-
-          {/* COMMITTEE */}
-
-          <div
-            className="touch-tilt group relative mx-auto w-full max-w-2xl"
-            style={{
-              transform: `perspective(1000px) rotateX(${
-                (mouse.y - 50) * -0.025
-              }deg) rotateY(${
-                (mouse.x - 50) * 0.025
-              }deg)`,
-              transition: "transform 0.25s ease-out",
-            }}
-          >
-
-            <div className="relative min-h-0 rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#173d68] via-[#0c2037] to-[#06101c] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.35)] transition-shadow duration-700 group-hover:shadow-[0_35px_110px_rgba(0,0,0,0.42)] sm:aspect-square sm:rounded-[2.5rem] sm:p-7">
-
-              {/* Outer glow */}
-
-              <div className="pointer-events-none absolute -inset-5 rounded-[3rem] bg-[#2387ff]/5 opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
-
-
-              <div className="relative flex flex-col rounded-[1.5rem] border border-white/10 bg-[#06111f]/80 p-4 backdrop-blur-xl sm:h-full sm:rounded-[2rem] sm:p-6">
-
-
-                <div className="flex items-center justify-between border-b border-white/10 pb-4 sm:pb-5">
-                  <div>
-                    <p className="text-[8px] uppercase tracking-[0.3em] text-white/35">
-                      Experience MUN
-                    </p>
-                    <p className="mt-1 text-xs font-semibold">Committee in session</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 animate-pulse rounded-full bg-[#2387ff]" />
-                    <span className="text-[8px] uppercase tracking-[0.2em] text-white/35">
-                      LIVE
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-4 gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1 sm:mt-5">
-                  {simulationTabs.map((simulation, index) => (
-                    <button
-                      key={simulation.label}
-                      type="button"
-                      onClick={() => setSimulationTab(index)}
-                      className={`min-h-11 rounded-lg px-0.5 text-[8px] font-bold uppercase tracking-[0.06em] transition sm:min-h-10 sm:px-1 sm:text-[9px] sm:tracking-[0.08em] ${
-                        simulationTab === index
-                          ? "bg-[#2387ff]/20 text-[#8bc3ff]"
-                          : "text-white/35 hover:text-white"
-                      }`}
-                    >
-                      {simulation.label}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="grid place-items-center py-5 text-center sm:flex-1 sm:py-10">
-                  <div>
-                    <p className="text-[9px] uppercase tracking-[0.3em] text-[#68afff]">
-                      {simulationTabs[simulationTab].label}
-                    </p>
-                    <h3 className="mt-2 text-xl font-bold leading-tight tracking-[-0.04em] sm:mt-3 sm:text-3xl">
-                      {simulationTabs[simulationTab].value}
-                    </h3>
-                    <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/50 sm:mt-4">
-                      {simulationTabs[simulationTab].text}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-[#2387ff]/25 bg-[#2387ff]/10 p-4 sm:p-5">
-                  <p className="text-[8px] uppercase tracking-[0.3em] text-[#68afff]">
-                    The Chair
-                  </p>
-                  <p className="mt-2 text-base leading-6">
-                    What would you do?
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-white/45">
-                    Choose a chapter above and practice your next move.
-                  </p>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          WHAT YOU ACTUALLY LEARN
-      ========================================================= */}
-
-      <section className="relative overflow-hidden border-t border-white/10 bg-[#0a1b2e] px-5 py-24 sm:px-6 sm:py-36">
-        <div
-          data-reveal="learning"
-          className={`mx-auto max-w-7xl transform transition-all duration-1000 ${reveal(
-            "learning"
-          )}`}
-        >
-          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
-                The real curriculum
-              </p>
-              <h2 className="mt-6 max-w-xl text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl">
-                You don&apos;t just learn MUN.
-              </h2>
-              <p className="mt-7 max-w-md text-base leading-7 text-white/55 sm:text-lg sm:leading-8">
-                You learn the practical skills behind a strong delegate:
-                clear thinking, clear language and better decisions under pressure.
-              </p>
-            </div>
-
-            <div className="grid gap-x-6 gap-y-8 sm:grid-cols-2">
-              {learningSkills.map(([number, title, text], index) => (
-                <div
-                  key={title}
-                  className="group border-t border-white/10 pt-4 transition-all duration-500 hover:-translate-y-1 hover:border-[#2387ff]/60"
-                  style={{ transitionDelay: `${index * 60}ms` }}
-                >
-                  <div className="flex items-baseline justify-between gap-4">
-                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-white/85 transition-colors group-hover:text-white">
-                      {title}
-                    </h3>
-                    <span className="font-mono text-[10px] text-[#5da8ff]">
-                      {number}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm leading-6 text-white/45">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* =========================================================
-          CREDIBILITY
-      ========================================================= */}
-
-      <section className="relative overflow-hidden bg-[#071321] px-5 py-24 sm:px-6 sm:py-36">
-        <div
-          data-reveal="credibility"
-          className={`mx-auto max-w-7xl transform transition-all duration-1000 ${reveal(
-            "credibility"
-          )}`}
-        >
-          <div className="max-w-3xl">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
-              Built for what&apos;s next
-            </p>
-            <h2 className="mt-6 text-[2.75rem] font-bold leading-[0.92] tracking-[-0.06em] sm:text-7xl">
-              Built for students who want to go further.
-            </h2>
-            <p className="mt-7 max-w-2xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8">
-              Practical training. Real simulations. Skills that last beyond
-              the conference room.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-3 sm:grid-cols-3 sm:mt-16">
-            {[
-              ["Student voices", "Verified stories from the people doing the work."],
-              ["Mentor perspective", "A place for the coaches shaping the room."],
-              ["Partners in progress", "Future collaborations, shared when confirmed."],
-            ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 sm:p-6"
-              >
-                <p className="text-[10px] uppercase tracking-[0.22em] text-[#78b8ff]">
-                  {title}
-                </p>
-                <p className="mt-4 text-sm leading-6 text-white/45">{text}</p>
-                <p className="mt-8 text-[9px] uppercase tracking-[0.18em] text-white/25">
-                  Coming soon
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* =========================================================
-          PROMISE
-      ========================================================= */}
-
-      <section className="relative overflow-hidden border-t border-white/10 bg-[#0a1b2e] px-5 py-24 text-center sm:px-6 sm:py-40">
-
-        <div
-          data-reveal="promise"
-          className={`relative z-10 mx-auto max-w-6xl transform transition-all duration-1000 ${reveal(
-            "promise"
-          )}`}
-        >
-
-          <p className="text-[10px] uppercase tracking-[0.4em] text-[#5da8ff]">
-            The promise
-          </p>
-
-
-          <h2 className="mt-7 text-[2.75rem] font-bold leading-[0.92] tracking-[-0.07em] sm:mt-8 sm:text-7xl lg:text-[7.5rem]">
-
-            YOU DON&apos;T NEED TO BE
-
-            <span className="text-white/25">
-              {" "}AN EXPERT.
-            </span>
-
-            <br />
-
-            <span className="text-[#58a9ff]">
-              YOU JUST NEED TO START.
-            </span>
-
-          </h2>
-
-
-          <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-white/55 sm:mt-10 sm:text-lg sm:leading-8">
-            MUN is the training ground. The goal is communication,
-            decision-making and leadership that travel with you.
-          </p>
-
-        </div>
-
-
-        {/* Background rings */}
-
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/5" />
-
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/5" />
-
-      </section>
-
-
-      {/* =========================================================
-          FINAL CTA
-      ========================================================= */}
-
-      <section
-        id="start"
-        className="relative overflow-hidden bg-[#071321] px-5 py-16 sm:px-6 sm:py-24"
-      >
-
-        <div
-          data-reveal="cta"
-          className={`relative mx-auto max-w-7xl transform transition-all duration-1000 ${reveal(
-            "cta"
-          )}`}
-        >
-
-          <div className="relative overflow-hidden rounded-[2rem] border border-[#2387ff]/35 bg-gradient-to-br from-[#153a65] via-[#0c223c] to-[#081525] px-5 py-16 text-center shadow-[0_30px_120px_rgba(35,135,255,0.12)] sm:rounded-[3rem] sm:px-12 sm:py-32">
-
-
-            {/* Glow */}
-
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2387ff]/15 blur-[100px]" />
-
-
-            {/* Content */}
-
-            <div className="relative z-10">
-
-              <p className="text-[10px] uppercase tracking-[0.4em] text-[#78b8ff]">
-                Your first MUN starts here
-              </p>
-
-              <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/55">
-                Tell us a little about yourself and we&apos;ll help you find the
-                right Vidwan experience.
-              </p>
-
-
-              <h2 className="mt-6 text-[2.75rem] font-bold leading-[0.92] tracking-[-0.07em] sm:mt-7 sm:text-7xl lg:text-[7rem]">
-
-                Ready to become the
-
-                <br />
-
-                <span className="text-white/60">
-                  delegate people remember?
-                </span>
-
-              </h2>
-
-
-              <a
-                href="/register"
-                className="group mt-9 inline-flex min-h-12 w-full max-w-xs items-center justify-center gap-4 rounded-full bg-white px-8 py-4 text-xs font-bold uppercase tracking-[0.18em] text-[#071321] transition-all duration-500 hover:scale-105 hover:bg-[#2387ff] hover:text-white sm:mt-12 sm:w-auto"
-              >
-
-                Start Your Journey
-
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        {/* =====================================================
-            FOOTER
-        ===================================================== */}
-
-        <footer className="mx-auto flex max-w-7xl flex-col gap-5 px-2 py-8 text-[9px] uppercase tracking-[0.16em] text-white/30 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-10 sm:tracking-[0.2em]">
-
-          <div className="flex items-center gap-3">
             <Image
               src="/images/vidwan-logo.png"
               alt="Vidwan"
-              width={128}
-              height={128}
-              className="h-9 w-9 object-contain"
+              width={58}
+              height={58}
+              priority
+              className="logo-image"
             />
-            <span>© {new Date().getFullYear()} Vidwan</span>
+          </Link>
+
+          <div className="desktop-nav">
+            <a href="#about">ABOUT</a>
+            <a href="#experience">EXPERIENCE</a>
+            <a href="#journey">JOURNEY</a>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-            <span>Experiment. Debate. Lead.</span>
+          <div className="desktop-actions">
+            <Link
+              href="/student/login"
+              className="login-button"
+            >
+              STUDENT LOGIN
+            </Link>
 
-            <Link href="/teacher/login" className="transition hover:text-white">
-              Teacher Login
+            <Link
+              href="/register"
+              className="started-button"
+            >
+              GET STARTED →
             </Link>
           </div>
 
-        </footer>
+          <button
+            type="button"
+            className="mobile-menu-button"
+            aria-label="Toggle navigation"
+            aria-expanded={mobileMenu}
+            onClick={() =>
+              setMobileMenu(
+                (value) => !value
+              )
+            }
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </nav>
 
+        {mobileMenu && (
+          <div className="mobile-menu">
+
+            <a
+              href="#about"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              ABOUT
+            </a>
+
+            <a
+              href="#experience"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              EXPERIENCE
+            </a>
+
+            <a
+              href="#journey"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              JOURNEY
+            </a>
+
+            <Link
+              href="/student/login"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              STUDENT LOGIN
+            </Link>
+
+            <Link
+              href="/register"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+              className="mobile-started"
+            >
+              GET STARTED →
+            </Link>
+          </div>
+        )}
+      </header>
+
+      {/* HERO */}
+
+      <section className="hero">
+        <div className="hero-inner">
+
+          <div className="hero-kicker">
+            <span />
+            <p>MUN • DEBATE • LEADERSHIP</p>
+          </div>
+
+          <h1 className="hero-title">
+            VIDWAN
+          </h1>
+
+          <p className="hero-description">
+            A platform built for students who want to think
+            deeper, communicate better and lead with purpose.
+          </p>
+
+          <div className="hero-actions">
+            <Link
+              href="/register"
+              className="hero-primary"
+            >
+              GET STARTED →
+            </Link>
+
+            <a
+              href="#journey"
+              className="hero-secondary"
+            >
+              EXPLORE THE JOURNEY
+            </a>
+          </div>
+        </div>
+
+        <div className="hero-scroll">
+          <span>SCROLL TO EXPLORE</span>
+          <div>
+            <i />
+          </div>
+        </div>
       </section>
 
+      {/* ABOUT */}
 
-      {/* =========================================================
-          ANIMATIONS
-      ========================================================= */}
+      <section
+        id="about"
+        className="content-section"
+      >
+        <div className="two-column">
 
-      <style>{`
-        @keyframes floatParticle {
-          0%, 100% {
-            transform: translate3d(0, 0, 0);
-            opacity: 0.2;
-          }
+          <div>
+            <p className="eyebrow">
+              ABOUT VIDWAN
+            </p>
 
-          50% {
-            transform: translate3d(0, -22px, 0);
-            opacity: 0.8;
-          }
+            <h2 className="large-heading">
+              THINK.
+              <br />
+              SPEAK.
+              <br />
+              LEAD.
+            </h2>
+          </div>
+
+          <div>
+            <p className="large-copy">
+              Vidwan is a learning platform for students exploring
+              Model United Nations, debate and leadership.
+            </p>
+
+            <p className="body-copy">
+              We focus on the skills behind the performance:
+              research, communication, argumentation, negotiation
+              and leadership.
+            </p>
+
+            <div className="mini-grid">
+              {[
+                ["01", "RESEARCH"],
+                ["02", "COMMUNICATE"],
+                ["03", "LEAD"],
+              ].map(([number, title]) => (
+                <div
+                  key={number}
+                  className="mini-card"
+                >
+                  <span>{number}</span>
+                  <strong>{title}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* JOURNEY */}
+
+      <section
+        id="journey"
+        className="journey-section"
+      >
+        <div className="journey-sticky">
+
+          <div className="journey-background">
+            <div className="journey-grid" />
+
+            <div
+              className="journey-ring journey-ring-large"
+              style={{
+                transform: `
+                  translate(-50%, -50%)
+                  rotate(${journeyProgress * 360}deg)
+                `,
+              }}
+            />
+
+            <div
+              className="journey-ring journey-ring-small"
+              style={{
+                transform: `
+                  translate(-50%, -50%)
+                  rotate(${-journeyProgress * 240}deg)
+                `,
+              }}
+            />
+
+            <div className="journey-glow" />
+
+            <div
+              className="journey-scan"
+              style={{
+                transform:
+                  `translateY(${journeyProgress * 100}vh)`,
+              }}
+            />
+          </div>
+
+          <div className="journey-header">
+            <p className="eyebrow">
+              THE VIDWAN JOURNEY
+            </p>
+
+            <div className="journey-counter">
+              <span>
+                {String(
+                  journeyState.currentIndex + 1
+                ).padStart(2, "0")}
+              </span>
+
+              <i />
+
+              <span>05</span>
+            </div>
+          </div>
+
+          <div className="journey-center">
+
+            {/* VISUAL SYSTEM */}
+
+            <div className="visual-system">
+
+              {/* RESEARCH */}
+
+              <div
+                className="research-visual"
+                style={{
+                  opacity:
+                    visualStage === 0 ? 1 : 0,
+                  transform: `
+                    scale(
+                      ${visualStage === 0
+                        ? 1
+                        : 0.72}
+                    )
+                  `,
+                }}
+              >
+                <div
+                  className="research-system"
+                  style={{
+                    transform:
+                      `rotate(${researchRotation}deg)`,
+                  }}
+                >
+
+                  <div className="research-signal">
+                    <div className="signal-core">
+                      <span />
+                    </div>
+
+                    <div className="signal-ring signal-ring-one" />
+                    <div className="signal-ring signal-ring-two" />
+                    <div className="signal-ring signal-ring-three" />
+
+                    <div className="signal-cross horizontal" />
+                    <div className="signal-cross vertical" />
+                  </div>
+
+                  {journey[0].keywords.map(
+                    (keyword, index) => {
+                      const angle =
+                        index * 90;
+
+                      return (
+                        <div
+                          key={keyword}
+                          className="research-node"
+                          style={{
+                            transform: `
+                              rotate(${angle}deg)
+                              translateX(
+                                min(31vw, 300px)
+                              )
+                            `,
+                          }}
+                        >
+                          <i />
+                          <span
+                            style={{
+                              transform:
+                                `rotate(${-angle}deg)`,
+                            }}
+                          >
+                            {keyword}
+                          </span>
+                        </div>
+                      );
+                    }
+                  )}
+
+                  <div
+                    className="research-pulse"
+                    style={{
+                      transform:
+                        `scale(${researchSignal})`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* SPEAK */}
+
+              <div
+                className="speak-visual"
+                style={{
+                  opacity:
+                    visualStage === 1 ? 1 : 0,
+                }}
+              >
+                <div className="speak-system">
+
+                  <div className="speak-axis" />
+
+                  <div className="speak-pulse pulse-one" />
+                  <div className="speak-pulse pulse-two" />
+                  <div className="speak-pulse pulse-three" />
+
+                  <div className="wave">
+                    {Array.from({
+                      length: 45,
+                    }).map((_, index) => {
+                      const value =
+                        Math.sin(
+                          index * 0.55 +
+                            journeyProgress * 22
+                        ) *
+                        Math.cos(
+                          index * 0.21 +
+                            journeyProgress * 8
+                        );
+
+                      return (
+                        <span
+                          key={index}
+                          style={{
+                            height:
+                              18 +
+                              Math.abs(value) *
+                                105 *
+                                speakIntensity,
+                            opacity:
+                              0.35 +
+                              Math.abs(value) *
+                                0.65,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  <div className="speak-label speak-label-left">
+                    VOICE
+                  </div>
+
+                  <div className="speak-label speak-label-right">
+                    IMPACT
+                  </div>
+                </div>
+              </div>
+
+              {/* DEBATE */}
+
+              <div
+                className="debate-visual"
+                style={{
+                  opacity:
+                    visualStage === 2 ? 1 : 0,
+                }}
+              >
+                <div className="debate-system">
+
+                  <div
+                    className="debate-side debate-left"
+                    style={{
+                      transform:
+                        `translateX(${debateDistance}px)`,
+                    }}
+                  >
+                    <span>POSITION</span>
+                  </div>
+
+                  <div
+                    className="debate-side debate-right"
+                    style={{
+                      transform:
+                        `translateX(${-debateDistance}px)`,
+                    }}
+                  >
+                    <span>COUNTER</span>
+                  </div>
+
+                  <div className="debate-line debate-line-one" />
+                  <div className="debate-line debate-line-two" />
+
+                  <div
+                    className="debate-tension"
+                    style={{
+                      transform: `
+                        translate(-50%, -50%)
+                        scale(
+                          ${0.7 +
+                            visualLocal * 0.6}
+                        )
+                      `,
+                    }}
+                  >
+                    <span />
+                  </div>
+
+                  <div className="debate-cross" />
+                </div>
+              </div>
+
+              {/* NEGOTIATE */}
+
+              <div
+                className="negotiate-visual"
+                style={{
+                  opacity:
+                    visualStage === 3 ? 1 : 0,
+                }}
+              >
+                <div className="negotiate-system">
+
+                  <div
+                    className="negotiation-orb negotiation-left"
+                    style={{
+                      transform:
+                        `translateX(${negotiateDistance}px)`,
+                    }}
+                  >
+                    <span>ONE POSITION</span>
+                  </div>
+
+                  <div
+                    className="negotiation-orb negotiation-right"
+                    style={{
+                      transform:
+                        `translateX(${-negotiateDistance}px)`,
+                    }}
+                  >
+                    <span>ANOTHER POSITION</span>
+                  </div>
+
+                  <div
+                    className="negotiation-connection"
+                    style={{
+                      width:
+                        `${20 + visualLocal * 80}%`,
+                    }}
+                  />
+
+                  <div
+                    className="common-ground"
+                    style={{
+                      transform: `
+                        translate(-50%, -50%)
+                        scale(
+                          ${0.55 +
+                            visualLocal * 0.45}
+                        )
+                      `,
+                    }}
+                  >
+                    <span>COMMON</span>
+                    <strong>GROUND</strong>
+                  </div>
+
+                  <div className="negotiation-spark">
+                    +
+                  </div>
+                </div>
+              </div>
+
+              {/* LEAD */}
+
+              <div
+                className="lead-visual"
+                style={{
+                  opacity:
+                    visualStage === 4 ? 1 : 0,
+                  transform: `
+                    scale(
+                      ${0.82 +
+                        leadConvergence * 0.18}
+                    )
+                  `,
+                }}
+              >
+                <div className="lead-system">
+
+                  <div
+                    className="lead-orbit lead-orbit-one"
+                    style={{
+                      transform:
+                        `translate(-50%, -50%) rotate(${journeyProgress * 90}deg)`,
+                    }}
+                  />
+
+                  <div
+                    className="lead-orbit lead-orbit-two"
+                    style={{
+                      transform:
+                        `translate(-50%, -50%) rotate(${-journeyProgress * 120}deg)`,
+                    }}
+                  />
+
+                  <div
+                    className="lead-orbit lead-orbit-three"
+                    style={{
+                      transform:
+                        `translate(-50%, -50%) rotate(${journeyProgress * 180}deg)`,
+                    }}
+                  />
+
+                  <div
+                    className="lead-spoke lead-spoke-one"
+                    style={{
+                      transform:
+                        `translate(-50%, -50%) rotate(${journeyProgress * 180}deg)`,
+                    }}
+                  />
+
+                  <div
+                    className="lead-spoke lead-spoke-two"
+                    style={{
+                      transform:
+                        `translate(-50%, -50%) rotate(${-journeyProgress * 180}deg)`,
+                    }}
+                  />
+
+                  {[
+                    ["RESEARCH", "node-one"],
+                    ["SPEAK", "node-two"],
+                    ["DEBATE", "node-three"],
+                    ["NEGOTIATE", "node-four"],
+                  ].map(
+                    ([label, className], index) => (
+                      <div
+                        key={label}
+                        className={`lead-node ${className}`}
+                        style={{
+                          transform: `
+                            translate(-50%, -50%)
+                            scale(
+                              ${
+                                1 -
+                                leadConvergence *
+                                  0.35
+                              }
+                            )
+                            translate(
+                              ${
+                                index === 0
+                                  ? "0"
+                                  : index === 1
+                                  ? "0"
+                                  : index === 2
+                                  ? "0"
+                                  : "0"
+                              }
+                            )
+                          `,
+                        }}
+                      >
+                        <i />
+                        <span>{label}</span>
+                      </div>
+                    )
+                  )}
+
+                  <div
+                    className="lead-core"
+                    style={{
+                      boxShadow: `
+                        0 0 ${
+                          55 +
+                          leadConvergence * 55
+                        }px
+                        rgba(38,148,255,.5)
+                      `,
+                    }}
+                  >
+                    LEAD
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CURRENT TITLE */}
+
+            <div
+              className="journey-title current-title"
+              style={{
+                opacity:
+                  currentOpacity,
+                transform: `
+                  translate(
+                    -50%,
+                    calc(
+                      -50% +
+                      ${currentY}px
+                    )
+                  )
+                  scale(
+                    ${currentScale}
+                  )
+                `,
+              }}
+            >
+              <span>
+                {journeyState.current.number}
+              </span>
+
+              <h2>
+                {journeyState.current.title}
+              </h2>
+
+              <p>
+                {journeyState.current.subtitle}
+              </p>
+            </div>
+
+            {/* NEXT TITLE */}
+
+            {journeyState.currentIndex <
+              journey.length - 1 && (
+              <div
+                className="journey-title next-title"
+                style={{
+                  opacity:
+                    nextOpacity,
+                  transform: `
+                    translate(
+                      -50%,
+                      calc(
+                        -50% +
+                        ${nextY}px
+                      )
+                    )
+                    scale(
+                      ${nextScale}
+                    )
+                  `,
+                }}
+              >
+                <span>
+                  {journeyState.next.number}
+                </span>
+
+                <h2>
+                  {journeyState.next.title}
+                </h2>
+
+                <p>
+                  {journeyState.next.subtitle}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="journey-description">
+            <p>
+              {journeyState.current.description}
+            </p>
+          </div>
+
+          <div className="journey-nav">
+            {journey.map(
+              (stage, index) => {
+                const distance =
+                  Math.abs(
+                    index -
+                      journeyState.position
+                  );
+
+                const opacity =
+                  clamp(
+                    1 -
+                      distance *
+                        0.65
+                  );
+
+                return (
+                  <button
+                    key={stage.number}
+                    type="button"
+                    onClick={() =>
+                      goToStage(index)
+                    }
+                    aria-label={
+                      `Go to ${stage.title}`
+                    }
+                    style={{
+                      opacity,
+                    }}
+                  >
+                    <span>
+                      {stage.number}
+                    </span>
+
+                    <i
+                      className={
+                        index ===
+                        journeyState.currentIndex
+                          ? "active"
+                          : ""
+                      }
+                    />
+                  </button>
+                );
+              }
+            )}
+          </div>
+
+          <div className="journey-progress">
+            <p>SCROLL TO CONTINUE</p>
+
+            <div>
+              <span
+                style={{
+                  width:
+                    `${journeyProgress * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* EXPERIENCE */}
+
+      <section
+        id="experience"
+        className="content-section"
+      >
+        <div className="single-column">
+
+          <p className="eyebrow">
+            THE EXPERIENCE
+          </p>
+
+          <h2 className="large-heading">
+            Built around
+            <br />
+            <span className="muted">
+              real rooms.
+            </span>
+          </h2>
+
+          <p className="body-copy experience-copy">
+            Vidwan brings together the preparation, communication
+            and leadership skills students need to participate
+            confidently in MUNs, debates and other high-pressure
+            environments.
+          </p>
+
+          <div className="experience-image">
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/images/vidwan-experience-mobile.png"
+              />
+
+              <Image
+                src="/images/vidwan-experience.png"
+                alt="Vidwan learning experience"
+                fill
+                className="object-cover"
+              />
+            </picture>
+
+            <div className="experience-overlay">
+              <p>MUN • DEBATE • LEADERSHIP</p>
+
+              <strong>
+                Learn the thinking behind
+                the performance.
+              </strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* LEARNING */}
+
+      <section className="content-section">
+        <div className="two-column">
+
+          <div>
+            <p className="eyebrow">
+              WHAT YOU ACTUALLY LEARN
+            </p>
+
+            <h2 className="large-heading">
+              Skills that
+              <br />
+              <span className="muted">
+                travel with you.
+              </span>
+            </h2>
+          </div>
+
+          <div className="learning-list">
+            {[
+              [
+                "01",
+                "Research",
+                "Finding the information that actually matters.",
+              ],
+              [
+                "02",
+                "Structure",
+                "Turning information into a clear argument.",
+              ],
+              [
+                "03",
+                "Speaking",
+                "Communicating ideas with clarity and confidence.",
+              ],
+              [
+                "04",
+                "Debate",
+                "Responding to ideas without losing your position.",
+              ],
+              [
+                "05",
+                "Negotiation",
+                "Finding solutions when positions collide.",
+              ],
+              [
+                "06",
+                "Leadership",
+                "Taking responsibility for moving the room forward.",
+              ],
+            ].map(
+              ([number, title, text]) => (
+                <div
+                  key={number}
+                  className="learning-item"
+                >
+                  <span>{number}</span>
+                  <strong>{title}</strong>
+                  <p>{text}</p>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* STANDARD */}
+
+      <section className="content-section">
+        <div className="standard-card">
+
+          <p className="eyebrow">
+            THE VIDWAN STANDARD
+          </p>
+
+          <div className="standard-grid">
+
+            <h2>
+              No shortcuts.
+              <br />
+              No empty confidence.
+              <br />
+              <span>
+                Just preparation.
+              </span>
+            </h2>
+
+            <div>
+              <p>
+                Strong performance starts long before the
+                microphone turns on.
+              </p>
+
+              <p>
+                Vidwan is designed around the preparation students
+                can actually use: understanding the issue, building
+                a position, communicating it clearly and adapting
+                when the room changes.
+              </p>
+
+              <p>
+                The goal is not simply to perform once. It is to
+                build skills that remain useful beyond the
+                conference room.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+
+      <section className="cta-section">
+
+        <p className="eyebrow">
+          YOUR TURN
+        </p>
+
+        <h2>
+          Ready to enter
+          <span>{" "}the room?</span>
+        </h2>
+
+        <p>
+          Start your Vidwan journey and build the skills that
+          matter when the room gets difficult.
+        </p>
+
+        <div>
+          <Link
+            href="/register"
+            className="hero-primary"
+          >
+            GET STARTED →
+          </Link>
+
+          <Link
+            href="/student/login"
+            className="hero-secondary"
+          >
+            STUDENT LOGIN
+          </Link>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+
+      <footer className="site-footer">
+        <div className="footer-inner">
+
+          <div className="footer-brand">
+            <Image
+              src="/images/vidwan-logo.png"
+              alt="Vidwan"
+              width={40}
+              height={40}
+              className="logo-image"
+            />
+
+            <div>
+              <strong>VIDWAN</strong>
+              <span>
+                MUN • DEBATE • LEADERSHIP
+              </span>
+            </div>
+          </div>
+
+          <div className="footer-links">
+            <a href="#about">ABOUT</a>
+            <a href="#experience">EXPERIENCE</a>
+            <a href="#journey">JOURNEY</a>
+
+            <Link href="/student/login">
+              LOGIN
+            </Link>
+
+            {/* STAFF ACCESS */}
+            <Link
+              href="/staff"
+              className="staff-access-button"
+            >
+              STAFF
+            </Link>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          © {new Date().getFullYear()} VIDWAN.
+          ALL RIGHTS RESERVED.
+        </div>
+      </footer>
+      {/* STAFF ACCESS */}
+      <Link
+        href="/staff"
+        className="staff-access-fixed"
+      >
+        STAFF
+      </Link>
+      <style jsx global>{`
+
+        html {
+          margin: 0;
+          padding: 0;
+          background: #030912;
+          scroll-behavior: auto !important;
         }
 
-        @keyframes scrollLine {
-          0% {
-            transform: translateY(-100%);
-          }
-
-          50% {
-            transform: translateY(100%);
-          }
-
-          100% {
-            transform: translateY(220%);
-          }
+        body {
+          margin: 0;
+          padding: 0;
+          background: #030912;
+          color: white;
         }
 
-        @keyframes marquee {
-          from {
-            transform: translateX(0);
-          }
-
-          to {
-            transform: translateX(-50%);
-          }
+        .vidwan-page {
+          position: relative;
+          width: 100%;
+          background: #030912;
         }
 
-        @keyframes journeyIn {
+        .global-progress {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 1000;
+          height: 2px;
+          background: #2694ff;
+          box-shadow: 0 0 12px rgba(38,148,255,.9);
+        }
+
+        .global-background {
+          position: fixed;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          overflow: hidden;
+        }
+
+        .global-grid {
+          position: absolute;
+          inset: 0;
+          opacity: .1;
+          background-image:
+            linear-gradient(
+              rgba(72,154,220,.15) 1px,
+              transparent 1px
+            ),
+            linear-gradient(
+              90deg,
+              rgba(72,154,220,.15) 1px,
+              transparent 1px
+            );
+          background-size: 64px 64px;
+        }
+
+        .background-orb {
+          position: absolute;
+          border-radius: 9999px;
+        }
+
+        .background-orb-one {
+          left: -240px;
+          top: 100px;
+          width: 650px;
+          height: 650px;
+          border: 1px solid rgba(38,148,255,.06);
+        }
+
+        .background-orb-two {
+          right: -300px;
+          top: 40%;
+          width: 700px;
+          height: 700px;
+          background: rgba(8,101,184,.05);
+          filter: blur(100px);
+        }
+
+        /* NAV */
+
+        .site-header {
+          position: fixed;
+          left: 0;
+          right: 0;
+          top: 0;
+          z-index: 900;
+          padding: 16px 16px 0;
+        }
+
+        .site-nav {
+          width: 100%;
+          max-width: 1320px;
+          height: 72px;
+          margin: 0 auto;
+          padding: 0 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border: 1px solid rgba(255,255,255,.09);
+          border-radius: 9999px;
+          background: rgba(6,19,33,.9);
+          backdrop-filter: blur(20px);
+        }
+
+        .logo-link {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+        }
+
+        .logo-image {
+          width: 44px;
+          height: 44px;
+          object-fit: contain;
+        }
+
+        .desktop-nav {
+          display: flex;
+          align-items: center;
+          gap: 36px;
+        }
+
+        .desktop-nav a,
+        .footer-links a {
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: .28em;
+          color: rgba(255,255,255,.45);
+          text-decoration: none;
+          transition: color .2s ease;
+        }
+
+        .desktop-nav a:hover,
+        .footer-links a:hover {
+          color: white;
+        }
+
+        .desktop-actions {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .login-button {
+          padding: 13px 20px;
+          border: 1px solid rgba(255,255,255,.15);
+          border-radius: 9999px;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: .18em;
+          color: rgba(255,255,255,.7);
+          text-decoration: none;
+        }
+
+        .started-button {
+          padding: 14px 24px;
+          border-radius: 9999px;
+          background: white;
+          color: #061321;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: .18em;
+          text-decoration: none;
+        }
+
+        .mobile-menu-button,
+        .mobile-menu {
+          display: none;
+        }
+
+        /* HERO */
+
+        .hero {
+          position: relative;
+          z-index: 10;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          padding: 130px 20px 80px;
+        }
+
+        .hero-inner {
+          width: 100%;
+          max-width: 1440px;
+          margin: 0 auto;
+        }
+
+        .hero-kicker {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .hero-kicker span {
+          width: 48px;
+          height: 1px;
+          background: #2694ff;
+        }
+
+        .hero-kicker p {
+          margin: 0;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: .42em;
+          color: #65b8ff;
+        }
+
+        .hero-title {
+          margin: 28px 0 0;
+          font-size: clamp(5rem,17vw,16rem);
+          font-weight: 900;
+          line-height: .75;
+          letter-spacing: -.075em;
+          color: white;
+          opacity: 0;
+          animation:
+            heroIn
+            1.1s
+            cubic-bezier(.16,1,.3,1)
+            forwards;
+        }
+
+        @keyframes heroIn {
           from {
             opacity: 0;
-            transform: translateY(22px) scale(0.98);
+            transform: translateY(20px);
           }
 
           to {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
+          }
+        }
+
+        .hero-description {
+          max-width: 720px;
+          margin: 40px 0 0;
+          font-size: 20px;
+          line-height: 1.7;
+          color: rgba(255,255,255,.5);
+        }
+
+        .hero-actions {
+          display: flex;
+          gap: 12px;
+          margin-top: 40px;
+        }
+
+        .hero-primary,
+        .hero-secondary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 16px 28px;
+          border-radius: 9999px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: .18em;
+          text-decoration: none;
+        }
+
+        .hero-primary {
+          background: white;
+          color: #061321;
+        }
+
+        .hero-secondary {
+          border: 1px solid rgba(255,255,255,.15);
+          color: rgba(255,255,255,.7);
+        }
+
+        .hero-scroll {
+          position: absolute;
+          left: 50%;
+          bottom: 28px;
+          transform: translateX(-50%);
+          text-align: center;
+        }
+
+        .hero-scroll span {
+          display: block;
+          margin-bottom: 12px;
+          font-size: 8px;
+          font-weight: 600;
+          letter-spacing: .45em;
+          color: rgba(255,255,255,.25);
+        }
+
+        .hero-scroll div {
+          width: 1px;
+          height: 40px;
+          margin: 0 auto;
+          overflow: hidden;
+          background: rgba(255,255,255,.1);
+        }
+
+        .hero-scroll i {
+          display: block;
+          width: 100%;
+          height: 50%;
+          background: #2694ff;
+        }
+
+        /* CONTENT */
+
+        .content-section {
+          position: relative;
+          z-index: 10;
+          padding: 140px 20px;
+          border-top: 1px solid rgba(255,255,255,.06);
+        }
+
+        .two-column {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: .8fr 1.2fr;
+          gap: 80px;
+        }
+
+        .single-column {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .eyebrow {
+          margin: 0;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: .4em;
+          color: #2694ff;
+        }
+
+        .large-heading {
+          margin: 24px 0 0;
+          font-size: clamp(2.7rem,5vw,5rem);
+          font-weight: 600;
+          line-height: 1;
+          letter-spacing: -.05em;
+        }
+
+        .large-copy {
+          margin: 0;
+          font-size: 24px;
+          line-height: 1.6;
+          color: rgba(255,255,255,.7);
+        }
+
+        .body-copy {
+          max-width: 700px;
+          margin-top: 28px;
+          font-size: 16px;
+          line-height: 2;
+          color: rgba(255,255,255,.4);
+        }
+
+        .muted {
+          color: rgba(255,255,255,.35);
+        }
+
+        .mini-grid {
+          display: grid;
+          grid-template-columns: repeat(3,1fr);
+          gap: 12px;
+          margin-top: 32px;
+        }
+
+        .mini-card {
+          min-height: 130px;
+          padding: 20px;
+          border: 1px solid rgba(255,255,255,.08);
+          border-radius: 18px;
+          background: rgba(255,255,255,.02);
+        }
+
+        .mini-card span {
+          display: block;
+          font-size: 9px;
+          letter-spacing: .3em;
+          color: #2694ff;
+        }
+
+        .mini-card strong {
+          display: block;
+          margin-top: 42px;
+          font-size: 11px;
+          letter-spacing: .18em;
+          color: rgba(255,255,255,.7);
+        }
+
+        /* JOURNEY — DO NOT CHANGE THE SCROLL ARCHITECTURE */
+
+        .journey-section {
+          position: relative;
+          z-index: 20;
+          height: 500vh;
+          background: #040d18;
+        }
+
+        .journey-sticky {
+          position: sticky;
+          top: 0;
+          width: 100%;
+          height: 100vh;
+          min-height: 600px;
+          overflow: hidden;
+        }
+
+        .journey-background {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+        }
+
+        .journey-grid {
+          position: absolute;
+          inset: 0;
+          opacity: .12;
+          background-image:
+            linear-gradient(
+              rgba(72,154,220,.15) 1px,
+              transparent 1px
+            ),
+            linear-gradient(
+              90deg,
+              rgba(72,154,220,.15) 1px,
+              transparent 1px
+            );
+          background-size: 72px 72px;
+        }
+
+        .journey-ring {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          border-radius: 9999px;
+          transform-origin: center;
+        }
+
+        .journey-ring-large {
+          width: min(76vw,900px);
+          height: min(76vw,900px);
+          border: 1px solid rgba(38,148,255,.07);
+        }
+
+        .journey-ring-small {
+          width: min(53vw,650px);
+          height: min(53vw,650px);
+          border: 1px solid rgba(38,148,255,.055);
+        }
+
+        .journey-glow {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 440px;
+          height: 440px;
+          transform: translate(-50%,-50%);
+          border-radius: 9999px;
+          background: rgba(8,117,209,.08);
+          filter: blur(110px);
+        }
+
+        .journey-scan {
+          position: absolute;
+          left: 0;
+          top: -1px;
+          width: 100%;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(38,148,255,.45),
+            transparent
+          );
+          box-shadow: 0 0 25px rgba(38,148,255,.4);
+          opacity: .35;
+        }
+
+        .journey-header {
+          position: absolute;
+          left: 40px;
+          top: 120px;
+          z-index: 30;
+        }
+
+        .journey-counter {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-top: 12px;
+          font-size: 9px;
+          letter-spacing: .3em;
+          color: rgba(255,255,255,.25);
+        }
+
+        .journey-counter i {
+          width: 30px;
+          height: 1px;
+          background: rgba(255,255,255,.1);
+        }
+
+        .journey-center {
+          position: absolute;
+          inset: 0;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+        }
+
+        .visual-system {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 100%;
+          height: 100%;
+          transform: translate(-50%,-50%);
+          pointer-events: none;
+        }
+
+        .research-visual,
+        .speak-visual,
+        .debate-visual,
+        .negotiate-visual,
+        .lead-visual {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition:
+            opacity .35s ease,
+            transform .35s ease;
+          pointer-events: none;
+        }
+
+        /* RESEARCH */
+
+        .research-system {
+          position: relative;
+          width: min(42vw,520px);
+          height: min(42vw,520px);
+          border: 1px solid rgba(38,148,255,.11);
+          border-radius: 50%;
+        }
+
+        .research-system::before {
+          content: "";
+          position: absolute;
+          inset: 14%;
+          border: 1px dashed rgba(38,148,255,.1);
+          border-radius: 50%;
+        }
+
+        .research-system::after {
+          content: "";
+          position: absolute;
+          inset: 29%;
+          border: 1px solid rgba(38,148,255,.08);
+          border-radius: 50%;
+        }
+
+        .research-signal {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 130px;
+          height: 130px;
+          transform: translate(-50%,-50%);
+        }
+
+        .signal-core {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 34px;
+          height: 34px;
+          transform: translate(-50%,-50%);
+          border: 1px solid #2694ff;
+          border-radius: 50%;
+          background: rgba(38,148,255,.08);
+          box-shadow:
+            0 0 40px rgba(38,148,255,.5);
+        }
+
+        .signal-core span {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 7px;
+          height: 7px;
+          transform: translate(-50%,-50%);
+          border-radius: 50%;
+          background: #2694ff;
+          box-shadow: 0 0 18px #2694ff;
+        }
+
+        .signal-ring {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%,-50%);
+          border: 1px solid rgba(38,148,255,.22);
+          border-radius: 50%;
+        }
+
+        .signal-ring-one {
+          width: 65px;
+          height: 65px;
+        }
+
+        .signal-ring-two {
+          width: 100px;
+          height: 100px;
+        }
+
+        .signal-ring-three {
+          width: 135px;
+          height: 135px;
+          border-style: dashed;
+          opacity: .5;
+        }
+
+        .signal-cross {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          background: rgba(38,148,255,.2);
+        }
+
+        .signal-cross.horizontal {
+          width: 180px;
+          height: 1px;
+          transform: translate(-50%,-50%);
+        }
+
+        .signal-cross.vertical {
+          width: 1px;
+          height: 180px;
+          transform: translate(-50%,-50%);
+        }
+
+        .research-node {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 1px;
+          height: 1px;
+          transform-origin: 0 0;
+        }
+
+        .research-node i {
+          position: absolute;
+          width: 85px;
+          height: 1px;
+          right: 0;
+          top: 0;
+          transform: translateX(-50%);
+          background: linear-gradient(
+            90deg,
+            rgba(38,148,255,.4),
+            transparent
+          );
+        }
+
+        .research-node span {
+          position: absolute;
+          left: 18px;
+          top: -7px;
+          width: 120px;
+          text-align: left;
+          font-size: 8px;
+          font-weight: 700;
+          letter-spacing: .25em;
+          color: rgba(255,255,255,.48);
+        }
+
+        .research-pulse {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 280px;
+          height: 280px;
+          transform: translate(-50%,-50%);
+          border: 1px solid rgba(38,148,255,.12);
+          border-radius: 50%;
+        }
+
+        /* SPEAK */
+
+        .speak-system {
+          position: relative;
+          width: min(900px,85vw);
+          height: 280px;
+        }
+
+        .speak-axis {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 100%;
+          height: 1px;
+          transform: translate(-50%,-50%);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(38,148,255,.3),
+            transparent
+          );
+        }
+
+        .wave {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+          height: 100%;
+        }
+
+        .wave span {
+          display: block;
+          width: 3px;
+          min-height: 8px;
+          border-radius: 9999px;
+          background: #2694ff;
+          box-shadow: 0 0 14px rgba(38,148,255,.4);
+        }
+
+        .speak-pulse {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          border: 1px solid rgba(38,148,255,.12);
+          border-radius: 50%;
+          transform: translate(-50%,-50%);
+        }
+
+        .pulse-one {
+          width: 180px;
+          height: 180px;
+        }
+
+        .pulse-two {
+          width: 340px;
+          height: 340px;
+        }
+
+        .pulse-three {
+          width: 500px;
+          height: 500px;
+          opacity: .4;
+        }
+
+        .speak-label {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 8px;
+          font-weight: 700;
+          letter-spacing: .35em;
+          color: rgba(255,255,255,.3);
+        }
+
+        .speak-label-left {
+          left: 0;
+        }
+
+        .speak-label-right {
+          right: 0;
+        }
+
+        /* DEBATE */
+
+        .debate-system {
+          position: relative;
+          width: min(850px,88vw);
+          height: 430px;
+        }
+
+        .debate-side {
+          position: absolute;
+          top: 50%;
+          width: 290px;
+          height: 290px;
+          margin-top: -145px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: transform .08s linear;
+        }
+
+        .debate-left {
+          left: 4%;
+          border: 1px solid rgba(255,255,255,.14);
+          background: rgba(255,255,255,.018);
+        }
+
+        .debate-right {
+          right: 4%;
+          border: 1px solid rgba(38,148,255,.25);
+          background: rgba(38,148,255,.025);
+        }
+
+        .debate-side span {
+          font-size: 8px;
+          font-weight: 700;
+          letter-spacing: .35em;
+          color: rgba(255,255,255,.3);
+        }
+
+        .debate-side::after {
+          content: "";
+          position: absolute;
+          inset: 18%;
+          border: 1px dashed rgba(255,255,255,.08);
+          border-radius: 50%;
+        }
+
+        .debate-line {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 360px;
+          height: 1px;
+          background: rgba(38,148,255,.18);
+          transform-origin: center;
+        }
+
+        .debate-line-one {
+          transform: translate(-50%,-50%) rotate(28deg);
+        }
+
+        .debate-line-two {
+          transform: translate(-50%,-50%) rotate(-28deg);
+        }
+
+        .debate-tension {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 54px;
+          height: 54px;
+          border: 1px solid #2694ff;
+          border-radius: 50%;
+          background: #040d18;
+          box-shadow: 0 0 45px rgba(38,148,255,.3);
+          transition: transform .08s linear;
+        }
+
+        .debate-tension span {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 7px;
+          height: 7px;
+          transform: translate(-50%,-50%);
+          border-radius: 50%;
+          background: #2694ff;
+          box-shadow: 0 0 20px #2694ff;
+        }
+
+        .debate-cross {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 180px;
+          height: 180px;
+          transform: translate(-50%,-50%);
+          border: 1px solid rgba(38,148,255,.1);
+          border-radius: 50%;
+        }
+
+        /* NEGOTIATE */
+
+        .negotiate-system {
+          position: relative;
+          width: min(850px,88vw);
+          height: 430px;
+        }
+
+        .negotiation-orb {
+          position: absolute;
+          top: 50%;
+          width: 310px;
+          height: 310px;
+          margin-top: -155px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: transform .08s linear;
+        }
+
+        .negotiation-left {
+          left: 5%;
+          border: 1px solid rgba(255,255,255,.12);
+          background: rgba(255,255,255,.015);
+        }
+
+        .negotiation-right {
+          right: 5%;
+          border: 1px solid rgba(38,148,255,.23);
+          background: rgba(38,148,255,.025);
+        }
+
+        .negotiation-orb::before {
+          content: "";
+          position: absolute;
+          inset: 18%;
+          border: 1px dashed rgba(255,255,255,.07);
+          border-radius: 50%;
+        }
+
+        .negotiation-orb span {
+          font-size: 7px;
+          font-weight: 700;
+          letter-spacing: .3em;
+          color: rgba(255,255,255,.25);
+        }
+
+        .negotiation-connection {
+          position: absolute;
+          left: 10%;
+          top: 50%;
+          height: 1px;
+          transform: translateY(-50%);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            #2694ff,
+            transparent
+          );
+          transition: width .08s linear;
+        }
+
+        .common-ground {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 170px;
+          height: 170px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          transform: translate(-50%,-50%);
+          border: 1px solid rgba(38,148,255,.4);
+          border-radius: 50%;
+          background: rgba(38,148,255,.07);
+          box-shadow: 0 0 80px rgba(38,148,255,.16);
+          transition: transform .08s linear;
+        }
+
+        .common-ground span {
+          font-size: 7px;
+          letter-spacing: .35em;
+          color: #69bbff;
+        }
+
+        .common-ground strong {
+          margin-top: 7px;
+          font-size: 11px;
+          letter-spacing: .3em;
+          color: white;
+        }
+
+        .negotiation-spark {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%,-50%);
+          font-size: 16px;
+          color: #69bbff;
+          text-shadow: 0 0 20px #2694ff;
+        }
+
+        /* LEAD */
+
+        .lead-system {
+          position: relative;
+          width: min(600px,70vw);
+          height: min(600px,70vw);
+        }
+
+        .lead-orbit {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          border: 1px solid rgba(38,148,255,.17);
+          border-radius: 50%;
+          transform-origin: center;
+        }
+
+        .lead-orbit-one {
+          width: 100%;
+          height: 100%;
+        }
+
+        .lead-orbit-two {
+          width: 75%;
+          height: 75%;
+        }
+
+        .lead-orbit-three {
+          width: 50%;
+          height: 50%;
+          border-style: dashed;
+        }
+
+        .lead-spoke {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 88%;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(38,148,255,.2),
+            transparent
+          );
+          transform-origin: center;
+        }
+
+        .lead-node {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transform-origin: center;
+          transition: transform .08s linear;
+        }
+
+        .lead-node i {
+          display: block;
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #2694ff;
+          box-shadow: 0 0 15px rgba(38,148,255,.7);
+        }
+
+        .lead-node span {
+          font-size: 7px;
+          font-weight: 700;
+          letter-spacing: .25em;
+          color: rgba(255,255,255,.38);
+        }
+
+        .node-one {
+          transform: translate(-50%,-50%) translateY(-250px);
+        }
+
+        .node-two {
+          transform: translate(-50%,-50%) translateX(250px);
+        }
+
+        .node-three {
+          transform: translate(-50%,-50%) translateY(250px);
+        }
+
+        .node-four {
+          transform: translate(-50%,-50%) translateX(-250px);
+        }
+
+        .lead-core {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 100px;
+          height: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transform: translate(-50%,-50%);
+          border-radius: 50%;
+          background: #2694ff;
+          color: #03101c;
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: .3em;
+          transition: box-shadow .1s ease;
+        }
+
+        /* TITLES */
+
+        .journey-title {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: calc(100% - 80px);
+          max-width: 1500px;
+          transform: translate(-50%,-50%);
+          text-align: center;
+          will-change: transform,opacity;
+          pointer-events: none;
+          overflow: visible;
+        }
+
+        .journey-title span {
+          display: block;
+          margin-bottom: 22px;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: .5em;
+          color: #2694ff;
+        }
+
+        .journey-title h2 {
+          margin: 0;
+          font-size: clamp(3.2rem,10.5vw,10.5rem);
+          font-weight: 900;
+          line-height: .78;
+          letter-spacing: -.075em;
+          color: white;
+          white-space: nowrap;
+          max-width: 100%;
+        }
+
+        .journey-title p {
+          margin: 28px 0 0;
+          font-size: clamp(.55rem,1vw,.75rem);
+          font-weight: 600;
+          letter-spacing: .45em;
+          color: rgba(255,255,255,.45);
+        }
+
+        .current-title {
+          z-index: 20;
+        }
+
+        .next-title {
+          z-index: 19;
+        }
+
+        .next-title h2 {
+          color: rgba(255,255,255,.5);
+        }
+
+        /* JOURNEY INFO */
+
+        .journey-description {
+          position: absolute;
+          left: 40px;
+          bottom: 70px;
+          z-index: 40;
+          width: 420px;
+          max-width: calc(100vw - 100px);
+        }
+
+        .journey-description p {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.8;
+          color: rgba(255,255,255,.35);
+        }
+
+        .journey-nav {
+          position: absolute;
+          right: 40px;
+          top: 50%;
+          z-index: 50;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 14px;
+          transform: translateY(-50%);
+        }
+
+        .journey-nav button {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          cursor: pointer;
+        }
+
+        .journey-nav button span {
+          font-size: 9px;
+          letter-spacing: .25em;
+          color: rgba(255,255,255,.2);
+        }
+
+        .journey-nav button i {
+          display: block;
+          width: 3px;
+          height: 8px;
+          border-radius: 9999px;
+          background: rgba(255,255,255,.15);
+          transition:
+            height .2s ease,
+            background .2s ease;
+        }
+
+        .journey-nav button i.active {
+          height: 36px;
+          background: #2694ff;
+          box-shadow: 0 0 14px rgba(38,148,255,.8);
+        }
+
+        .journey-progress {
+          position: absolute;
+          left: 50%;
+          bottom: 28px;
+          z-index: 50;
+          width: min(300px,55vw);
+          transform: translateX(-50%);
+        }
+
+        .journey-progress p {
+          margin: 0 0 10px;
+          text-align: center;
+          font-size: 8px;
+          font-weight: 600;
+          letter-spacing: .45em;
+          color: rgba(255,255,255,.25);
+        }
+
+        .journey-progress div {
+          width: 100%;
+          height: 3px;
+          overflow: hidden;
+          border-radius: 9999px;
+          background: rgba(255,255,255,.1);
+        }
+
+        .journey-progress span {
+          display: block;
+          height: 100%;
+          border-radius: 9999px;
+          background: #2694ff;
+          box-shadow: 0 0 12px rgba(38,148,255,.8);
+        }
+
+        /* EXPERIENCE */
+
+        .experience-copy {
+          max-width: 650px;
+        }
+
+        .experience-image {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 8;
+          margin-top: 60px;
+          overflow: hidden;
+          border: 1px solid rgba(255,255,255,.08);
+          border-radius: 28px;
+        }
+
+        .experience-overlay {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          padding: 40px;
+          background: linear-gradient(
+            transparent,
+            rgba(3,9,18,.95)
+          );
+        }
+
+        .experience-overlay p {
+          margin: 0;
+          font-size: 9px;
+          letter-spacing: .35em;
+          color: #69bbff;
+        }
+
+        .experience-overlay strong {
+          display: block;
+          max-width: 500px;
+          margin-top: 12px;
+          font-size: 28px;
+          font-weight: 500;
+        }
+
+        /* LEARNING */
+
+        .learning-list {
+          display: grid;
+          gap: 8px;
+        }
+
+        .learning-item {
+          display: grid;
+          grid-template-columns: 55px 150px 1fr;
+          gap: 20px;
+          align-items: center;
+          padding: 20px;
+          border: 1px solid rgba(255,255,255,.07);
+          border-radius: 18px;
+          background: rgba(255,255,255,.018);
+        }
+
+        .learning-item span {
+          font-size: 9px;
+          letter-spacing: .25em;
+          color: #2694ff;
+        }
+
+        .learning-item strong {
+          font-size: 13px;
+          color: rgba(255,255,255,.8);
+        }
+
+        .learning-item p {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.7;
+          color: rgba(255,255,255,.35);
+        }
+
+        /* STANDARD */
+
+        .standard-card {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 60px;
+          border: 1px solid rgba(255,255,255,.08);
+          border-radius: 32px;
+          background: linear-gradient(
+            135deg,
+            rgba(255,255,255,.045),
+            transparent
+          );
+        }
+
+        .standard-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 60px;
+          margin-top: 35px;
+        }
+
+        .standard-grid h2 {
+          margin: 0;
+          font-size: clamp(2.5rem,5vw,4.5rem);
+          line-height: 1;
+          letter-spacing: -.05em;
+        }
+
+        .standard-grid h2 span {
+          color: rgba(255,255,255,.35);
+        }
+
+        .standard-grid p {
+          font-size: 14px;
+          line-height: 2;
+          color: rgba(255,255,255,.4);
+        }
+
+        /* CTA */
+
+        .cta-section {
+          position: relative;
+          z-index: 10;
+          padding: 170px 20px;
+          text-align: center;
+        }
+
+        .cta-section h2 {
+          max-width: 900px;
+          margin: 28px auto 0;
+          font-size: clamp(3.2rem,8vw,8rem);
+          font-weight: 600;
+          line-height: .95;
+          letter-spacing: -.06em;
+        }
+
+        .cta-section h2 span {
+          color: rgba(255,255,255,.35);
+        }
+
+        .cta-section > p:not(.eyebrow) {
+          max-width: 560px;
+          margin: 28px auto 0;
+          font-size: 15px;
+          line-height: 1.8;
+          color: rgba(255,255,255,.35);
+        }
+
+        .cta-section > div {
+          display: flex;
+          justify-content: center;
+          gap: 12px;
+          margin-top: 40px;
+        }
+
+        /* FOOTER */
+
+        .site-footer {
+          position: relative;
+          z-index: 10;
+          padding: 40px 20px;
+          border-top: 1px solid rgba(255,255,255,.07);
+        }
+
+        .footer-inner {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 30px;
+        }
+
+        .footer-brand {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .footer-brand strong {
+          display: block;
+          font-size: 12px;
+          letter-spacing: .2em;
+        }
+
+        .footer-brand span {
+          display: block;
+          margin-top: 5px;
+          font-size: 9px;
+          letter-spacing: .25em;
+          color: rgba(255,255,255,.25);
+        }
+
+        .footer-links {
+          display: flex;
+          gap: 25px;
+          flex-wrap: wrap;
+        }
+
+        /* SMALL STAFF ACCESS BUTTON */
+
+        .staff-access-button {
+          padding: 8px 12px;
+          border: 1px solid rgba(255,255,255,.08);
+          border-radius: 9999px;
+          color: rgba(255,255,255,.22) !important;
+          transition:
+            color .2s ease,
+            border-color .2s ease,
+            background .2s ease;
+        }
+
+        .staff-access-button:hover {
+          color: #69bbff !important;
+          border-color: rgba(38,148,255,.3);
+          background: rgba(38,148,255,.05);
+        }
+
+        .footer-bottom {
+          width: 100%;
+          max-width: 1200px;
+          margin: 30px auto 0;
+          padding-top: 20px;
+          border-top: 1px solid rgba(255,255,255,.05);
+          font-size: 9px;
+          letter-spacing: .18em;
+          color: rgba(255,255,255,.2);
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 767px) {
+
+          .site-header {
+            padding: 12px 12px 0;
+          }
+
+          .site-nav {
+            height: 64px;
+            padding: 0 16px;
+          }
+
+          .desktop-nav,
+          .desktop-actions {
+            display: none;
+          }
+
+          .mobile-menu-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 9999px;
+            background: transparent;
+          }
+
+          .mobile-menu-button span {
+            width: 15px;
+            height: 1px;
+            background: white;
+          }
+
+          .mobile-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+            max-width: 1320px;
+            margin: 8px auto 0;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 24px;
+            background: rgba(6,19,33,.96);
+            backdrop-filter: blur(20px);
+          }
+
+          .mobile-menu a {
+            padding: 15px;
+            border-radius: 15px;
+            color: rgba(255,255,255,.7);
+            font-size: 14px;
+            text-decoration: none;
+          }
+
+          .mobile-menu .mobile-started {
+            text-align: center;
+            background: white;
+            color: #061321;
+            font-weight: 700;
+          }
+
+          .hero {
+            padding: 120px 20px 80px;
+          }
+
+          .hero-title {
+            font-size: clamp(4rem,23vw,8rem);
+          }
+
+          .hero-description {
+            font-size: 17px;
+          }
+
+          .hero-actions {
+            flex-direction: column;
+          }
+
+          .hero-primary,
+          .hero-secondary {
+            width: 100%;
+          }
+
+          .content-section {
+            padding: 100px 20px;
+          }
+
+          .two-column {
+            grid-template-columns: 1fr;
+            gap: 55px;
+          }
+
+          .mini-grid {
+            grid-template-columns: 1fr 1fr 1fr;
+          }
+
+          /* MOBILE JOURNEY */
+
+          .journey-section {
+            height: 500vh;
+          }
+
+          .journey-sticky {
+            min-height: 0;
+          }
+
+          .journey-header {
+            left: 20px;
+            top: 105px;
+          }
+
+          .journey-title {
+            width: calc(100% - 70px);
+            max-width: calc(100% - 70px);
+          }
+
+          .journey-title h2 {
+            font-size: clamp(2.9rem,13vw,6rem);
+            letter-spacing: -.07em;
+          }
+
+          .journey-title p {
+            font-size: 7px;
+            letter-spacing: .3em;
+          }
+
+          .journey-title span {
+            margin-bottom: 16px;
+            font-size: 8px;
+          }
+
+          .journey-description {
+            left: 20px;
+            right: 20px;
+            bottom: 80px;
+            width: auto;
+            max-width: none;
+          }
+
+          .journey-description p {
+            font-size: 11px;
+            line-height: 1.7;
+          }
+
+          .journey-nav {
+            right: 16px;
+          }
+
+          .journey-nav button span {
+            display: none;
+          }
+
+          .journey-ring-large {
+            width: 105vw;
+            height: 105vw;
+          }
+
+          .journey-ring-small {
+            width: 75vw;
+            height: 75vw;
+          }
+
+          /* RESEARCH MOBILE */
+
+          .research-system {
+            width: 260px;
+            height: 260px;
+          }
+
+          .research-node span {
+            width: 90px;
+            font-size: 6px;
+          }
+
+          .research-node i {
+            width: 55px;
+          }
+
+          .research-pulse {
+            width: 150px;
+            height: 150px;
+          }
+
+          /* SPEAK MOBILE */
+
+          .speak-system {
+            width: 94vw;
+            height: 220px;
+          }
+
+          .wave {
+            gap: 2px;
+          }
+
+          .wave span {
+            width: 2px;
+          }
+
+          .speak-label {
+            font-size: 6px;
+          }
+
+          .pulse-three {
+            width: 350px;
+            height: 350px;
+          }
+
+          /* DEBATE MOBILE */
+
+          .debate-system {
+            width: 100vw;
+            height: 300px;
+          }
+
+          .debate-side {
+            width: 170px;
+            height: 170px;
+            margin-top: -85px;
+          }
+
+          .debate-side span {
+            font-size: 6px;
+          }
+
+          .debate-left {
+            left: 0;
+          }
+
+          .debate-right {
+            right: 0;
+          }
+
+          .debate-line {
+            width: 230px;
+          }
+
+          /* NEGOTIATE MOBILE */
+
+          .negotiate-system {
+            width: 100vw;
+            height: 300px;
+          }
+
+          .negotiation-orb {
+            width: 190px;
+            height: 190px;
+            margin-top: -95px;
+          }
+
+          .negotiation-left {
+            left: 0;
+          }
+
+          .negotiation-right {
+            right: 0;
+          }
+
+          .negotiation-orb span {
+            font-size: 5px;
+          }
+
+          .common-ground {
+            width: 105px;
+            height: 105px;
+          }
+
+          .common-ground span {
+            font-size: 5px;
+          }
+
+          .common-ground strong {
+            font-size: 8px;
+          }
+
+          /* LEAD MOBILE */
+
+          .lead-system {
+            width: 330px;
+            height: 330px;
+          }
+
+          .lead-core {
+            width: 72px;
+            height: 72px;
+            font-size: 8px;
+          }
+
+          .node-one {
+            transform:
+              translate(-50%,-50%)
+              translateY(-135px);
+          }
+
+          .node-two {
+            transform:
+              translate(-50%,-50%)
+              translateX(135px);
+          }
+
+          .node-three {
+            transform:
+              translate(-50%,-50%)
+              translateY(135px);
+          }
+
+          .node-four {
+            transform:
+              translate(-50%,-50%)
+              translateX(-135px);
+          }
+
+          .lead-node span {
+            font-size: 5px;
+          }
+
+          /* REST */
+
+          .experience-image {
+            aspect-ratio: 1 / 1;
+          }
+
+          .experience-overlay {
+            padding: 25px;
+          }
+
+          .experience-overlay strong {
+            font-size: 21px;
+          }
+
+          .learning-item {
+            grid-template-columns: 40px 1fr;
+          }
+
+          .learning-item p {
+            grid-column: 2;
+          }
+
+          .standard-card {
+            padding: 30px;
+          }
+
+          .standard-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+
+          .cta-section {
+            padding: 120px 20px;
+          }
+
+          .cta-section > div {
+            flex-direction: column;
+          }
+
+          .cta-section .hero-primary,
+          .cta-section .hero-secondary {
+            width: 100%;
+          }
+
+          .footer-inner {
+            flex-direction: column;
+            align-items: flex-start;
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
+
           *,
           *::before,
           *::after {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
             scroll-behavior: auto !important;
-            transition-duration: 0.01ms !important;
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+          }
+
+          .hero-title {
+            opacity: 1;
+            transform: none;
           }
         }
-      `}</style>
 
+      `}</style>
     </main>
   );
 }

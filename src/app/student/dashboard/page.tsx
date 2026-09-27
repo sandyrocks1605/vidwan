@@ -97,7 +97,7 @@ export default function StudentDashboardPage() {
           "full_name,email,age,mun_experience,debate_experience,goals,status"
         )
         .eq("user_id", session.session.user.id)
-        .single(),
+        .maybeSingle(),
 
       supabase
         .from("meetings")
@@ -122,7 +122,23 @@ export default function StudentDashboardPage() {
     ) {
       throw new Error("We couldn't load your Vidwan dashboard.");
     }
-
+    // An authenticated Auth user is not automatically a student. Handle a
+    // missing or inactive student profile with a useful message instead of
+    // rendering a broken dashboard.
+    if (!profileResult.data) {
+      setError(
+        "Your student account is not set up yet. Please ask your Vidwan teacher for access."
+      );
+      setStatus("error");
+      return;
+    }
+    if (profileResult.data.status !== "ACTIVE") {
+      setError(
+        "Your student account is currently inactive. Please contact your Vidwan teacher."
+      );
+      setStatus("error");
+      return;
+    }
     setProfile(profileResult.data);
     setMeetings(meetingsResult.data ?? []);
     setAnnouncements(announcementsResult.data ?? []);

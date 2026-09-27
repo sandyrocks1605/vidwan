@@ -47,22 +47,31 @@ export default function TeacherStudentsPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-
+  const [statusActionId, setStatusActionId] = useState("");
   const loadStudents = useCallback(async () => {
     setLoading(true);
     setError("");
-
     const supabase = getSupabaseClient();
-
     const {
       data: { session },
     } = await supabase.auth.getSession();
-
     if (!session) {
       window.location.replace("/teacher/login");
       return;
     }
-
+    // A signed-in Auth user is not automatically a teacher. Confirm the
+    // teacher profile before querying or changing any student data.
+    const { data: teacherProfile, error: teacherError } = await supabase
+      .from("teacher_profiles")
+      .select("is_teacher")
+      .eq("user_id", session.user.id)
+      .maybeSingle();
+    if (teacherError || !teacherProfile?.is_teacher) {
+      setError("You don't have teacher access.");
+      setLoading(false);
+      setStudents([]);
+      return;
+    }
     const { data, error: studentsError } = await supabase
       .from("student_profiles")
       .select(
@@ -83,7 +92,7 @@ export default function TeacherStudentsPage() {
   }, []);
 
   useEffect(() => {
-    void loadStudents();
+    void Promise.resolve().then(loadStudents);
   }, [loadStudents]);
 
   const updateForm = (
@@ -152,6 +161,53 @@ export default function TeacherStudentsPage() {
   const logout = async () => {
     await getSupabaseClient().auth.signOut();
     window.location.replace("/teacher/login");
+  };
+
+  const toggleStudentStatus = async (student: Student) => {
+    const nextStatus = student.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+
+    setStatusActionId(student.id);
+    setMessage("");
+    setError("");
+
+    try {
+      const response = await fetch("/api/teacher/students", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: student.user_id,
+          status: nextStatus,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || "Unable to update this student."
+        );
+      }
+
+      setStudents((current) =>
+        current.map((item) =>
+          item.user_id === student.user_id
+            ? { ...item, status: nextStatus }
+            : item
+        )
+      );
+
+      setMessage(
+        `${student.full_name} is now ${nextStatus === "ACTIVE" ? "active" : "inactive"}.`
+      );
+    } catch (statusError) {
+      setError(
+        statusError instanceof Error
+          ? statusError.message
+          : "Unable to update this student."
+      );
+    } finally {
+      setStatusActionId("");
+    }
   };
 
   const filteredStudents = useMemo(() => {
@@ -468,6 +524,8 @@ export default function TeacherStudentsPage() {
                   key={student.id}
                   student={student}
                   index={index}
+                  busy={statusActionId === student.user_id}
+                  onToggleStatus={() => toggleStudentStatus(student)}
                 />
               ))}
             </div>
@@ -481,9 +539,13 @@ export default function TeacherStudentsPage() {
 function StudentCard({
   student,
   index,
+  busy,
+  onToggleStatus,
 }: {
   student: Student;
   index: number;
+  busy: boolean;
+  onToggleStatus: () => void;
 }) {
   return (
     <article className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 transition hover:border-[#2387ff]/30 hover:bg-[#2387ff]/[0.05] sm:p-6">
@@ -570,6 +632,20 @@ function StudentCard({
               </p>
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={onToggleStatus}
+            disabled={busy}
+            aria-busy={busy}
+            className="min-h-11 w-full rounded-full border border-white/15 px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-50 lg:w-auto"
+          >
+            {busy
+              ? "Saving..."
+              : student.status === "ACTIVE"
+                ? "Deactivate"
+                : "Activate"}
+          </button>
         </div>
       </div>
     </article>
