@@ -3032,12 +3032,6 @@
   pointer-events: none;
 }
 
-.storyStepCopy {
-  position: sticky;
-  top: calc(72px + 5svh);
-  width: min(100%, 470px);
-}
-
 .storyStep,
 .storyStep:nth-child(even) {
   width: min(42%, 510px);
@@ -3452,63 +3446,120 @@
   }
 }
 
-/* Keep the story copy clear while the 3D camera moves. */
-.storyStep,
-.storyStep:nth-child(even) {
+/* Keep the chapter text pinned beside the camera while invisible steps drive the scroll. */
+.sceneStoryCopy {
+  position: absolute;
+  z-index: 4;
+  top: clamp(98px, 14vh, 132px);
+  left: max(32px, calc((100% - 1320px) / 2));
   width: min(42%, 510px);
-  align-items: flex-start;
-  margin-right: auto;
-  margin-left: 0;
-  padding-right: 26px;
-  padding-left: 5px;
-  background: linear-gradient(90deg, rgb(5 7 13 / 0.68), rgb(5 7 13 / 0.32) 68%, transparent);
-  text-align: left;
-  opacity: 0;
+  padding: 20px 34px 24px 0;
+  background: linear-gradient(90deg, rgb(5 7 13 / 0.84), rgb(5 7 13 / 0.42) 74%, transparent);
+  animation: storyCopyEnter 700ms cubic-bezier(0.18, 0.76, 0.22, 1) both;
+  pointer-events: none;
 }
 
+.sceneStoryCopy .storyStepIndex { margin-bottom: 25px; }
+.sceneStoryCopy .storyKicker { margin: 0; }
+.sceneStoryCopy h3 {
+  max-width: 480px;
+  margin: 18px 0 0;
+  color: #f5f5fa;
+  font-size: clamp(38px, 4.8vw, 62px);
+  font-weight: 520;
+  line-height: 0.98;
+  letter-spacing: -0.075em;
+  text-wrap: balance;
+}
+
+.sceneStoryCopy .storyDescription {
+  max-width: 420px;
+  margin: 19px 0 0;
+  color: #c1c8d5;
+  font-size: 13px;
+  line-height: 1.75;
+  text-shadow: 0 2px 18px rgb(0 0 0 / 0.7);
+}
+
+.sceneStoryCopy .storyRule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  color: #f3f4f8;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sceneStoryCopy .storyRule i {
+  width: 33px;
+  background: #80dcff;
+  box-shadow: 0 0 13px rgb(78 180 255 / 0.48);
+}
+
+.storyStep,
+.storyStep:nth-child(even),
 .storyStep.storyStepActive,
 .storyStep:nth-child(even).storyStepActive {
+  width: 100%;
+  min-height: 83svh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  transform: none;
+  text-align: left;
+  transition: none;
+}
+
+.storyStepCopy {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes storyCopyEnter {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 @media (max-width: 920px) {
-  .storyStep,
-  .storyStep:nth-child(even) {
-    width: min(82%, 560px);
-    margin-right: auto;
-    margin-left: 0;
-    padding: 42px 20px 42px 0;
-    background: linear-gradient(90deg, rgb(5 7 13 / 0.76), rgb(5 7 13 / 0.3) 76%, transparent);
-    text-align: left;
+  .sceneStoryCopy {
+    top: clamp(92px, 12vh, 116px);
+    left: 28px;
+    width: min(56%, 480px);
+    padding-right: 24px;
   }
+
+  .sceneStoryCopy h3 { font-size: clamp(34px, 4.8vw, 48px); }
 }
 
 @media (max-width: 640px) {
-  .storyStep,
-  .storyStep:nth-child(even) {
-    width: 100%;
-    padding: 42px 2px;
-    background: linear-gradient(180deg, transparent, rgb(5 7 13 / 0.72) 22%, rgb(5 7 13 / 0.88));
+  .sceneStoryCopy {
+    top: 88px;
+    left: 20px;
+    width: min(78%, 390px);
+    padding: 14px 18px 18px 0;
+    background: linear-gradient(90deg, rgb(5 7 13 / 0.9), rgb(5 7 13 / 0.7) 74%, transparent);
   }
+
+  .sceneStoryCopy .storyStepIndex { margin-bottom: 17px; }
+  .sceneStoryCopy h3 { margin-top: 12px; font-size: clamp(30px, 8vw, 40px); }
+  .sceneStoryCopy .storyDescription { margin-top: 14px; font-size: 11px; line-height: 1.6; }
+  .sceneStoryCopy .storyRule { margin-top: 17px; font-size: 7px; }
+  .storyStep,
+  .storyStep:nth-child(even),
+  .storyStep.storyStepActive,
+  .storyStep:nth-child(even).storyStepActive { min-height: 68svh; }
 }
 
-.storyStep,
-.storyStep:nth-child(even) {
-  justify-content: flex-start;
-  padding-top: 6svh;
-}
-
-@media (max-width: 920px) {
-  .storyStep,
-  .storyStep:nth-child(even) {
-    padding-top: 5svh;
-  }
-}
-
-@media (max-width: 640px) {
-  .storyStep,
-  .storyStep:nth-child(even) {
-    padding-top: 5svh;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .sceneStoryCopy { animation: none !important; }
 }

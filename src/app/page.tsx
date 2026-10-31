@@ -195,7 +195,7 @@ function ScrollytellingExperience() {
           }
         }
       },
-      { rootMargin: "-14% 0px -68% 0px", threshold: 0 }
+      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
     );
 
     steps.forEach((step) => observer.observe(step));
@@ -233,6 +233,13 @@ function ScrollytellingExperience() {
               <span>{activeBeat.sceneLabel}</span>
               <strong>{activeBeat.note}</strong>
               <i><b style={{ width: `${(activeStory + 1) * 25}%` }} /></i>
+            </div>
+            <div className={styles.sceneStoryCopy} key={activeStory} aria-hidden="true">
+              <p className={styles.storyStepIndex}><span>{activeBeat.number}</span> / 04</p>
+              <p className={styles.storyKicker}>{activeBeat.kicker}</p>
+              <h3>{activeBeat.title}</h3>
+              <p className={styles.storyDescription}>{activeBeat.description}</p>
+              <span className={styles.storyRule}><i /> {activeBeat.note}</span>
             </div>
             <div className={styles.sceneCaption}>
               <span>SCROLL TO MOVE THROUGH THE ROOM</span>
