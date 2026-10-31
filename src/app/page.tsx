@@ -195,7 +195,7 @@ function ScrollytellingExperience() {
           }
         }
       },
-      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
+      { rootMargin: "-14% 0px -68% 0px", threshold: 0 }
     );
 
     steps.forEach((step) => observer.observe(step));
@@ -249,11 +249,13 @@ function ScrollytellingExperience() {
               data-story-index={index}
               key={beat.number}
             >
-              <p className={styles.storyStepIndex}><span>{beat.number}</span> / 04</p>
-              <p className={styles.storyKicker}>{beat.kicker}</p>
-              <h3>{beat.title}</h3>
-              <p className={styles.storyDescription}>{beat.description}</p>
-              <span className={styles.storyRule}><i /> {beat.note}</span>
+              <div className={styles.storyStepCopy}>
+                <p className={styles.storyStepIndex}><span>{beat.number}</span> / 04</p>
+                <p className={styles.storyKicker}>{beat.kicker}</p>
+                <h3>{beat.title}</h3>
+                <p className={styles.storyDescription}>{beat.description}</p>
+                <span className={styles.storyRule}><i /> {beat.note}</span>
+              </div>
             </article>
           ))}
         </div>

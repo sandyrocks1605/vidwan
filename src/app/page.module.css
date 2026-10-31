@@ -3032,6 +3032,12 @@
   pointer-events: none;
 }
 
+.storyStepCopy {
+  position: sticky;
+  top: calc(72px + 5svh);
+  width: min(100%, 470px);
+}
+
 .storyStep,
 .storyStep:nth-child(even) {
   width: min(42%, 510px);
