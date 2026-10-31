@@ -1450,6 +1450,35 @@
   letter-spacing: 0.14em;
 }
 
+.staffAccessLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 999px;
+  color: rgb(255 255 255 / 0.28);
+  font-size: 7px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease;
+}
+
+.staffAccessLink:hover,
+.staffAccessLink:focus-visible {
+  border-color: rgb(181 197 255 / 0.34);
+  background: rgb(181 197 255 / 0.04);
+  color: #b5c5ff;
+}
+
+.staffAccessLink:focus-visible {
+  border-radius: 2px;
+  outline: 1px solid #859fff;
+  outline-offset: 4px;
+}
+
 @keyframes riseIn {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }

@@ -567,6 +567,7 @@ export default function HomePage() {
         <div className={[styles.container, styles.footerBottom].join(" ")}>
           <span>© {new Date().getFullYear()} VIDWAN. ALL RIGHTS RESERVED.</span>
           <span>MUN · DEBATE · YOUTH LEADERSHIP</span>
+          <Link href="/staff" className={styles.staffAccessLink}>Staff login</Link>
         </div>
       </footer>
     </main>
