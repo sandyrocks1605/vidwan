@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-const geistSans = Geist({
+const geistSans = localFont({
+  src: "./fonts/geist-latin.woff2",
+  weight: "100 900",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/geist-mono-latin.woff2",
+  weight: "100 900",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -21,7 +25,7 @@ export const metadata: Metadata = {
   ),
   title: "Vidwan — MUN • Debate • Leadership",
   description:
-    "A platform helping students build the skills, confidence and perspective to become future leaders.",
+    "Build a confident voice through Model United Nations, debate and leadership. Research deeply, speak clearly and help shape what comes next.",
   icons: {
     icon: "/images/vidwan-logo.png",
     apple: "/images/vidwan-logo.png",
@@ -29,9 +33,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Vidwan — MUN • Debate • Leadership",
     description:
-      "A platform helping students build the skills, confidence and perspective to become future leaders.",
+      "Build a confident voice through Model United Nations, debate and leadership. Research deeply, speak clearly and help shape what comes next.",
     type: "website",
-    images: ["/images/vidwan-experience.png"],
+    images: ["/images/vidwan-hero-conference.jpg"],
   },
 };
 

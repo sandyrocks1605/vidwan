@@ -25,11 +25,15 @@ async function resolveAuthorizedTeacher(request: Request) {
 
   const { data: teacherProfile, error: teacherError } = await supabase
     .from("teacher_profiles")
-    .select("is_teacher")
+    .select("is_teacher, status")
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (teacherError || !teacherProfile?.is_teacher) {
+  if (
+    teacherError ||
+    !teacherProfile?.is_teacher ||
+    teacherProfile.status !== "ACTIVE"
+  ) {
     return {
       error: NextResponse.json(
         { error: "You don't have teacher access." },

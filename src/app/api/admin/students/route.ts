@@ -107,6 +107,42 @@ export async function POST(request: Request) {
       );
     }
 
+    const { error: profileError } = await supabaseAdmin
+      .from("student_profiles")
+      .upsert(
+        {
+          user_id: createdUser.user.id,
+          full_name: fullName,
+          email,
+          age,
+          mun_experience: body.mun_experience?.trim() || null,
+          debate_experience: body.debate_experience?.trim() || null,
+          goals: body.goals?.trim() || null,
+          status: "ACTIVE",
+        },
+        { onConflict: "user_id" }
+      );
+
+    if (profileError) {
+      const { error: rollbackError } = await supabaseAdmin.auth.admin.deleteUser(
+        createdUser.user.id
+      );
+      console.error("Admin student profile error:", profileError.message);
+
+      if (rollbackError) {
+        console.error("Admin student rollback error:", rollbackError.message);
+      }
+
+      return NextResponse.json(
+        {
+          error: rollbackError
+            ? "The student profile could not be completed. Please contact support before retrying."
+            : "The student profile could not be completed, so the account was removed. Please try again.",
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       student: {

@@ -100,3 +100,35 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* Owner workspace: quieter surfaces and clearer hierarchy for daily use. */
+.admin-dashboard-shell {
+  background-image: radial-gradient(900px circle at 88% 0%, rgb(35 135 255 / 0.13), transparent 55%), linear-gradient(145deg, #071321, #050b14 68%);
+}
+
+.admin-dashboard-shell .owner-stat-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgb(210 228 250 / 0.12);
+  background: linear-gradient(145deg, rgb(17 36 57 / 0.92), rgb(8 21 35 / 0.88));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.045), 0 14px 34px rgb(0 0 0 / 0.12);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.admin-dashboard-shell .owner-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgb(120 184 255 / 0.3);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 18px 40px rgb(0 0 0 / 0.22);
+}
+
+.admin-dashboard-shell input:not([type="checkbox"]),
+.admin-dashboard-shell select,
+.admin-dashboard-shell textarea {
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-dashboard-shell .owner-stat-card:hover {
+    transform: none;
+  }
+}

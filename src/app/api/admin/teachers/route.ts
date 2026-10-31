@@ -105,12 +105,21 @@ export async function POST(request: Request) {
       );
 
     if (profileError) {
+      const { error: rollbackError } = await supabaseAdmin.auth.admin.deleteUser(
+        createdUser.user.id
+      );
       console.error("Admin teacher profile error:", profileError.message);
+
+      if (rollbackError) {
+        console.error("Admin teacher rollback error:", rollbackError.message);
+      }
 
       return NextResponse.json(
         {
           error:
-            "Teacher account was created but the profile could not be completed. Please contact support.",
+            rollbackError
+              ? "The teacher profile could not be completed. Please contact support before retrying."
+              : "The teacher profile could not be completed, so the account was removed. Please try again.",
         },
         { status: 500 }
       );

@@ -61,23 +61,19 @@ $$;
 revoke all on function public.is_authorized_admin() from public;
 grant execute on function public.is_authorized_admin() to authenticated;
 
--- No direct table access for regular roles. Only the admin API route reads it
--- with the service-role key. RLS with no policies blocks every authenticated
--- role (including students and teachers) by default.
-do $$
-begin
-  if not exists (
-    select 1 from pg_policies
-    where schemaname = 'public' and tablename = 'admin_profiles'
-  ) then
-    create policy "Admins can read their own admin profile"
-      on public.admin_profiles
-      for select
-      to authenticated
-      using (public.is_authorized_admin());
-  end if;
-end;
-$$;
+-- Let an active admin verify only their own profile from the browser. Recreate
+-- this named policy explicitly so rerunning the script repairs a partial setup
+-- even when unrelated policies already exist on the table.
+drop policy if exists "Admins can read their own admin profile"
+  on public.admin_profiles;
+create policy "Admins can read their own admin profile"
+  on public.admin_profiles
+  for select
+  to authenticated
+  using (
+    user_id = (select auth.uid())
+    and (select public.is_authorized_admin())
+  );
 
 -- ---------------------------------------------------------------------------
 -- 3. Teacher status (ACTIVE / INACTIVE) — added safely, only if missing.

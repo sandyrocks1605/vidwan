@@ -48,56 +48,79 @@ export default function TeacherAnnouncementsPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [teacherId, setTeacherId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
 
     const load = async () => {
-      const supabase = getSupabaseClient();
+      try {
+        const supabase = getSupabaseClient();
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
-      if (!session) {
-        window.location.replace("/teacher/login");
-        return;
-      }
+        if (!session) {
+          window.location.replace("/staff");
+          return;
+        }
 
-      const { data: teacher, error: teacherError } = await supabase
-        .from("teacher_profiles")
-        .select("is_teacher")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+        const { data: teacher, error: teacherError } = await supabase
+          .from("teacher_profiles")
+          .select("is_teacher, status")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
 
-      if (teacherError || !teacher?.is_teacher) {
+        const isActiveTeacher =
+          !teacherError && teacher?.is_teacher && teacher.status === "ACTIVE";
+        let isActiveAdmin = false;
+
+        if (!isActiveTeacher) {
+          const { data: admin, error: adminError } = await supabase
+            .from("admin_profiles")
+            .select("is_active")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+          isActiveAdmin = !adminError && admin?.is_active === true;
+        }
+
+        if (!isActiveTeacher && !isActiveAdmin) {
+          if (active) {
+            setError("You are not authorized to manage announcements.");
+            setLoading(false);
+          }
+          return;
+        }
+
         if (active) {
-          setError("You are not authorized to manage announcements.");
+          setTeacherId(session.user.id);
+          setIsAdmin(isActiveAdmin);
+        }
+
+        const { data, error: announcementError } = await supabase
+          .from("announcements")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!active) return;
+
+        if (announcementError) {
+          setError("We couldn't load announcements.");
+          setLoading(false);
+          return;
+        }
+
+        setAnnouncements((data ?? []) as Announcement[]);
+        setLoading(false);
+      } catch {
+        if (active) {
+          setError("We couldn't connect to Vidwan. Please try again.");
           setLoading(false);
         }
-        return;
       }
-
-      if (active) {
-        setTeacherId(session.user.id);
-      }
-
-      const { data, error: announcementError } = await supabase
-        .from("announcements")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (!active) return;
-
-      if (announcementError) {
-        setError("We couldn't load announcements.");
-        setLoading(false);
-        return;
-      }
-
-      setAnnouncements((data ?? []) as Announcement[]);
-      setLoading(false);
     };
 
     void load();
@@ -121,7 +144,7 @@ export default function TeacherAnnouncementsPage() {
     event.preventDefault();
 
     if (!teacherId) {
-      setError("Your teacher session has expired. Please log in again.");
+      setError("Your staff session has expired. Please log in again.");
       return;
     }
 
@@ -129,49 +152,43 @@ export default function TeacherAnnouncementsPage() {
     setError("");
     setSuccess("");
 
-    const supabase = getSupabaseClient();
+    try {
+      const { data, error: insertError } = await getSupabaseClient()
+        .from("announcements")
+        .insert({
+          title: form.title.trim(),
+          message: form.message.trim(),
+          link: form.link.trim() || null,
+          is_published: form.is_published,
+          created_by: teacherId,
+        })
+        .select("*")
+        .single();
 
-    const { data, error: insertError } = await supabase
-      .from("announcements")
-      .insert({
-        title: form.title.trim(),
-        message: form.message.trim(),
-        link: form.link.trim() || null,
-        is_published: form.is_published,
-        created_by: teacherId,
-      })
-      .select("*")
-      .single();
+      if (insertError || !data) {
+        throw new Error(insertError?.message || "We couldn't create this announcement.");
+      }
 
-    if (insertError) {
-      setError(
-        insertError.message ||
-          "We couldn't create this announcement."
+      setAnnouncements((current) => [data as Announcement, ...current]);
+      setForm(emptyForm);
+      setSuccess(
+        form.is_published
+          ? "Announcement published successfully."
+          : "Announcement saved as a draft."
       );
+      window.setTimeout(() => setSuccess(""), 4000);
+    } catch (createError) {
+      setError(createError instanceof Error ? createError.message : "We couldn't create this announcement.");
+    } finally {
       setCreating(false);
-      return;
     }
-
-    setAnnouncements((current) => [
-      data as Announcement,
-      ...current,
-    ]);
-
-    setForm(emptyForm);
-    setSuccess(
-      form.is_published
-        ? "Announcement published successfully."
-        : "Announcement saved as a draft."
-    );
-
-    setCreating(false);
-
-    window.setTimeout(() => setSuccess(""), 4000);
   };
 
   const deleteAnnouncement = async (
     announcement: Announcement
   ) => {
+    if (deletingId || updatingId) return;
+
     const confirmed = window.confirm(
       `Delete "${announcement.title}"? This cannot be undone.`
     );
@@ -180,37 +197,40 @@ export default function TeacherAnnouncementsPage() {
 
     setDeletingId(announcement.id);
     setError("");
+    setSuccess("");
 
-    const { error: deleteError } = await getSupabaseClient()
-      .from("announcements")
-      .delete()
-      .eq("id", announcement.id);
+    try {
+      const { error: deleteError } = await getSupabaseClient()
+        .from("announcements")
+        .delete()
+        .eq("id", announcement.id);
 
-    setDeletingId(null);
+      if (deleteError) throw deleteError;
 
-    if (deleteError) {
-      setError(
-        "We couldn't delete this announcement."
+      setAnnouncements((current) =>
+        current.filter((item) => item.id !== announcement.id)
       );
-      return;
+      setSuccess("Announcement deleted.");
+    } catch {
+      setError("We couldn't delete this announcement. Please try again.");
+    } finally {
+      setDeletingId(null);
     }
-
-    setAnnouncements((current) =>
-      current.filter(
-        (item) => item.id !== announcement.id
-      )
-    );
   };
 
   const togglePublished = async (
     announcement: Announcement
   ) => {
+    if (deletingId || updatingId) return;
+
     setError("");
+    setSuccess("");
+    setUpdatingId(announcement.id);
 
     const nextPublished = !announcement.is_published;
 
-    const { data, error: updateError } =
-      await getSupabaseClient()
+    try {
+      const { data, error: updateError } = await getSupabaseClient()
         .from("announcements")
         .update({
           is_published: nextPublished,
@@ -219,26 +239,55 @@ export default function TeacherAnnouncementsPage() {
         .select("*")
         .single();
 
-    if (updateError) {
-      setError(
-        "We couldn't update this announcement."
-      );
-      return;
-    }
+      if (updateError || !data) {
+        throw new Error("We couldn't update this announcement.");
+      }
 
-    setAnnouncements((current) =>
-      current.map((item) =>
-        item.id === announcement.id
-          ? (data as Announcement)
-          : item
-      )
-    );
+      setAnnouncements((current) =>
+        current.map((item) =>
+          item.id === announcement.id
+            ? (data as Announcement)
+            : item
+        )
+      );
+      setSuccess(nextPublished ? "Announcement published." : "Announcement hidden from students.");
+    } catch (updateError) {
+      setError(updateError instanceof Error ? updateError.message : "We couldn't update this announcement.");
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
   const logOut = async () => {
     await getSupabaseClient().auth.signOut();
-    window.location.replace("/teacher/login");
+    window.location.replace(isAdmin ? "/admin/login" : "/teacher/login");
   };
+
+  if (loading && !teacherId) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[#071321] px-4 text-white">
+        <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-sm text-white/55">
+          Checking access and loading announcements…
+        </div>
+      </main>
+    );
+  }
+
+  if (!teacherId) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[#071321] px-4 text-white">
+        <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#0a1b2e]/90 p-8 text-center">
+          <h1 className="text-2xl font-bold tracking-[-0.05em]">ACCESS RESTRICTED</h1>
+          <p role="alert" className="mt-4 text-sm leading-6 text-white/55">
+            {error || "You are not authorized to manage announcements."}
+          </p>
+          <Link href="/staff" className="mt-7 inline-flex rounded-full bg-white px-5 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#071321]">
+            Go to staff access
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-5 pb-10 text-white sm:px-8 sm:py-8">
@@ -264,19 +313,30 @@ export default function TeacherAnnouncementsPage() {
           </Link>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/teacher/dashboard"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
-            >
-              Dashboard
-            </Link>
+            {isAdmin ? (
+              <Link
+                href="/admin/dashboard"
+                className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+              >
+                Owner dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/teacher/dashboard"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+                >
+                  Dashboard
+                </Link>
 
-            <Link
-              href="/teacher/students"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
-            >
-              Students
-            </Link>
+                <Link
+                  href="/teacher/students"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+                >
+                  Students
+                </Link>
+              </>
+            )}
 
             <Link
               href="/teacher/meetings"
@@ -304,7 +364,7 @@ export default function TeacherAnnouncementsPage() {
         {/* Header */}
         <header className="mt-12 border-b border-white/10 pb-8 sm:mt-16 sm:pb-10">
           <p className="text-[10px] uppercase tracking-[0.42em] text-[#78b8ff]">
-            Teacher control
+            {isAdmin ? "Owner control" : "Teacher control"}
           </p>
 
           <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -513,6 +573,8 @@ export default function TeacherAnnouncementsPage() {
                   deleting={
                     deletingId === announcement.id
                   }
+                  updating={updatingId === announcement.id}
+                  busy={Boolean(deletingId || updatingId)}
                 />
               ))}
             </div>
@@ -528,11 +590,15 @@ function AnnouncementCard({
   onToggle,
   onDelete,
   deleting,
+  updating,
+  busy,
 }: {
   announcement: Announcement;
   onToggle: () => void;
   onDelete: () => void;
   deleting: boolean;
+  updating: boolean;
+  busy: boolean;
 }) {
   return (
     <article className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 transition hover:border-[#2387ff]/30 hover:bg-[#2387ff]/[0.05] sm:p-6">
@@ -583,17 +649,20 @@ function AnnouncementCard({
         <div className="flex shrink-0 flex-wrap gap-2 border-t border-white/10 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
 
           <button
+            type="button"
             onClick={onToggle}
-            className="rounded-full border border-white/10 px-4 py-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/50 transition hover:border-[#2387ff]/40 hover:text-white"
+            disabled={busy}
+            className="rounded-full border border-white/10 px-4 py-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/50 transition hover:border-[#2387ff]/40 hover:text-white disabled:cursor-wait disabled:opacity-40"
           >
-            {announcement.is_published
+            {updating ? "Saving..." : announcement.is_published
               ? "Hide"
               : "Publish"}
           </button>
 
           <button
+            type="button"
             onClick={onDelete}
-            disabled={deleting}
+            disabled={busy}
             className="rounded-full border border-red-300/15 px-4 py-2 text-[9px] font-bold uppercase tracking-[0.15em] text-red-200/50 transition hover:border-red-300/35 hover:text-red-100 disabled:opacity-40"
           >
             {deleting ? "Deleting..." : "Delete"}

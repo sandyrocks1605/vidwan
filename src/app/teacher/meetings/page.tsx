@@ -88,57 +88,79 @@ export default function TeacherMeetingsPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [teacherId, setTeacherId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
 
     const load = async () => {
-      const supabase = getSupabaseClient();
+      try {
+        const supabase = getSupabaseClient();
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
-      if (!session) {
-        window.location.replace("/teacher/login");
-        return;
-      }
+        if (!session) {
+          window.location.replace("/staff");
+          return;
+        }
 
-      const { data: teacher, error: teacherError } = await supabase
-        .from("teacher_profiles")
-        .select("is_teacher")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+        const { data: teacher, error: teacherError } = await supabase
+          .from("teacher_profiles")
+          .select("is_teacher, status")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
 
-      if (teacherError || !teacher?.is_teacher) {
+        const isActiveTeacher =
+          !teacherError && teacher?.is_teacher && teacher.status === "ACTIVE";
+        let isActiveAdmin = false;
+
+        if (!isActiveTeacher) {
+          const { data: admin, error: adminError } = await supabase
+            .from("admin_profiles")
+            .select("is_active")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+          isActiveAdmin = !adminError && admin?.is_active === true;
+        }
+
+        if (!isActiveTeacher && !isActiveAdmin) {
+          if (active) {
+            setError("You are not authorized to manage meetings.");
+            setLoading(false);
+          }
+          return;
+        }
+
         if (active) {
-          setError("You are not authorized to manage meetings.");
+          setTeacherId(session.user.id);
+          setIsAdmin(isActiveAdmin);
+        }
+
+        const { data, error: meetingError } = await supabase
+          .from("meetings")
+          .select("*")
+          .order("date", { ascending: true })
+          .order("start_time", { ascending: true });
+
+        if (!active) return;
+
+        if (meetingError) {
+          setError("We couldn't load meetings.");
+          setLoading(false);
+          return;
+        }
+
+        setMeetings((data ?? []) as Meeting[]);
+        setLoading(false);
+      } catch {
+        if (active) {
+          setError("We couldn't connect to Vidwan. Please try again.");
           setLoading(false);
         }
-        return;
       }
-
-      if (active) {
-        setTeacherId(session.user.id);
-      }
-
-      const { data, error: meetingError } = await supabase
-        .from("meetings")
-        .select("*")
-        .order("date", { ascending: true })
-        .order("start_time", { ascending: true });
-
-      if (!active) return;
-
-      if (meetingError) {
-        setError("We couldn't load meetings.");
-        setLoading(false);
-        return;
-      }
-
-      setMeetings((data ?? []) as Meeting[]);
-      setLoading(false);
     };
 
     void load();
@@ -162,7 +184,7 @@ export default function TeacherMeetingsPage() {
     event.preventDefault();
 
     if (!teacherId) {
-      setError("Your teacher session has expired. Please log in again.");
+      setError("Your staff session has expired. Please log in again.");
       return;
     }
 
@@ -170,47 +192,51 @@ export default function TeacherMeetingsPage() {
     setError("");
     setSuccess("");
 
-    const supabase = getSupabaseClient();
+    try {
+      const supabase = getSupabaseClient();
 
-    const { data, error: insertError } = await supabase
-      .from("meetings")
-      .insert({
-        title: form.title.trim(),
-        description: form.description.trim(),
-        date: form.date,
-        start_time: form.start_time,
-        end_time: form.end_time || null,
-        meeting_type: form.meeting_type,
-        location: form.location.trim(),
-        meeting_link: form.meeting_link.trim() || null,
-        status: "UPCOMING",
-        created_by: teacherId,
-      })
-      .select("*")
-      .single();
+      const { data, error: insertError } = await supabase
+        .from("meetings")
+        .insert({
+          title: form.title.trim(),
+          description: form.description.trim(),
+          date: form.date,
+          start_time: form.start_time,
+          end_time: form.end_time || null,
+          meeting_type: form.meeting_type,
+          location: form.location.trim(),
+          meeting_link: form.meeting_link.trim() || null,
+          status: "UPCOMING",
+          created_by: teacherId,
+        })
+        .select("*")
+        .single();
 
-    if (insertError) {
-      setError(insertError.message || "We couldn't create this meeting.");
+      if (insertError || !data) {
+        throw new Error(insertError?.message || "We couldn't create this meeting.");
+      }
+
+      setMeetings((current) =>
+        [...current, data as Meeting].sort((a, b) => {
+          const first = `${a.date} ${a.start_time}`;
+          const second = `${b.date} ${b.start_time}`;
+          return first.localeCompare(second);
+        })
+      );
+
+      setForm(emptyForm);
+      setSuccess("Meeting created successfully.");
+      window.setTimeout(() => setSuccess(""), 4000);
+    } catch (createError) {
+      setError(createError instanceof Error ? createError.message : "We couldn't create this meeting.");
+    } finally {
       setCreating(false);
-      return;
     }
-
-    setMeetings((current) =>
-      [...current, data as Meeting].sort((a, b) => {
-        const first = `${a.date} ${a.start_time}`;
-        const second = `${b.date} ${b.start_time}`;
-        return first.localeCompare(second);
-      })
-    );
-
-    setForm(emptyForm);
-    setSuccess("Meeting created successfully.");
-    setCreating(false);
-
-    window.setTimeout(() => setSuccess(""), 4000);
   };
 
   const deleteMeeting = async (meeting: Meeting) => {
+    if (deletingId) return;
+
     const confirmed = window.confirm(
       `Delete "${meeting.title}"? This cannot be undone.`
     );
@@ -219,28 +245,57 @@ export default function TeacherMeetingsPage() {
 
     setDeletingId(meeting.id);
     setError("");
+    setSuccess("");
 
-    const { error: deleteError } = await getSupabaseClient()
-      .from("meetings")
-      .delete()
-      .eq("id", meeting.id);
+    try {
+      const { error: deleteError } = await getSupabaseClient()
+        .from("meetings")
+        .delete()
+        .eq("id", meeting.id);
 
-    setDeletingId(null);
+      if (deleteError) throw deleteError;
 
-    if (deleteError) {
-      setError("We couldn't delete this meeting.");
-      return;
+      setMeetings((current) =>
+        current.filter((item) => item.id !== meeting.id)
+      );
+      setSuccess("Meeting deleted.");
+    } catch {
+      setError("We couldn't delete this meeting. Please try again.");
+    } finally {
+      setDeletingId(null);
     }
-
-    setMeetings((current) =>
-      current.filter((item) => item.id !== meeting.id)
-    );
   };
 
   const logOut = async () => {
     await getSupabaseClient().auth.signOut();
-    window.location.replace("/teacher/login");
+    window.location.replace(isAdmin ? "/admin/login" : "/teacher/login");
   };
+
+  if (loading && !teacherId) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[#071321] px-4 text-white">
+        <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-sm text-white/55">
+          Checking access and loading meetings…
+        </div>
+      </main>
+    );
+  }
+
+  if (!teacherId) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[#071321] px-4 text-white">
+        <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#0a1b2e]/90 p-8 text-center">
+          <h1 className="text-2xl font-bold tracking-[-0.05em]">ACCESS RESTRICTED</h1>
+          <p role="alert" className="mt-4 text-sm leading-6 text-white/55">
+            {error || "You are not authorized to manage meetings."}
+          </p>
+          <Link href="/staff" className="mt-7 inline-flex rounded-full bg-white px-5 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#071321]">
+            Go to staff access
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-5 pb-10 text-white sm:px-8 sm:py-8">
@@ -264,19 +319,30 @@ export default function TeacherMeetingsPage() {
           </Link>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/teacher/dashboard"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
-            >
-              Dashboard
-            </Link>
+            {isAdmin ? (
+              <Link
+                href="/admin/dashboard"
+                className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+              >
+                Owner dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/teacher/dashboard"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+                >
+                  Dashboard
+                </Link>
 
-            <Link
-              href="/teacher/students"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
-            >
-              Students
-            </Link>
+                <Link
+                  href="/teacher/students"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+                >
+                  Students
+                </Link>
+              </>
+            )}
 
             <Link
               href="/teacher/meetings"
@@ -304,7 +370,7 @@ export default function TeacherMeetingsPage() {
         {/* Header */}
         <header className="mt-12 border-b border-white/10 pb-8 sm:mt-16 sm:pb-10">
           <p className="text-[10px] uppercase tracking-[0.42em] text-[#78b8ff]">
-            Teacher control
+            {isAdmin ? "Owner control" : "Teacher control"}
           </p>
 
           <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -530,6 +596,7 @@ export default function TeacherMeetingsPage() {
                   index={index}
                   onDelete={() => void deleteMeeting(meeting)}
                   deleting={deletingId === meeting.id}
+                  busy={Boolean(deletingId)}
                 />
               ))}
             </div>
@@ -557,6 +624,7 @@ export default function TeacherMeetingsPage() {
                   index={0}
                   onDelete={() => void deleteMeeting(meeting)}
                   deleting={deletingId === meeting.id}
+                  busy={Boolean(deletingId)}
                   muted
                 />
               ))}
@@ -626,12 +694,14 @@ function MeetingCard({
   index,
   onDelete,
   deleting,
+  busy,
   muted = false,
 }: {
   meeting: Meeting;
   index: number;
   onDelete: () => void;
   deleting: boolean;
+  busy: boolean;
   muted?: boolean;
 }) {
   return (
@@ -721,9 +791,10 @@ function MeetingCard({
             )}
 
             <button
+              type="button"
               onClick={onDelete}
-              disabled={deleting}
-              className="rounded-full border border-red-300/15 px-4 py-2 text-[9px] font-bold uppercase tracking-[0.15em] text-red-200/50 transition hover:border-red-300/35 hover:text-red-100 disabled:opacity-40"
+              disabled={busy}
+              className="rounded-full border border-red-300/15 px-4 py-2 text-[9px] font-bold uppercase tracking-[0.15em] text-red-200/50 transition hover:border-red-300/35 hover:text-red-100 disabled:cursor-wait disabled:opacity-40"
             >
               {deleting ? "Deleting..." : "Delete"}
             </button>

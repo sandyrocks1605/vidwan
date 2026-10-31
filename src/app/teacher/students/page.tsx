@@ -43,6 +43,7 @@ export default function TeacherStudentsPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [form, setForm] = useState<StudentForm>(emptyForm);
   const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
   const [creating, setCreating] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -63,15 +64,20 @@ export default function TeacherStudentsPage() {
     // teacher profile before querying or changing any student data.
     const { data: teacherProfile, error: teacherError } = await supabase
       .from("teacher_profiles")
-      .select("is_teacher")
+      .select("is_teacher, status")
       .eq("user_id", session.user.id)
       .maybeSingle();
-    if (teacherError || !teacherProfile?.is_teacher) {
-      setError("You don't have teacher access.");
+    if (
+      teacherError ||
+      !teacherProfile?.is_teacher ||
+      teacherProfile.status !== "ACTIVE"
+    ) {
+      setError("You don't have active teacher access.");
       setLoading(false);
       setStudents([]);
       return;
     }
+    setAuthorized(true);
     const { data, error: studentsError } = await supabase
       .from("student_profiles")
       .select(
@@ -232,6 +238,32 @@ export default function TeacherStudentsPage() {
   const activeCount = students.filter(
     (student) => student.status === "ACTIVE"
   ).length;
+
+  if (loading && !authorized) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[#071321] px-4 text-white">
+        <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-sm text-white/55">
+          Checking teacher access…
+        </div>
+      </main>
+    );
+  }
+
+  if (!authorized) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[#071321] px-4 text-white">
+        <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#0a1b2e]/90 p-8 text-center">
+          <h1 className="text-2xl font-bold tracking-[-0.05em]">ACCESS RESTRICTED</h1>
+          <p role="alert" className="mt-4 text-sm leading-6 text-white/55">
+            {error || "You don't have active teacher access."}
+          </p>
+          <Link href="/staff" className="mt-7 inline-flex rounded-full bg-white px-5 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#071321]">
+            Go to staff access
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-[100dvh] overflow-x-hidden bg-[#071321] px-4 py-5 pb-10 text-white sm:px-8 sm:py-8">

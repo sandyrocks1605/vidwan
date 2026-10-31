@@ -23,7 +23,7 @@ type Registration = {
   read_by: string | null;
 };
 
-type TeacherProfile = { name: string; is_teacher: boolean };
+type TeacherProfile = { name: string; is_teacher: boolean; status: string };
 type Tab = "inbox" | "archive";
 
 const trackOptions = [
@@ -149,7 +149,7 @@ export default function TeacherDashboardPage() {
 
       const { data: profileData, error: profileError } = await supabase
         .from("teacher_profiles")
-        .select("name, is_teacher")
+        .select("name, is_teacher, status")
         .eq("user_id", sessionData.session.user.id)
         .maybeSingle();
 
@@ -161,7 +161,7 @@ export default function TeacherDashboardPage() {
         return;
       }
 
-      if (!profileData?.is_teacher) {
+      if (!profileData?.is_teacher || profileData.status !== "ACTIVE") {
         setStatus("denied");
         return;
       }
