@@ -3486,3 +3486,23 @@
     background: linear-gradient(180deg, transparent, rgb(5 7 13 / 0.72) 22%, rgb(5 7 13 / 0.88));
   }
 }
+
+.storyStep,
+.storyStep:nth-child(even) {
+  justify-content: flex-start;
+  padding-top: 6svh;
+}
+
+@media (max-width: 920px) {
+  .storyStep,
+  .storyStep:nth-child(even) {
+    padding-top: 5svh;
+  }
+}
+
+@media (max-width: 640px) {
+  .storyStep,
+  .storyStep:nth-child(even) {
+    padding-top: 5svh;
+  }
+}
