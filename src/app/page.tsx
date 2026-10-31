@@ -112,7 +112,8 @@ const storyBeats = [
     title: "Every position begins with a question.",
     description:
       "Look past the headline. Find the people, interests and history shaping the issue before deciding what you believe.",
-    note: "Look closer",
+    note: "THE ISSUE / IN CONTEXT",
+    sceneLabel: "RESEARCH · 01",
   },
   {
     number: "02",
@@ -120,7 +121,8 @@ const storyBeats = [
     title: "Turn noise into a point of view.",
     description:
       "Compare sources, notice what is missing and build a position that can hold up when someone asks the next question.",
-    note: "Find the signal",
+    note: "THE POSITION / WITH EVIDENCE",
+    sceneLabel: "RESEARCH · 02",
   },
   {
     number: "03",
@@ -128,7 +130,8 @@ const storyBeats = [
     title: "Preparation gives your voice direction.",
     description:
       "The first speech is only a beginning. Listen, make your case and stay open to the idea that shifts the room.",
-    note: "Speak with purpose",
+    note: "THE FLOOR / YOUR VOICE",
+    sceneLabel: "DEBATE · 03",
   },
   {
     number: "04",
@@ -136,7 +139,8 @@ const storyBeats = [
     title: "Good leadership leaves room for others.",
     description:
       "Bring different perspectives into the work and turn discussion into a way forward that more people can stand behind.",
-    note: "Make progress together",
+    note: "THE ROOM / A WAY FORWARD",
+    sceneLabel: "RESOLUTION · 04",
   },
 ];
 
@@ -158,6 +162,23 @@ function Icon({ name, className }: { name: IconName; className?: string }) {
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d={paths[name]} />
     </svg>
+  );
+}
+
+function ProgramArtwork({ icon, number }: { icon: string; number: string }) {
+  const artworkClass = icon === "globe"
+    ? styles.programArtworkGlobe
+    : icon === "debate"
+      ? styles.programArtworkDebate
+      : styles.programArtworkLeadership;
+
+  return (
+    <div className={`${styles.programArtwork} ${artworkClass}`} aria-hidden="true">
+      <div className={styles.programArtworkObject}><span>{number}</span></div>
+      <i className={styles.programArtworkOrbitOne} />
+      <i className={styles.programArtworkOrbitTwo} />
+      <b className={styles.programArtworkSignal} />
+    </div>
   );
 }
 
@@ -197,40 +218,25 @@ function ScrollytellingExperience() {
         <div className={styles.sceneSticky}>
           <div className={styles.sceneFrame} data-active-story={activeStory} aria-hidden="true">
             <div className={styles.sceneStars} />
+            <div className={styles.sceneGrid} />
             <div className={styles.sceneCoordinates}>VIDWAN FIELD NOTES <span>·</span> {activeBeat.number} / 04</div>
-            <div className={styles.sceneStage}>
-              <div className={styles.sceneGlobe}>
-                <div className={styles.sceneGlobeSurface}>
-                  <i className={styles.globeLatitudeOne} />
-                  <i className={styles.globeLatitudeTwo} />
-                  <i className={styles.globeLongitudeOne} />
-                  <i className={styles.globeLongitudeTwo} />
-                  <i className={styles.globeLongitudeThree} />
-                  <b className={styles.scenePinOne} />
-                  <b className={styles.scenePinTwo} />
-                  <b className={styles.scenePinThree} />
-                </div>
-              </div>
-              <div className={`${styles.sceneOrbit} ${styles.sceneOrbitOne}`} />
-              <div className={`${styles.sceneOrbit} ${styles.sceneOrbitTwo}`} />
-              <div className={`${styles.sceneOrbit} ${styles.sceneOrbitThree}`} />
-              <div className={styles.sceneAxis} />
-              <div className={styles.scenePodium}><span /><i /><b /></div>
-              <div className={styles.sceneResolution}>
-                <span>SHARED DIRECTION</span>
-                <i /><i /><i />
-                <b>AGREEMENT / 04</b>
-              </div>
-              <div className={styles.sceneNodeOne} />
-              <div className={styles.sceneNodeTwo} />
-              <div className={styles.sceneNodeThree} />
+            <div className={styles.sceneCamera}>
+              <Image
+                src="/images/vidwan-stage.png"
+                alt=""
+                fill
+                sizes="100vw"
+                className={styles.sceneArtwork}
+              />
+            </div>
+            <div className={styles.sceneReadout}>
+              <span>{activeBeat.sceneLabel}</span>
+              <strong>{activeBeat.note}</strong>
+              <i><b style={{ width: `${(activeStory + 1) * 25}%` }} /></i>
             </div>
             <div className={styles.sceneCaption}>
-              <span>THE DELEGATE JOURNEY</span>
-              <strong>{activeBeat.note}</strong>
-            </div>
-            <div className={styles.sceneProgress}>
-              {storyBeats.map((beat, index) => <i className={index <= activeStory ? styles.sceneProgressActive : ""} key={beat.number} />)}
+              <span>SCROLL TO MOVE THROUGH THE ROOM</span>
+              <strong>0{activeStory + 1} <i>/</i> 04</strong>
             </div>
           </div>
         </div>
@@ -338,18 +344,18 @@ export default function HomePage() {
 
           <figure className={styles.heroVisual}>
             <Image
-              src="/images/vidwan-hero-conference.jpg"
-              alt="A student delegate speaking to a room of fellow delegates"
+              src="/images/vidwan-stage.png"
+              alt="A sculptural 3D globe, research pages and microphone above a delegate podium"
               fill
               priority
               sizes="(max-width: 920px) 100vw, 52vw"
               className={styles.heroImage}
             />
             <div className={styles.heroShade} />
-            <div className={styles.photoTopline}><span>VIDWAN · THE DELEGATE JOURNEY</span><span aria-hidden="true">01 / 05</span></div>
+            <div className={styles.photoTopline}><span>VIDWAN · IDEAS INTO IMPACT</span><span aria-hidden="true">01 / 05</span></div>
             <figcaption className={styles.photoCaption}>
-              <span>THE MOMENT IS ONLY THE BEGINNING</span>
-              <strong>Preparation changes how you enter the room.</strong>
+              <span>THE WORLD IS ALREADY IN THE ROOM</span>
+              <strong>Prepare your voice to move it.</strong>
             </figcaption>
             <div className={styles.imageOrbit} aria-hidden="true"><span>V</span></div>
           </figure>
@@ -447,6 +453,7 @@ export default function HomePage() {
         <div className={[styles.container, styles.programGrid].join(" ")}>
           {programCards.map((program) => (
             <article className={styles.programCard} key={program.number}>
+              <ProgramArtwork icon={program.icon} number={program.number} />
               <div className={styles.programCardTop}><span>{program.number}</span><Icon name={program.icon as IconName} /></div>
               <h3>{program.title}</h3><p>{program.text}</p><div className={styles.programTag}>{program.tag}</div>
               <Link href="/register" aria-label={"Explore " + program.title + " with Vidwan"}><Icon name="arrow" /></Link>
