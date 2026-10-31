@@ -3445,3 +3445,44 @@
     transition: none !important;
   }
 }
+
+/* Keep the story copy clear while the 3D camera moves. */
+.storyStep,
+.storyStep:nth-child(even) {
+  width: min(42%, 510px);
+  align-items: flex-start;
+  margin-right: auto;
+  margin-left: 0;
+  padding-right: 26px;
+  padding-left: 5px;
+  background: linear-gradient(90deg, rgb(5 7 13 / 0.68), rgb(5 7 13 / 0.32) 68%, transparent);
+  text-align: left;
+  opacity: 0;
+}
+
+.storyStep.storyStepActive,
+.storyStep:nth-child(even).storyStepActive {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (max-width: 920px) {
+  .storyStep,
+  .storyStep:nth-child(even) {
+    width: min(82%, 560px);
+    margin-right: auto;
+    margin-left: 0;
+    padding: 42px 20px 42px 0;
+    background: linear-gradient(90deg, rgb(5 7 13 / 0.76), rgb(5 7 13 / 0.3) 76%, transparent);
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .storyStep,
+  .storyStep:nth-child(even) {
+    width: 100%;
+    padding: 42px 2px;
+    background: linear-gradient(180deg, transparent, rgb(5 7 13 / 0.72) 22%, rgb(5 7 13 / 0.88));
+  }
+}
