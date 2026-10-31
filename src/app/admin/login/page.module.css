@@ -1,8 +1,8 @@
 .page {
   --night: #091626;
   min-height: 100dvh;
-  background: #f6f4ef;
-  color: #101a29;
+  background: #07111e;
+  color: #f2f6fc;
 }
 
 .layout { display: grid; min-height: 100dvh; grid-template-columns: minmax(0, 1.08fr) minmax(440px, 0.92fr); }
@@ -40,35 +40,35 @@
 .storyRule i { color: #a6c9ff; font-style: normal; }
 .storyIndex { position: absolute; right: 58px; bottom: 58px; color: rgb(245 248 255 / 0.5); font-size: 8px; letter-spacing: 0.18em; }
 
-.formColumn { display: flex; min-height: 100dvh; flex-direction: column; align-items: center; justify-content: center; padding: 40px clamp(28px, 6vw, 100px); }
-.backLink { align-self: flex-end; margin: 0 0 38px; color: #697489; font-size: 10px; text-decoration: none; transition: color 180ms ease; }
-.backLink:hover { color: #314ec2; }
+.formColumn { display: flex; min-height: 100dvh; flex-direction: column; align-items: center; justify-content: center; padding: 40px clamp(28px, 6vw, 100px); background: radial-gradient(ellipse at 90% 10%, rgb(51 80 145 / 0.12), transparent 38%), #07111e; }
+.backLink { align-self: flex-end; margin: 0 0 38px; color: #9eabc0; font-size: 10px; text-decoration: none; transition: color 180ms ease; }
+.backLink:hover { color: #c4d5ff; }
 .formCard { width: min(100%, 440px); }
 .formHeading > p { margin: 0; color: #5d6fd2; font-size: 9px; font-weight: 750; letter-spacing: 0.2em; }
 .formHeading > p span { padding: 0 4px; color: #aab0c0; }
-.formHeading h2 { margin: 17px 0 0; font-size: clamp(36px, 4vw, 48px); font-weight: 600; letter-spacing: -0.075em; line-height: 1.05; }
-.formHeading > span { display: block; margin-top: 12px; color: #737b89; font-size: 13px; line-height: 1.6; }
+.formHeading h2 { margin: 17px 0 0; color: #f3f6fb; font-size: clamp(36px, 4vw, 48px); font-weight: 600; letter-spacing: -0.075em; line-height: 1.05; }
+.formHeading > span { display: block; margin-top: 12px; color: #a8b5c7; font-size: 13px; line-height: 1.6; }
 
 .form { display: grid; gap: 18px; margin-top: 34px; }
-.field { display: grid; gap: 9px; color: #354052; font-size: 11px; font-weight: 650; }
-.field input { width: 100%; min-height: 52px; border: 1px solid #dfe2e7; border-radius: 10px; background: #fff; padding: 0 15px; color: #111b2b; font-size: 13px; outline: none; transition: border-color 180ms ease, box-shadow 180ms ease; }
-.field input::placeholder { color: #a2a9b4; }
-.field input:focus { border-color: #6f82df; box-shadow: 0 0 0 3px rgb(89 111 217 / 0.12); }
-.submitButton { display: flex; min-height: 53px; align-items: center; justify-content: space-between; border: 0; border-radius: 10px; margin-top: 3px; padding: 0 18px; background: #101b31; color: white; cursor: pointer; font-size: 11px; font-weight: 700; transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease; }
+.field { display: grid; gap: 9px; color: #c0cce0; font-size: 11px; font-weight: 650; }
+.field input { width: 100%; min-height: 52px; border: 1px solid rgb(209 225 248 / 0.14); border-radius: 10px; background: #0b1a2b; padding: 0 15px; color: #f3f7fd; font-size: 13px; outline: none; transition: border-color 180ms ease, box-shadow 180ms ease; }
+.field input::placeholder { color: #73829a; }
+.field input:focus { border-color: #819eff; box-shadow: 0 0 0 3px rgb(89 111 217 / 0.17); }
+.submitButton { display: flex; min-height: 53px; align-items: center; justify-content: space-between; border: 0; border-radius: 10px; margin-top: 3px; padding: 0 18px; background: #dce7ff; color: #0b1524; cursor: pointer; font-size: 11px; font-weight: 700; transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease; }
 .submitButton:hover { transform: translateY(-1px); background: #354fc2; box-shadow: 0 10px 24px rgb(53 79 194 / 0.2); }
 .submitButton:disabled { cursor: wait; opacity: 0.65; }
 .submitButton span { font-size: 18px; font-weight: 400; }
 .error { margin: 0; border: 1px solid #f0d1d1; border-radius: 9px; background: #fff5f5; padding: 11px 13px; color: #ae3b3b; font-size: 12px; line-height: 1.55; }
-.divider { display: flex; align-items: center; gap: 12px; margin: 25px 0 18px; color: #9ba1ac; font-size: 10px; }
-.divider span { height: 1px; flex: 1; background: #e6e7eb; }
+.divider { display: flex; align-items: center; gap: 12px; margin: 25px 0 18px; color: #8796ae; font-size: 10px; }
+.divider span { height: 1px; flex: 1; background: rgb(218 230 249 / 0.12); }
 .divider b { font-weight: 500; }
-.googleButton { display: flex; width: 100%; min-height: 51px; align-items: center; justify-content: center; gap: 10px; border: 1px solid #dedfe4; border-radius: 10px; background: transparent; color: #283246; cursor: pointer; font-size: 11px; font-weight: 650; transition: border-color 180ms ease, background 180ms ease; }
-.googleButton:hover { border-color: #b3b9c9; background: #fff; }
+.googleButton { display: flex; width: 100%; min-height: 51px; align-items: center; justify-content: center; gap: 10px; border: 1px solid rgb(215 230 249 / 0.18); border-radius: 10px; background: rgb(255 255 255 / 0.035); color: #e6edf8; cursor: pointer; font-size: 11px; font-weight: 650; transition: border-color 180ms ease, background 180ms ease; }
+.googleButton:hover { border-color: rgb(164 191 255 / 0.55); background: rgb(107 135 231 / 0.09); }
 .googleButton:disabled { cursor: wait; opacity: 0.6; }
 .googleMark { color: #4563cc; font-size: 16px; font-weight: 800; }
-.formFoot { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 27px; color: #9299a5; font-size: 10px; text-align: center; }
+.formFoot { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 27px; color: #92a0b4; font-size: 10px; text-align: center; }
 .lockIcon { color: #7e8dce; font-size: 8px; }
-.help { margin: 36px 0 0; color: #9a9eaa; font-size: 10px; }
+.help { margin: 36px 0 0; color: #7f8da2; font-size: 10px; }
 .help a { color: #5369ca; text-decoration: none; }
 
 @media (max-width: 900px) {
@@ -88,7 +88,7 @@
   .storyEyebrow { margin-bottom: 15px; }
   .storyCopy h1 { font-size: clamp(42px, 11vw, 62px); }
   .storyCopy > p:not(.storyEyebrow), .storyRule, .storyIndex { display: none; }
-  .formColumn { min-height: auto; padding: 30px 24px 48px; }
+  .formColumn { min-height: auto; padding: 30px 24px 48px; background: #07111e; }
   .backLink { align-self: flex-start; margin-bottom: 25px; }
   .formHeading h2 { font-size: 39px; }
   .help { margin-top: 28px; }

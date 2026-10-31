@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import styles from "./page.module.css";
 
@@ -105,6 +105,41 @@ const questions = [
   },
 ];
 
+const storyBeats = [
+  {
+    number: "01",
+    kicker: "START WITH THE WORLD",
+    title: "Every position begins with a question.",
+    description:
+      "Look past the headline. Find the people, interests and history shaping the issue before deciding what you believe.",
+    note: "Look closer",
+  },
+  {
+    number: "02",
+    kicker: "FOLLOW THE EVIDENCE",
+    title: "Turn noise into a point of view.",
+    description:
+      "Compare sources, notice what is missing and build a position that can hold up when someone asks the next question.",
+    note: "Find the signal",
+  },
+  {
+    number: "03",
+    kicker: "ENTER THE ROOM",
+    title: "Preparation gives your voice direction.",
+    description:
+      "The first speech is only a beginning. Listen, make your case and stay open to the idea that shifts the room.",
+    note: "Speak with purpose",
+  },
+  {
+    number: "04",
+    kicker: "MOVE IDEAS FORWARD",
+    title: "Good leadership leaves room for others.",
+    description:
+      "Bring different perspectives into the work and turn discussion into a way forward that more people can stand behind.",
+    note: "Make progress together",
+  },
+];
+
 type IconName = "research" | "structure" | "voice" | "debate" | "negotiate" | "lead" | "globe" | "arrow";
 
 function Icon({ name, className }: { name: IconName; className?: string }) {
@@ -126,6 +161,101 @@ function Icon({ name, className }: { name: IconName; className?: string }) {
   );
 }
 
+function ScrollytellingExperience() {
+  const [activeStory, setActiveStory] = useState(0);
+
+  useEffect(() => {
+    const steps = document.querySelectorAll<HTMLElement>("[data-story-index]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveStory(Number((entry.target as HTMLElement).dataset.storyIndex ?? 0));
+          }
+        }
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
+    );
+
+    steps.forEach((step) => observer.observe(step));
+    return () => observer.disconnect();
+  }, []);
+
+  const activeBeat = storyBeats[activeStory];
+
+  return (
+    <section className={styles.scrolly} id="journey-3d" aria-labelledby="scrolly-title">
+      <div className={[styles.container, styles.scrollyHeader].join(" ")}>
+        <div>
+          <p className={styles.lightEyebrow}><span>05</span> A JOURNEY IN MOTION</p>
+          <h2 id="scrolly-title">One idea can change <em>the room.</em></h2>
+        </div>
+        <p>Follow the path from first question to shared progress. Scroll to move through the story.</p>
+      </div>
+
+      <div className={[styles.container, styles.scrollyLayout].join(" ")}>
+        <div className={styles.sceneSticky}>
+          <div className={styles.sceneFrame} data-active-story={activeStory} aria-hidden="true">
+            <div className={styles.sceneStars} />
+            <div className={styles.sceneCoordinates}>VIDWAN FIELD NOTES <span>·</span> {activeBeat.number} / 04</div>
+            <div className={styles.sceneStage}>
+              <div className={styles.sceneGlobe}>
+                <div className={styles.sceneGlobeSurface}>
+                  <i className={styles.globeLatitudeOne} />
+                  <i className={styles.globeLatitudeTwo} />
+                  <i className={styles.globeLongitudeOne} />
+                  <i className={styles.globeLongitudeTwo} />
+                  <i className={styles.globeLongitudeThree} />
+                  <b className={styles.scenePinOne} />
+                  <b className={styles.scenePinTwo} />
+                  <b className={styles.scenePinThree} />
+                </div>
+              </div>
+              <div className={`${styles.sceneOrbit} ${styles.sceneOrbitOne}`} />
+              <div className={`${styles.sceneOrbit} ${styles.sceneOrbitTwo}`} />
+              <div className={`${styles.sceneOrbit} ${styles.sceneOrbitThree}`} />
+              <div className={styles.sceneAxis} />
+              <div className={styles.scenePodium}><span /><i /><b /></div>
+              <div className={styles.sceneResolution}>
+                <span>SHARED DIRECTION</span>
+                <i /><i /><i />
+                <b>AGREEMENT / 04</b>
+              </div>
+              <div className={styles.sceneNodeOne} />
+              <div className={styles.sceneNodeTwo} />
+              <div className={styles.sceneNodeThree} />
+            </div>
+            <div className={styles.sceneCaption}>
+              <span>THE DELEGATE JOURNEY</span>
+              <strong>{activeBeat.note}</strong>
+            </div>
+            <div className={styles.sceneProgress}>
+              {storyBeats.map((beat, index) => <i className={index <= activeStory ? styles.sceneProgressActive : ""} key={beat.number} />)}
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.storySteps}>
+          {storyBeats.map((beat, index) => (
+            <article
+              aria-current={activeStory === index ? "step" : undefined}
+              className={`${styles.storyStep} ${activeStory === index ? styles.storyStepActive : ""}`}
+              data-story-index={index}
+              key={beat.number}
+            >
+              <p className={styles.storyStepIndex}><span>{beat.number}</span> / 04</p>
+              <p className={styles.storyKicker}>{beat.kicker}</p>
+              <h3>{beat.title}</h3>
+              <p className={styles.storyDescription}>{beat.description}</p>
+              <span className={styles.storyRule}><i /> {beat.note}</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HomePage() {
   const [activeStage, setActiveStage] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -136,7 +266,7 @@ export default function HomePage() {
       <div className={styles.announcement}>
         <span className={styles.announcementDot} />
         <p>Ideas worth hearing deserve a voice prepared to lead.</p>
-        <a href="#method">Discover Vidwan <span aria-hidden="true">↗</span></a>
+        <a href="#journey-3d">Discover the journey <span aria-hidden="true">↗</span></a>
       </div>
 
       <header className={styles.header}>
@@ -146,6 +276,7 @@ export default function HomePage() {
             <span className={styles.brandWords}><strong>VIDWAN</strong><small>THINK · SPEAK · LEAD</small></span>
           </Link>
           <div className={styles.desktopLinks}>
+            <a href="#journey-3d">The journey</a>
             <a href="#method">The method</a>
             <a href="#programs">Programs</a>
             <a href="#skills">Skills</a>
@@ -169,6 +300,7 @@ export default function HomePage() {
         {menuOpen && (
           <div className={styles.mobileMenu} id="mobile-navigation">
             {[
+              ["The journey", "#journey-3d"],
               ["The method", "#method"],
               ["Programs", "#programs"],
               ["Skills", "#skills"],
@@ -369,6 +501,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ScrollytellingExperience />
 
       <section className={styles.faq} id="faq" aria-labelledby="faq-title">
         <div className={[styles.container, styles.faqLayout].join(" ")}>
