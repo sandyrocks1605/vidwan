@@ -4776,3 +4776,216 @@
 .lightEyebrow > span,
 .stageKicker { color: #82bfff; }
 .stageButtonActive i { background: #7abaff; box-shadow: 0 0 14px rgb(122 186 255 / 0.5); }
+
+/* Photo-free visual system: drawn room plans, typographic labels, and live marks. */
+.hero::before {
+  width: 76%;
+  background: radial-gradient(ellipse at 71% 48%, rgb(36 82 118 / 0.3), transparent 54%), linear-gradient(90deg, #07111b 0%, rgb(7 17 27 / 0.18) 100%);
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.96fr);
+  gap: clamp(28px, 5vw, 76px);
+  width: min(1320px, calc(100% - 96px));
+}
+
+.heroCopy { position: relative; z-index: 1; width: auto; }
+.heroVisual {
+  position: relative;
+  z-index: 0;
+  inset: auto;
+  width: 100%;
+  height: clamp(420px, 49vw, 610px);
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgb(171 205 225 / 0.18);
+  background: radial-gradient(ellipse at 52% 48%, rgb(29 75 108 / 0.28), transparent 50%), repeating-linear-gradient(0deg, transparent 0 47px, rgb(190 219 232 / 0.035) 48px), repeating-linear-gradient(90deg, transparent 0 47px, rgb(190 219 232 / 0.035) 48px), #091620;
+  box-shadow: inset 0 0 80px rgb(0 0 0 / 0.2);
+  animation: heroArrival 850ms 100ms cubic-bezier(0.18, 0.8, 0.2, 1) both;
+}
+
+.heroVisual::after {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 54%, transparent 28%, rgb(4 11 17 / 0.35) 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.heroGraphicHeader,
+.heroGraphicCaption,
+.featureVisualHeader,
+.featureVisualFooter,
+.stageArtworkHeader,
+.programArtworkHeader,
+.programArtworkFooter {
+  position: absolute;
+  z-index: 2;
+  right: 22px;
+  left: 22px;
+  display: flex;
+  justify-content: space-between;
+  color: #9db0bb;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.heroGraphicHeader { top: 19px; border-bottom: 1px solid rgb(195 218 232 / 0.18); padding-bottom: 12px; }
+.heroGraphicHeader span:last-child { color: #78b9ed; }
+.heroRoomPlan { position: absolute; inset: 6% 4% 5%; width: 92%; height: 89%; overflow: visible; animation: roomDiagramDrift 14s ease-in-out infinite alternate; }
+.heroRoomBoundary, .heroRoomInset, .heroRoomDesk, .heroRoomAisle, .heroRoomLectern, .heroRoomTicks { vector-effect: non-scaling-stroke; }
+.heroRoomBoundary { stroke: rgb(150 192 216 / 0.44); stroke-width: 1; }
+.heroRoomInset { stroke: rgb(150 192 216 / 0.18); stroke-width: 1; stroke-dasharray: 3 8; }
+.heroRoomDesk { fill: rgb(42 88 118 / 0.12); stroke: rgb(111 178 218 / 0.72); stroke-width: 1.5; }
+.heroRoomAisle { stroke: rgb(127 185 218 / 0.42); stroke-dasharray: 2 7; stroke-width: 1; }
+.heroRoomLectern { fill: #91c8ed; stroke: #d0e8f5; stroke-width: 1; }
+.heroRoomSpeaker { fill: #d4e8f2; stroke: #79b8e8; stroke-width: 4; }
+.heroRoomSeat { fill: #0b1b26; stroke: rgb(132 185 215 / 0.72); stroke-width: 2; }
+.heroRoomTicks { stroke: #78b9ed; stroke-width: 1.2; }
+.heroGraphicNote { position: absolute; bottom: 16%; left: 9%; display: grid; gap: 9px; }
+.heroGraphicNote > span, .heroGraphicSide, .heroGraphicCaption { color: #9eb2bf; font-family: var(--font-geist-mono), monospace; font-size: 7px; font-weight: 600; letter-spacing: 0.14em; }
+.heroGraphicNote strong { color: #edf4f6; font-size: clamp(19px, 2.3vw, 28px); font-weight: 480; letter-spacing: -0.045em; line-height: 1.12; }
+.heroGraphicSide { position: absolute; right: 8%; bottom: 18%; display: grid; gap: 9px; text-align: right; }
+.heroGraphicSide > span { color: #78b9ed; font-size: 16px; }
+.heroGraphicSide i { width: 24px; height: 1px; justify-self: end; background: rgb(156 196 220 / 0.5); }
+.heroGraphicCaption { right: 0; bottom: 22px; left: 22px; display: flex; align-items: center; justify-content: flex-start; gap: 10px; }
+.heroGraphicCaption > span { width: 25px; height: 1px; background: #79b8e8; }
+
+.stageArtwork {
+  min-height: 370px;
+  border: 1px solid rgb(151 190 213 / 0.17);
+  background: radial-gradient(ellipse at 50% 45%, rgb(35 86 121 / 0.23), transparent 55%), repeating-linear-gradient(0deg, transparent 0 41px, rgb(190 219 232 / 0.035) 42px), repeating-linear-gradient(90deg, transparent 0 41px, rgb(190 219 232 / 0.035) 42px), #091620;
+  box-shadow: none;
+}
+.stageArtworkHeader { top: 18px; border-bottom: 1px solid rgb(195 218 232 / 0.17); padding-bottom: 12px; }
+.stageArtworkHeader span:last-child { color: #78b9ed; }
+.stageRoute { position: absolute; top: 46%; right: 8%; left: 8%; display: flex; align-items: flex-start; justify-content: space-between; }
+.stageRouteTrack { position: absolute; top: 9px; right: 0; left: 0; height: 1px; background: rgb(139 186 214 / 0.4); }
+.stageRouteTrack::after { display: block; width: 20%; height: 1px; background: #80c2f0; content: ""; transition: width 650ms cubic-bezier(0.2, 0.75, 0.25, 1); }
+.stageRouteNode { position: relative; z-index: 1; display: grid; justify-items: center; gap: 11px; color: #8298a5; }
+.stageRouteNode i { display: grid; width: 19px; height: 19px; place-items: center; border: 1px solid rgb(143 190 216 / 0.52); border-radius: 50%; background: #091620; color: #a7bac4; font-family: var(--font-geist-mono), monospace; font-size: 7px; font-style: normal; transition: 400ms ease; }
+.stageRouteNode b { font-size: 9px; font-weight: 500; }
+.stageRouteNode[data-current="true"] i { border-color: #b8e2fb; background: #8ac7ef; color: #07111b; box-shadow: 0 0 24px rgb(110 189 237 / 0.32); transform: scale(1.15); }
+.stageRouteNode[data-current="true"] b { color: #eff6f8; }
+.stageArtworkNote { position: absolute; bottom: 17%; left: 9%; display: grid; gap: 5px; }
+.stageArtworkNote > span { color: #86bfea; font-family: var(--font-geist-mono), monospace; font-size: 7px; letter-spacing: 0.16em; }
+.stageArtworkNote strong { color: #edf4f6; font-size: clamp(24px, 3vw, 38px); font-weight: 480; letter-spacing: -0.06em; }
+.stageArtworkNote i { color: #9fadb5; font-size: 11px; font-style: normal; }
+.artLabel { right: 9%; bottom: 21%; left: auto; color: #758c99; font-family: var(--font-geist-mono), monospace; font-size: 7px; }
+.stageArtwork[data-stage-art="02"] .stageRouteTrack::after { width: 40%; }
+.stageArtwork[data-stage-art="03"] .stageRouteTrack::after { width: 60%; }
+.stageArtwork[data-stage-art="04"] .stageRouteTrack::after { width: 80%; }
+.stageArtwork[data-stage-art="05"] .stageRouteTrack::after { width: 100%; }
+
+.programArtwork { height: clamp(168px, 20vw, 260px); border-block: 1px solid rgb(150 190 214 / 0.17); background: repeating-linear-gradient(0deg, transparent 0 38px, rgb(190 219 232 / 0.035) 39px), repeating-linear-gradient(90deg, transparent 0 38px, rgb(190 219 232 / 0.035) 39px), #091620; }
+.programArtwork::before { position: absolute; top: 50%; left: 50%; display: block; width: 124px; height: 124px; border: 1px solid rgb(116 176 211 / 0.28); border-radius: 50%; content: ""; transform: translate(-50%, -50%); transition: 600ms ease; }
+.programArtwork::after { position: absolute; top: 50%; left: 50%; display: block; width: 88px; height: 88px; border: 1px dashed rgb(116 176 211 / 0.26); border-radius: 50%; content: ""; transform: translate(-50%, -50%); }
+.programCard:hover .programArtwork::before { width: 150px; height: 150px; border-color: rgb(128 194 240 / 0.52); }
+.programArtworkHeader, .programArtworkFooter { right: 14px; left: 14px; color: #8199a7; font-size: 6px; }
+.programArtworkHeader { top: 12px; }
+.programArtworkHeader span:last-child { color: #8ac7ef; }
+.programArtworkStage { position: absolute; inset: 0; display: grid; place-items: center; }
+.programArtworkRule { position: absolute; top: 50%; width: 72%; height: 1px; background: rgb(143 190 216 / 0.24); }
+.programArtworkIcon { position: relative; z-index: 1; width: 47px; height: 47px; padding: 11px; border: 1px solid rgb(145 192 218 / 0.35); border-radius: 50%; background: #0a1822; color: #b6ddf4; transition: transform 550ms cubic-bezier(0.2, 0.75, 0.25, 1); }
+.programCard:hover .programArtworkIcon { transform: translateY(-6px) rotate(-5deg); }
+.programArtworkWord { position: absolute; top: calc(50% + 41px); color: #d7e5ec; font-family: var(--font-geist-mono), monospace; font-size: 7px; letter-spacing: 0.2em; }
+.programArtworkAccent { position: absolute; top: calc(50% - 2px); right: 13%; width: 5px; height: 5px; border-radius: 50%; background: #80c2f0; box-shadow: 0 0 12px rgb(128 194 240 / 0.7); }
+.programArtworkFooter { right: 14px; bottom: 12px; left: 14px; }
+
+.featureVisual { position: relative; display: block; min-height: clamp(360px, 42vw, 520px); margin: 0; overflow: hidden; border-block: 1px solid rgb(130 168 190 / 0.2); background: repeating-linear-gradient(0deg, transparent 0 44px, rgb(14 47 66 / 0.045) 45px), repeating-linear-gradient(90deg, transparent 0 44px, rgb(14 47 66 / 0.045) 45px), #0b1922; }
+.featureVisualHeader, .featureVisualFooter { right: 22px; left: 22px; }
+.featureVisualHeader { top: 19px; padding-bottom: 12px; border-bottom: 1px solid rgb(163 195 213 / 0.18); }
+.featureVisualHeader span:first-child { color: #8ac7ef; }
+.featureArgumentMap { position: absolute; inset: 6% 4% 16%; width: 92%; height: 78%; overflow: visible; }
+.argumentPath { stroke: #8ac7ef; stroke-width: 2; stroke-dasharray: 6 8; vector-effect: non-scaling-stroke; animation: argumentFlow 8s linear infinite; }
+.argumentGuide { stroke: rgb(157 190 209 / 0.2); stroke-dasharray: 2 7; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.argumentPoint { fill: #0b1922; stroke: #9fd5f3; stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.argumentPoint:nth-of-type(even) { fill: #85c3eb; }
+.argumentLabels { position: absolute; right: 8%; bottom: 24%; left: 8%; display: flex; justify-content: space-between; color: #a0b2bd; font-family: var(--font-geist-mono), monospace; font-size: 7px; letter-spacing: 0.08em; }
+.argumentLabels span { display: grid; gap: 6px; }
+.argumentLabels b { color: #80bee6; font-size: 8px; font-weight: 500; }
+.featureVisualFooter { bottom: 18px; align-items: end; }
+.featureVisualFooter strong { color: #eff5f6; font-size: clamp(17px, 2vw, 24px); font-weight: 480; letter-spacing: -0.04em; }
+.featureVisualFooter span { color: #91a7b4; font-family: var(--font-geist-mono), monospace; font-size: 6px; letter-spacing: 0.14em; }
+
+.experienceFrame { background: #081620; }
+.experienceGraphicStage { position: absolute; z-index: -2; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 72% 38%, rgb(31 77 108 / 0.32), transparent 46%), repeating-linear-gradient(0deg, transparent 0 54px, rgb(190 219 232 / 0.04) 55px), repeating-linear-gradient(90deg, transparent 0 54px, rgb(190 219 232 / 0.04) 55px), #081620; }
+.experienceGraphicStage::after { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(5 13 19 / 0.4), transparent 72%), linear-gradient(0deg, rgb(5 13 19 / 0.6), transparent 44%); content: ""; }
+.experienceRoomPlan { position: absolute; inset: -4% 0 0; width: 100%; height: 100%; overflow: visible; opacity: 0.8; transform: translate3d(var(--scene-drift, 0), 0, 0) rotate(var(--scene-turn, 0deg)); transform-origin: center; transition: transform 900ms cubic-bezier(0.2, 0.75, 0.25, 1), opacity 700ms ease; }
+.planOuter, .planInner, .planDesk, .planWalk, .planSpeaker, .planTick { vector-effect: non-scaling-stroke; }
+.planOuter { stroke: rgb(145 192 218 / 0.62); stroke-width: 1; }
+.planInner { stroke: rgb(145 192 218 / 0.28); stroke-width: 1; stroke-dasharray: 3 9; }
+.planDesk { fill: rgb(45 88 117 / 0.08); stroke: rgb(139 200 235 / 0.75); stroke-width: 1.5; }
+.planWalk { stroke: rgb(135 194 225 / 0.48); stroke-width: 1; stroke-dasharray: 3 9; transition: stroke-dashoffset 1.5s linear; animation: walkLine 12s linear infinite; }
+.planSpeaker { fill: #9dd3f2; stroke: #e1f2fa; stroke-width: 1; }
+.planNode { fill: #8ac7ef; stroke: #cde9f8; stroke-width: 4; transform-box: fill-box; transform-origin: center; animation: nodePulse 2.8s ease-in-out infinite; }
+.planSeat { fill: #0b1a23; stroke: rgb(148 199 227 / 0.8); stroke-width: 2; }
+.planTick { stroke: #8ac7ef; stroke-width: 1.3; }
+.experienceRoomLabel { position: absolute; top: 24%; left: max(30px, calc((100% - 1320px) / 2)); display: grid; gap: 7px; }
+.experienceRoomLabel span, .experienceRoomIndex { color: #a1b5bf; font-family: var(--font-geist-mono), monospace; font-size: 7px; letter-spacing: 0.15em; }
+.experienceRoomLabel strong { color: rgb(219 234 241 / 0.65); font-size: 12px; font-weight: 480; letter-spacing: 0.02em; }
+.experienceRoomIndex { position: absolute; right: max(30px, calc((100% - 1320px) / 2)); bottom: 27%; display: flex; align-items: center; gap: 10px; }
+.experienceRoomIndex i { width: 26px; height: 1px; background: #8ac7ef; }
+.experienceShade { background: linear-gradient(90deg, rgb(4 12 19 / 0.28), transparent 76%), linear-gradient(0deg, rgb(4 12 19 / 0.63), transparent 55%); }
+.experienceFrame[data-active-story="1"] .experienceRoomPlan { opacity: 0.94; }
+.experienceFrame[data-active-story="2"] .experienceRoomPlan { transform: translate3d(1.4%, -1%, 0) rotate(-0.5deg) scale(1.035); opacity: 0.7; }
+.experienceFrame[data-active-story="3"] .experienceRoomPlan { transform: translate3d(-1%, 1%, 0) rotate(0.4deg) scale(1.02); }
+.experienceBrief { background: #e8e1d5; }
+.experienceNarrative h3 { text-shadow: none; }
+.experienceNarrativeBottom p { text-shadow: none; }
+
+@keyframes roomDiagramDrift { from { transform: translate3d(-0.8%, 0.4%, 0) scale(1); } to { transform: translate3d(0.8%, -0.4%, 0) scale(1.025); } }
+@keyframes argumentFlow { to { stroke-dashoffset: -112; } }
+@keyframes walkLine { to { stroke-dashoffset: -72; } }
+@keyframes nodePulse { 0%, 100% { transform: scale(0.9); opacity: 0.86; } 50% { transform: scale(1.15); opacity: 1; } }
+
+@media (max-width: 920px) {
+  .heroGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 0.88fr); gap: 24px; }
+  .heroVisual { height: 470px; }
+  .heroGraphicSide { right: 5%; }
+  .experienceRoomLabel { left: 28px; }
+  .experienceRoomIndex { right: 28px; }
+}
+
+@media (max-width: 640px) {
+  .hero { min-height: 0; }
+  .hero::before { inset: 0; width: 100%; background: radial-gradient(ellipse at 70% 22%, rgb(36 82 118 / 0.25), transparent 50%); }
+  .heroGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px; width: calc(100% - 36px); min-height: 0; align-items: start; padding-block: 38px 50px; }
+  .heroCopy { padding: 0; }
+  .heroVisual { grid-row: 2; height: clamp(260px, 78vw, 360px); min-height: 0; margin: 0; }
+  .heroGraphicHeader, .featureVisualHeader, .stageArtworkHeader, .programArtworkHeader { right: 14px; left: 14px; font-size: 6px; }
+  .heroGraphicHeader { top: 13px; padding-bottom: 8px; }
+  .heroRoomPlan { inset: 7% 0 4%; width: 100%; height: 89%; }
+  .heroGraphicNote { bottom: 17%; left: 7%; gap: 5px; }
+  .heroGraphicNote > span, .heroGraphicSide, .heroGraphicCaption { font-size: 5px; }
+  .heroGraphicNote strong { font-size: 19px; }
+  .heroGraphicSide { right: 5%; bottom: 18%; gap: 6px; }
+  .heroGraphicSide > span { font-size: 12px; }
+  .heroGraphicCaption { bottom: 13px; left: 14px; }
+  .stageArtwork { min-height: 265px; }
+  .stageArtworkHeader { top: 13px; padding-bottom: 8px; }
+  .stageRoute { top: 42%; right: 5%; left: 5%; }
+  .stageRouteNode b { font-size: 7px; }
+  .stageArtworkNote { bottom: 12%; left: 7%; }
+  .stageArtworkNote strong { font-size: 27px; }
+  .artLabel { right: 7%; bottom: 17%; font-size: 5px; }
+  .programArtwork { height: clamp(190px, 60vw, 290px); }
+  .featureVisual { min-height: 330px; }
+  .featureVisualHeader { top: 14px; padding-bottom: 9px; }
+  .featureArgumentMap { inset: 8% 2% 19%; width: 96%; height: 72%; }
+  .argumentLabels { right: 5%; bottom: 25%; left: 5%; font-size: 5px; }
+  .featureVisualFooter { right: 14px; left: 14px; bottom: 14px; }
+  .featureVisualFooter strong { font-size: 16px; }
+  .featureVisualFooter span { font-size: 5px; }
+  .experienceRoomLabel { top: 21%; left: 19px; }
+  .experienceRoomIndex { right: 19px; bottom: 29%; font-size: 5px; }
+  .experienceRoomPlan { inset: 2% -24% 0; width: 148%; height: 92%; }
+  .experienceShade { background: linear-gradient(0deg, rgb(4 12 19 / 0.7), transparent 70%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroRoomPlan, .planWalk, .planNode, .argumentPath { animation: none !important; }
+}

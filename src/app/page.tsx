@@ -62,7 +62,6 @@ const programCards = [
   {
     number: "01",
     icon: "committee",
-    image: "/images/vidwan-hero-conference.jpg",
     title: "Model United Nations",
     text: "Research global issues, represent a position and work with other delegates toward resolution.",
     tag: "UNDERSTAND · REPRESENT · RESOLVE",
@@ -70,7 +69,6 @@ const programCards = [
   {
     number: "02",
     icon: "debate",
-    image: "/images/vidwan-collaboration.jpg",
     title: "Debate",
     text: "Build arguments, examine opposing ideas and make a reasoned case with confidence.",
     tag: "LISTEN · REASON · RESPOND",
@@ -78,7 +76,6 @@ const programCards = [
   {
     number: "03",
     icon: "lead",
-    image: "/images/vidwan-collaboration.jpg",
     title: "Leadership",
     text: "Practice the communication, collaboration and judgment that help groups move forward.",
     tag: "CONNECT · DECIDE · LEAD",
@@ -180,12 +177,24 @@ function Icon({ name, className }: { name: IconName; className?: string }) {
   );
 }
 
-function ProgramArtwork({ image, number }: { image: string; number: string }) {
+function ProgramArtwork({ icon, number }: { icon: IconName; number: string }) {
+  const labels: Record<string, string> = {
+    committee: "ASSEMBLY",
+    debate: "ARGUMENT",
+    lead: "DIRECTION",
+  };
+
   return (
-    <figure className={styles.programArtwork} aria-hidden="true">
-      <Image src={image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" className={styles.programArtworkImage} />
-      <span>{number}</span>
-    </figure>
+    <div className={styles.programArtwork} data-program-art={icon} aria-hidden="true">
+      <div className={styles.programArtworkHeader}><span>VIDWAN / FIELD GUIDE</span><span>{number}</span></div>
+      <div className={styles.programArtworkStage}>
+        <span className={styles.programArtworkRule} />
+        <Icon name={icon} className={styles.programArtworkIcon} />
+        <span className={styles.programArtworkWord}>{labels[icon]}</span>
+        <span className={styles.programArtworkAccent} />
+      </div>
+      <div className={styles.programArtworkFooter}><span>{labels[icon]} SERIES</span><span>01—03</span></div>
+    </div>
   );
 }
 
@@ -211,9 +220,8 @@ function ScrollytellingExperience() {
       const drift = Math.sin(progress * Math.PI * 1.5);
 
       frame.style.setProperty("--journey-progress", progress.toFixed(4));
-      frame.style.setProperty("--camera-scale", (1.04 + progress * 0.12).toFixed(4));
-      frame.style.setProperty("--camera-x", `${(drift * 1.8).toFixed(2)}%`);
-      frame.style.setProperty("--camera-y", `${(-1 + progress * 2.5).toFixed(2)}%`);
+      frame.style.setProperty("--scene-drift", `${(drift * 1.8).toFixed(2)}%`);
+      frame.style.setProperty("--scene-turn", `${(-1 + progress * 2.5).toFixed(2)}deg`);
 
       if (storyIndex !== activeStoryRef.current) {
         activeStoryRef.current = storyIndex;
@@ -250,9 +258,23 @@ function ScrollytellingExperience() {
       <div className={styles.experienceRunway} ref={runwayRef}>
         <div className={styles.experienceSticky}>
           <div className={styles.experienceFrame} ref={frameRef} data-active-story={activeStory} role="group" aria-label="A delegate's journey from research to resolution">
-            <div className={styles.experiencePhotoStage} aria-hidden="true">
-              <Image src="/images/vidwan-collaboration.jpg" alt="" fill sizes="100vw" className={`${styles.experiencePhoto} ${styles.experiencePhotoRoom}`} />
-              <Image src="/images/vidwan-hero-conference.jpg" alt="" fill sizes="100vw" className={`${styles.experiencePhoto} ${styles.experiencePhotoFloor}`} />
+            <div className={styles.experienceGraphicStage} aria-hidden="true">
+              <svg className={styles.experienceRoomPlan} viewBox="0 0 1000 620" fill="none">
+                <path className={styles.planOuter} d="M92 84h816v452H92z" />
+                <path className={styles.planInner} d="M132 124h736v372H132z" />
+                <path className={styles.planDesk} d="M285 315c0-68 96-123 215-123s215 55 215 123v30H285v-30Z" />
+                <path className={styles.planWalk} d="M500 490V364" />
+                <path className={styles.planSpeaker} d="M457 168h86v30h-86z" />
+                <circle className={styles.planNode} cx="500" cy="407" r="10" />
+                <circle className={styles.planSeat} cx="335" cy="268" r="11" />
+                <circle className={styles.planSeat} cx="414" cy="224" r="11" />
+                <circle className={styles.planSeat} cx="500" cy="208" r="11" />
+                <circle className={styles.planSeat} cx="586" cy="224" r="11" />
+                <circle className={styles.planSeat} cx="665" cy="268" r="11" />
+                <path className={styles.planTick} d="M92 70v-20h20m796 20v-20h-20M92 550v20h20m796-20v20h-20" />
+              </svg>
+              <div className={styles.experienceRoomLabel}><span>THE FLOOR PLAN</span><strong>{activeBeat.note}</strong></div>
+              <div className={styles.experienceRoomIndex}>ROOM 04 <i /> OPEN SESSION</div>
             </div>
             <div className={styles.experienceShade} aria-hidden="true" />
             <div className={styles.experienceTopline} aria-hidden="true">
@@ -395,21 +417,25 @@ export default function HomePage() {
             </div>
           </div>
 
-          <figure className={styles.heroVisual}>
-            <Image
-              src="/images/vidwan-hero-conference.jpg"
-              alt="A student delegate addresses a Model United Nations committee from the podium"
-              fill
-              loading="eager"
-              sizes="(max-width: 920px) 100vw, 52vw"
-              className={styles.heroImage}
-            />
-            <div className={styles.heroShade} />
-            <div className={styles.photoTopline}><span>VIDWAN · MODEL UN & DEBATE</span><span aria-hidden="true">01 / 05</span></div>
-            <figcaption className={styles.photoCaption}>
-              <span>THE WORK STARTS BEFORE YOU SPEAK</span>
-              <strong>Make the preparation count.</strong>
-            </figcaption>
+          <figure className={styles.heroVisual} aria-label="An illustrated plan of a debate room">
+            <div className={styles.heroGraphicHeader}><span>VIDWAN / FIELD GUIDE</span><span>01—05</span></div>
+            <svg className={styles.heroRoomPlan} viewBox="0 0 680 650" fill="none" aria-hidden="true">
+              <path className={styles.heroRoomBoundary} d="M78 95h524v428H78z" />
+              <path className={styles.heroRoomInset} d="M110 127h460v364H110z" />
+              <path className={styles.heroRoomDesk} d="M201 330c0-70 63-127 139-127s139 57 139 127v27H201v-27Z" />
+              <path className={styles.heroRoomAisle} d="M340 470V357" />
+              <path className={styles.heroRoomLectern} d="M312 171h56v28h-56z" />
+              <circle className={styles.heroRoomSpeaker} cx="340" cy="420" r="9" />
+              <circle className={styles.heroRoomSeat} cx="236" cy="282" r="9" />
+              <circle className={styles.heroRoomSeat} cx="282" cy="232" r="9" />
+              <circle className={styles.heroRoomSeat} cx="340" cy="218" r="9" />
+              <circle className={styles.heroRoomSeat} cx="398" cy="232" r="9" />
+              <circle className={styles.heroRoomSeat} cx="444" cy="282" r="9" />
+              <path className={styles.heroRoomTicks} d="M78 78V59h19m505 19V59h-19M78 540v19h19m505-19v19h-19" />
+            </svg>
+            <div className={styles.heroGraphicNote}><span>THE DEBATE FLOOR</span><strong>Ideas need<br />room to move.</strong></div>
+            <div className={styles.heroGraphicSide}><span>01</span>RESEARCH<i />02 SPEAK<i />03 LISTEN</div>
+            <figcaption className={styles.heroGraphicCaption}><span /> MODEL UNITED NATIONS · DEBATE · LEADERSHIP</figcaption>
           </figure>
         </div>
       </section>
@@ -477,10 +503,18 @@ export default function HomePage() {
                 {activeJourney.actions.map((action, index) => <span key={action}><b>0{index + 1}</b>{action}</span>)}
               </div>
             </div>
-            <div className={styles.stageArtwork} aria-hidden="true">
-              <Image src={activeStage < 2 ? "/images/vidwan-collaboration.jpg" : "/images/vidwan-hero-conference.jpg"} alt="" fill sizes="(max-width: 640px) 100vw, 42vw" className={styles.stagePhoto} />
-              <div className={styles.stagePhotoShade} />
-              <span className={styles.artLabel}>{activeJourney.title.toUpperCase()}</span>
+            <div className={styles.stageArtwork} data-stage-art={activeJourney.number} aria-hidden="true">
+              <div className={styles.stageArtworkHeader}><span>THE DELEGATE JOURNEY</span><span>{activeJourney.number} / 05</span></div>
+              <div className={styles.stageRoute}>
+                <span className={styles.stageRouteTrack} />
+                {journey.map((stage, index) => (
+                  <span className={styles.stageRouteNode} data-current={index === activeStage} key={stage.number}>
+                    <i>{stage.number}</i><b>{stage.title}</b>
+                  </span>
+                ))}
+              </div>
+              <div className={styles.stageArtworkNote}><span>NOW PRACTISING</span><strong>{activeJourney.title}</strong><i>{activeJourney.subtitle}</i></div>
+              <div className={styles.artLabel}>A POSITION TAKES SHAPE</div>
             </div>
           </div>
           <div className={styles.journeyFooter}><span>Move through the stages</span><span>{activeJourney.number} <i>/</i> 05</span></div>
@@ -498,7 +532,7 @@ export default function HomePage() {
         <div className={[styles.container, styles.programGrid].join(" ")} data-scroll-reveal>
           {programCards.map((program) => (
             <article className={styles.programCard} key={program.number}>
-              <ProgramArtwork image={program.image} number={program.number} />
+              <ProgramArtwork icon={program.icon as IconName} number={program.number} />
               <div className={styles.programCardTop}><span>{program.number}</span><Icon name={program.icon as IconName} /></div>
               <h3>{program.title}</h3><p>{program.text}</p><div className={styles.programTag}>{program.tag}</div>
               <Link href="/register" aria-label={"Explore " + program.title + " with Vidwan"}><Icon name="arrow" /></Link>
@@ -528,17 +562,18 @@ export default function HomePage() {
 
       <section className={styles.feature} aria-labelledby="feature-title">
         <div className={[styles.container, styles.featureLayout].join(" ")} data-scroll-reveal>
-          <figure className={styles.featureVisual}>
-            <Image
-              src="/images/vidwan-collaboration.jpg"
-              alt="Student delegates comparing research and notes around a conference table"
-              fill
-              sizes="(max-width: 900px) 100vw, 52vw"
-              className={styles.featureImage}
-            />
-            <div className={styles.featureImageShade} />
-            <figcaption>BETTER THINKING HAPPENS TOGETHER</figcaption>
-            <div className={styles.featureStamp} aria-hidden="true">V.</div>
+          <figure className={styles.featureVisual} aria-label="An illustrated path from research to resolution">
+            <div className={styles.featureVisualHeader}><span>FIELD NOTE / 04</span><span>FROM QUESTION TO RESOLUTION</span></div>
+            <svg className={styles.featureArgumentMap} viewBox="0 0 720 470" fill="none" aria-hidden="true">
+              <path className={styles.argumentPath} d="M78 353C157 347 150 143 267 143s88 200 205 200 97-133 172-133" />
+              <path className={styles.argumentGuide} d="M79 390h566M80 80v310" />
+              <circle className={styles.argumentPoint} cx="78" cy="353" r="13" />
+              <circle className={styles.argumentPoint} cx="267" cy="143" r="13" />
+              <circle className={styles.argumentPoint} cx="472" cy="343" r="13" />
+              <circle className={styles.argumentPoint} cx="644" cy="210" r="13" />
+            </svg>
+            <div className={styles.argumentLabels}><span><b>01</b> QUESTION</span><span><b>02</b> EVIDENCE</span><span><b>03</b> POSITION</span><span><b>04</b> RESPONSE</span></div>
+            <div className={styles.featureVisualFooter}><strong>Good ideas have a route.</strong><span>VIDWAN / PRACTICE</span></div>
           </figure>
           <div className={styles.featureCopy}>
             <p className={styles.darkEyebrow}><span>04</span> THE WORK BEHIND THE MOMENT</p>

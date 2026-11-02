@@ -155,15 +155,8 @@ export default function AdminLoginPage() {
     <main className={styles.page}>
       <div className={styles.layout}>
         <aside className={styles.story}>
-          <Image
-            src="/images/vidwan-hero-conference.jpg"
-            alt="A student delegate speaking to a conference audience"
-            fill
-            priority
-            sizes="(max-width: 900px) 100vw, 52vw"
-            className={styles.storyImage}
-          />
           <div className={styles.storyShade} />
+          <div className={styles.storyMark} aria-hidden="true"><span>V</span><i /><i /><i /></div>
           <Link href="/" className={styles.brand} aria-label="Vidwan home">
             <Image src="/images/vidwan-logo.png" alt="" width={48} height={48} />
             <span><strong>VIDWAN</strong><small>IDEAS INTO IMPACT</small></span>

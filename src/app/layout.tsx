@@ -35,7 +35,6 @@ export const metadata: Metadata = {
     description:
       "Build a confident voice through Model United Nations, debate and leadership. Research deeply, speak clearly and help shape what comes next.",
     type: "website",
-    images: ["/images/vidwan-hero-conference.jpg"],
   },
 };
 

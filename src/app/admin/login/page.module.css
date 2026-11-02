@@ -20,7 +20,6 @@
   color: white;
 }
 
-.storyImage { z-index: -3; object-fit: cover; object-position: 67% center; }
 .storyShade { position: absolute; z-index: -2; inset: 0; background: linear-gradient(180deg, rgb(4 12 24 / 0.53), rgb(4 12 24 / 0.12) 34%, rgb(4 12 24 / 0.81)), linear-gradient(90deg, rgb(4 12 24 / 0.34), transparent 82%); }
 
 .brand { display: inline-flex; width: fit-content; align-items: center; gap: 12px; color: white; text-decoration: none; }
@@ -82,7 +81,6 @@
   .layout { display: flex; flex-direction: column; }
   .story { min-height: 340px; padding: 21px 24px 29px; }
   .brand img { width: 39px; height: 39px; }
-  .storyImage { object-position: 70% 43%; }
   .storyShade { background: linear-gradient(180deg, rgb(4 12 24 / 0.48), rgb(4 12 24 / 0.7)); }
   .storyCopy { padding-top: 65px; }
   .storyEyebrow { margin-bottom: 15px; }
@@ -92,4 +90,22 @@
   .backLink { align-self: flex-start; margin-bottom: 25px; }
   .formHeading h2 { font-size: 39px; }
   .help { margin-top: 28px; }
+}
+
+.story {
+  background: radial-gradient(ellipse at 72% 42%, rgb(38 99 140 / 0.3), transparent 45%), repeating-linear-gradient(0deg, transparent 0 47px, rgb(190 219 232 / 0.035) 48px), repeating-linear-gradient(90deg, transparent 0 47px, rgb(190 219 232 / 0.035) 48px), #0a1b30;
+}
+.storyShade { background: linear-gradient(90deg, rgb(4 12 24 / 0.18), transparent 80%), linear-gradient(0deg, rgb(4 12 24 / 0.58), transparent 58%); }
+.storyMark { position: absolute; z-index: -1; top: 15%; right: 7%; display: grid; width: clamp(230px, 34vw, 460px); aspect-ratio: 1; place-items: center; border: 1px solid rgb(155 199 224 / 0.23); border-radius: 50%; color: rgb(176 215 239 / 0.22); }
+.storyMark::before, .storyMark::after { position: absolute; border: 1px solid rgb(155 199 224 / 0.14); border-radius: 50%; content: ""; }
+.storyMark::before { inset: 8%; }
+.storyMark::after { inset: 21%; border-style: dashed; }
+.storyMark span { font-size: clamp(100px, 19vw, 240px); font-weight: 300; letter-spacing: -0.12em; line-height: 1; transform: translateX(-0.06em); }
+.storyMark i { position: absolute; width: 7px; height: 7px; border: 1px solid #8ac7ef; border-radius: 50%; background: #0a1b30; }
+.storyMark i:nth-of-type(1) { top: 15%; left: 50%; }
+.storyMark i:nth-of-type(2) { right: 12%; bottom: 36%; }
+.storyMark i:nth-of-type(3) { bottom: 18%; left: 30%; }
+@media (max-width: 700px) {
+  .storyMark { top: 8%; right: -7%; width: 250px; }
+  .storyMark span { font-size: 130px; }
 }
