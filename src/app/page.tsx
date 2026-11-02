@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./page.module.css";
 
@@ -61,7 +61,8 @@ const skillCards = [
 const programCards = [
   {
     number: "01",
-    icon: "globe",
+    icon: "committee",
+    image: "/images/vidwan-hero-conference.jpg",
     title: "Model United Nations",
     text: "Research global issues, represent a position and work with other delegates toward resolution.",
     tag: "UNDERSTAND · REPRESENT · RESOLVE",
@@ -69,6 +70,7 @@ const programCards = [
   {
     number: "02",
     icon: "debate",
+    image: "/images/vidwan-collaboration.jpg",
     title: "Debate",
     text: "Build arguments, examine opposing ideas and make a reasoned case with confidence.",
     tag: "LISTEN · REASON · RESPOND",
@@ -76,6 +78,7 @@ const programCards = [
   {
     number: "03",
     icon: "lead",
+    image: "/images/vidwan-collaboration.jpg",
     title: "Leadership",
     text: "Practice the communication, collaboration and judgment that help groups move forward.",
     tag: "CONNECT · DECIDE · LEAD",
@@ -114,6 +117,9 @@ const storyBeats = [
       "Look past the headline. Find the people, interests and history shaping the issue before deciding what you believe.",
     note: "THE ISSUE / IN CONTEXT",
     sceneLabel: "RESEARCH · 01",
+    artifact: "DELEGATE BRIEF / 01",
+    artifactTitle: "Start with the issue.",
+    artifactLines: ["People affected", "Evidence to test", "Position to shape"],
   },
   {
     number: "02",
@@ -123,6 +129,9 @@ const storyBeats = [
       "Compare sources, notice what is missing and build a position that can hold up when someone asks the next question.",
     note: "THE POSITION / WITH EVIDENCE",
     sceneLabel: "RESEARCH · 02",
+    artifact: "SOURCE NOTES / 02",
+    artifactTitle: "Follow the evidence.",
+    artifactLines: ["Compare sources", "Find what's missing", "Keep what holds up"],
   },
   {
     number: "03",
@@ -132,6 +141,9 @@ const storyBeats = [
       "The first speech is only a beginning. Listen, make your case and stay open to the idea that shifts the room.",
     note: "THE FLOOR / YOUR VOICE",
     sceneLabel: "DEBATE · 03",
+    artifact: "SPEAKING NOTES / 03",
+    artifactTitle: "Make the point land.",
+    artifactLines: ["One clear claim", "A detail that matters", "Room for response"],
   },
   {
     number: "04",
@@ -141,10 +153,13 @@ const storyBeats = [
       "Bring different perspectives into the work and turn discussion into a way forward that more people can stand behind.",
     note: "THE ROOM / A WAY FORWARD",
     sceneLabel: "RESOLUTION · 04",
+    artifact: "WORKING PAPER / 04",
+    artifactTitle: "Build the next step.",
+    artifactLines: ["Shared interests", "Language everyone owns", "A way forward"],
   },
 ];
 
-type IconName = "research" | "structure" | "voice" | "debate" | "negotiate" | "lead" | "globe" | "arrow";
+type IconName = "research" | "structure" | "voice" | "debate" | "negotiate" | "lead" | "committee" | "arrow";
 
 function Icon({ name, className }: { name: IconName; className?: string }) {
   const paths: Record<IconName, string> = {
@@ -154,7 +169,7 @@ function Icon({ name, className }: { name: IconName; className?: string }) {
     debate: "M4 5h16v11H9l-5 4V5Zm4 4h8m-8 4h5",
     negotiate: "M3 8h6l3 3-3 3-3-3H3m18-3h-6l-3 3 3 3 3-3h3m-9 0v10",
     lead: "M12 3v18m0-18 7 4-7 4M5 13h5m-5 4h8m-8 4h6",
-    globe: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-20c2.5 2.7 3.8 6 3.8 10S14.5 19.3 12 22c-2.5-2.7-3.8-6-3.8-10S9.5 4.7 12 2ZM2 12h20",
+    committee: "M3 9h18L12 4 3 9Zm2 2v8m4-8v8m6-8v8m4-8v8M3 21h18",
     arrow: "M4 12h15m-6-6 6 6-6 6",
   };
 
@@ -165,105 +180,111 @@ function Icon({ name, className }: { name: IconName; className?: string }) {
   );
 }
 
-function ProgramArtwork({ icon, number }: { icon: string; number: string }) {
-  const artworkClass = icon === "globe"
-    ? styles.programArtworkGlobe
-    : icon === "debate"
-      ? styles.programArtworkDebate
-      : styles.programArtworkLeadership;
-
+function ProgramArtwork({ image, number }: { image: string; number: string }) {
   return (
-    <div className={`${styles.programArtwork} ${artworkClass}`} aria-hidden="true">
-      <div className={styles.programArtworkObject}><span>{number}</span></div>
-      <i className={styles.programArtworkOrbitOne} />
-      <i className={styles.programArtworkOrbitTwo} />
-      <b className={styles.programArtworkSignal} />
-    </div>
+    <figure className={styles.programArtwork} aria-hidden="true">
+      <Image src={image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" className={styles.programArtworkImage} />
+      <span>{number}</span>
+    </figure>
   );
 }
 
 function ScrollytellingExperience() {
   const [activeStory, setActiveStory] = useState(0);
+  const activeStoryRef = useRef(0);
+  const runwayRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const steps = document.querySelectorAll<HTMLElement>("[data-story-index]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveStory(Number((entry.target as HTMLElement).dataset.storyIndex ?? 0));
-          }
-        }
-      },
-      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
-    );
+    const runway = runwayRef.current;
+    const frame = frameRef.current;
+    if (!runway || !frame) return;
 
-    steps.forEach((step) => observer.observe(step));
-    return () => observer.disconnect();
+    let frameRequest = 0;
+    const updateProgress = () => {
+      frameRequest = 0;
+      const bounds = runway.getBoundingClientRect();
+      const scrollDistance = Math.max(1, runway.offsetHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -bounds.top / scrollDistance));
+      const storyPosition = progress * storyBeats.length;
+      const storyIndex = Math.min(storyBeats.length - 1, Math.floor(storyPosition));
+      const drift = Math.sin(progress * Math.PI * 1.5);
+
+      frame.style.setProperty("--journey-progress", progress.toFixed(4));
+      frame.style.setProperty("--camera-scale", (1.04 + progress * 0.12).toFixed(4));
+      frame.style.setProperty("--camera-x", `${(drift * 1.8).toFixed(2)}%`);
+      frame.style.setProperty("--camera-y", `${(-1 + progress * 2.5).toFixed(2)}%`);
+
+      if (storyIndex !== activeStoryRef.current) {
+        activeStoryRef.current = storyIndex;
+        setActiveStory(storyIndex);
+      }
+    };
+    const scheduleProgress = () => {
+      if (!frameRequest) frameRequest = window.requestAnimationFrame(updateProgress);
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", scheduleProgress, { passive: true });
+    window.addEventListener("resize", scheduleProgress);
+
+    return () => {
+      window.removeEventListener("scroll", scheduleProgress);
+      window.removeEventListener("resize", scheduleProgress);
+      if (frameRequest) window.cancelAnimationFrame(frameRequest);
+    };
   }, []);
 
   const activeBeat = storyBeats[activeStory];
 
   return (
     <section className={styles.scrolly} id="journey-3d" aria-labelledby="scrolly-title">
-      <div className={[styles.container, styles.scrollyHeader].join(" ")}>
+      <div className={[styles.container, styles.experienceHeader].join(" ")} data-scroll-reveal>
         <div>
-          <p className={styles.lightEyebrow}><span>05</span> A JOURNEY IN MOTION</p>
-          <h2 id="scrolly-title">From the brief <em>to the floor.</em></h2>
+          <p className={styles.lightEyebrow}><span>05</span> INSIDE A DELEGATE&apos;S DAY</p>
+          <h2 id="scrolly-title">Ideas change <em>in the room.</em></h2>
         </div>
-        <p>Follow a delegate from the first read to the final resolution. Scroll to move through the preparation.</p>
+        <p>One issue. Four moments. Stay with the work as it moves from the page into the room.</p>
       </div>
 
-      <div className={[styles.container, styles.scrollyLayout].join(" ")}>
-        <div className={styles.sceneSticky}>
-          <div className={styles.sceneFrame} data-active-story={activeStory} aria-hidden="true">
-            <div className={styles.sceneGrid} />
-            <div className={styles.sceneCoordinates}>VIDWAN FIELD NOTES <span>·</span> {activeBeat.number} / 04</div>
-            <div className={styles.sceneCamera}>
-              <Image
-                src="/images/vidwan-stage.png"
-                alt=""
-                fill
-                sizes="100vw"
-                className={styles.sceneArtwork}
-              />
+      <div className={styles.experienceRunway} ref={runwayRef}>
+        <div className={styles.experienceSticky}>
+          <div className={styles.experienceFrame} ref={frameRef} data-active-story={activeStory} role="group" aria-label="A delegate's journey from research to resolution">
+            <div className={styles.experiencePhotoStage} aria-hidden="true">
+              <Image src="/images/vidwan-collaboration.jpg" alt="" fill sizes="100vw" className={`${styles.experiencePhoto} ${styles.experiencePhotoRoom}`} />
+              <Image src="/images/vidwan-hero-conference.jpg" alt="" fill sizes="100vw" className={`${styles.experiencePhoto} ${styles.experiencePhotoFloor}`} />
             </div>
-            <div className={styles.sceneReadout}>
+            <div className={styles.experienceShade} aria-hidden="true" />
+            <div className={styles.experienceTopline} aria-hidden="true">
+              <span>VIDWAN / FIELD NOTES</span>
               <span>{activeBeat.sceneLabel}</span>
-              <strong>{activeBeat.note}</strong>
-              <i><b style={{ width: `${(activeStory + 1) * 25}%` }} /></i>
             </div>
-            <div className={styles.sceneStoryCopy} key={activeStory} aria-hidden="true">
-              <p className={styles.storyStepIndex}><span>{activeBeat.number}</span> / 04</p>
-              <p className={styles.storyKicker}>{activeBeat.kicker}</p>
+            <div className={styles.experienceNarrative} key={activeBeat.number}>
+              <p><span>{activeBeat.number}</span> / 04 <i /> {activeBeat.kicker}</p>
               <h3>{activeBeat.title}</h3>
-              <p className={styles.storyDescription}>{activeBeat.description}</p>
-              <span className={styles.storyRule}><i /> {activeBeat.note}</span>
+              <div className={styles.experienceNarrativeBottom}>
+                <p>{activeBeat.description}</p>
+                <span>{activeBeat.note}</span>
+              </div>
             </div>
-            <div className={styles.sceneCaption}>
-              <span>SCROLL TO MOVE THROUGH THE ROOM</span>
-              <strong>0{activeStory + 1} <i>/</i> 04</strong>
+            <div className={styles.experienceBrief} key={`brief-${activeBeat.number}`} aria-hidden="true">
+              <div className={styles.experienceBriefTop}><span>{activeBeat.artifact}</span><i>↗</i></div>
+              <h4>{activeBeat.artifactTitle}</h4>
+              <div className={styles.experienceBriefLines}>
+                {activeBeat.artifactLines.map((line, index) => (
+                  <p key={line}><span>0{index + 1}</span>{line}<i /></p>
+                ))}
+              </div>
+              <div className={styles.experienceBriefFooter}><span>VIDWAN / PRACTICE</span><span>{activeBeat.number}</span></div>
             </div>
+            <div className={styles.experienceProgress} aria-hidden="true">
+              {storyBeats.map((beat, index) => <span key={beat.number} className={index <= activeStory ? styles.experienceProgressActive : ""} />)}
+            </div>
+            <div className={styles.experienceScrollHint} aria-hidden="true">KEEP SCROLLING <span>↓</span></div>
           </div>
         </div>
-
-        <div className={styles.storySteps}>
-          {storyBeats.map((beat, index) => (
-            <article
-              aria-current={activeStory === index ? "step" : undefined}
-              className={`${styles.storyStep} ${activeStory === index ? styles.storyStepActive : ""}`}
-              data-story-index={index}
-              key={beat.number}
-            >
-              <div className={styles.storyStepCopy}>
-                <p className={styles.storyStepIndex}><span>{beat.number}</span> / 04</p>
-                <p className={styles.storyKicker}>{beat.kicker}</p>
-                <h3>{beat.title}</h3>
-                <p className={styles.storyDescription}>{beat.description}</p>
-                <span className={styles.storyRule}><i /> {beat.note}</span>
-              </div>
-            </article>
-          ))}
+        <div className={styles.experienceSteps} aria-hidden="true">
+          {storyBeats.map((beat) => <div className={styles.experienceStep} key={beat.number} />)}
         </div>
       </div>
     </section>
@@ -273,10 +294,35 @@ function ScrollytellingExperience() {
 export default function HomePage() {
   const [activeStage, setActiveStage] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const siteRef = useRef<HTMLElement>(null);
   const activeJourney = journey[activeStage];
 
+  useEffect(() => {
+    const root = siteRef.current;
+    if (!root) return;
+
+    const targets = root.querySelectorAll<HTMLElement>("[data-scroll-reveal]");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+      targets.forEach((target) => target.setAttribute("data-revealed", "true"));
+      return;
+    }
+
+    root.setAttribute("data-motion-ready", "true");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute("data-revealed", "true");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+
+    targets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <main className={styles.site}>
+    <main ref={siteRef} className={styles.site}>
       <div className={styles.announcement}>
         <span className={styles.announcementDot} />
         <p>Model UN and debate begin with the work behind the speech.</p>
@@ -354,7 +400,7 @@ export default function HomePage() {
               src="/images/vidwan-hero-conference.jpg"
               alt="A student delegate addresses a Model United Nations committee from the podium"
               fill
-              priority
+              loading="eager"
               sizes="(max-width: 920px) 100vw, 52vw"
               className={styles.heroImage}
             />
@@ -376,7 +422,7 @@ export default function HomePage() {
       </div>
 
       <section className={styles.manifesto} id="about" aria-labelledby="manifesto-title">
-        <div className={[styles.container, styles.manifestoGrid].join(" ")}>
+        <div className={[styles.container, styles.manifestoGrid].join(" ")} data-scroll-reveal>
           <div className={styles.manifestoLead}>
             <p className={styles.darkEyebrow}><span>01</span> WHY VIDWAN</p>
             <h2 id="manifesto-title">The work starts <em>before</em> you speak.</h2>
@@ -387,7 +433,7 @@ export default function HomePage() {
             <a className={styles.lightTextLink} href="#method">See how the journey works <Icon name="arrow" /></a>
           </div>
         </div>
-        <div className={[styles.container, styles.principleCards].join(" ")}>
+        <div className={[styles.container, styles.principleCards].join(" ")} data-scroll-reveal>
           {[
             ["A", "Ask a better question", "Look past the headline and find the facts that shape the issue."],
             ["B", "Make your case", "Give people a clear reason to understand—and challenge—your position."],
@@ -401,14 +447,14 @@ export default function HomePage() {
       </section>
 
       <section className={styles.method} id="method" aria-labelledby="method-title">
-        <div className={[styles.container, styles.methodHead].join(" ")}>
+        <div className={[styles.container, styles.methodHead].join(" ")} data-scroll-reveal>
           <div>
             <p className={styles.eyebrow}><span className={styles.eyebrowLine} />THE VIDWAN METHOD</p>
             <h2 id="method-title">Five skills. <em>One step at a time.</em></h2>
           </div>
           <p>Start with research, then move from an initial position to speaking, negotiation and leadership.</p>
         </div>
-        <div className={[styles.container, styles.journeyCard].join(" ")}>
+        <div className={[styles.container, styles.journeyCard].join(" ")} data-active-stage={activeStage} data-scroll-reveal>
           <div className={styles.stageRail} role="group" aria-label="Five stages of the Vidwan journey">
             {journey.map((stage, index) => (
               <button
@@ -423,7 +469,6 @@ export default function HomePage() {
             ))}
           </div>
           <div className={styles.stageContent} key={activeStage}>
-            <div className={styles.stageNumber}>{activeJourney.number}</div>
             <div className={styles.stageText}>
               <p className={styles.stageKicker}>STAGE {activeJourney.number} · THE DELEGATE JOURNEY</p>
               <h3>{activeJourney.title}<br /><em>{activeJourney.subtitle}</em></h3>
@@ -433,12 +478,9 @@ export default function HomePage() {
               </div>
             </div>
             <div className={styles.stageArtwork} aria-hidden="true">
-              <div className={styles.stageOrb}><span>{activeJourney.number}</span></div>
-              <div className={[styles.orbit, styles.orbitOne].join(" ")} />
-              <div className={[styles.orbit, styles.orbitTwo].join(" ")} />
-              <div className={[styles.orbit, styles.orbitThree].join(" ")} />
+              <Image src={activeStage < 2 ? "/images/vidwan-collaboration.jpg" : "/images/vidwan-hero-conference.jpg"} alt="" fill sizes="(max-width: 640px) 100vw, 42vw" className={styles.stagePhoto} />
+              <div className={styles.stagePhotoShade} />
               <span className={styles.artLabel}>{activeJourney.title.toUpperCase()}</span>
-              <span className={styles.artCoordinate}>VIDWAN / 05</span>
             </div>
           </div>
           <div className={styles.journeyFooter}><span>Move through the stages</span><span>{activeJourney.number} <i>/</i> 05</span></div>
@@ -446,17 +488,17 @@ export default function HomePage() {
       </section>
 
       <section className={styles.programs} id="programs" aria-labelledby="programs-title">
-        <div className={[styles.container, styles.sectionHeader].join(" ")}>
+        <div className={[styles.container, styles.sectionHeader].join(" ")} data-scroll-reveal>
           <div>
             <p className={styles.darkEyebrow}><span>02</span> WHERE YOU PRACTISE</p>
             <h2 id="programs-title">Choose your <em>starting point.</em></h2>
           </div>
           <p>Model UN, debate and leadership ask different things of you. The preparation travels between them.</p>
         </div>
-        <div className={[styles.container, styles.programGrid].join(" ")}>
+        <div className={[styles.container, styles.programGrid].join(" ")} data-scroll-reveal>
           {programCards.map((program) => (
             <article className={styles.programCard} key={program.number}>
-              <ProgramArtwork icon={program.icon} number={program.number} />
+              <ProgramArtwork image={program.image} number={program.number} />
               <div className={styles.programCardTop}><span>{program.number}</span><Icon name={program.icon as IconName} /></div>
               <h3>{program.title}</h3><p>{program.text}</p><div className={styles.programTag}>{program.tag}</div>
               <Link href="/register" aria-label={"Explore " + program.title + " with Vidwan"}><Icon name="arrow" /></Link>
@@ -466,7 +508,7 @@ export default function HomePage() {
       </section>
 
       <section className={styles.skills} id="skills" aria-labelledby="skills-title">
-        <div className={[styles.container, styles.skillsLayout].join(" ")}>
+        <div className={[styles.container, styles.skillsLayout].join(" ")} data-scroll-reveal>
           <div className={styles.skillsIntro}>
             <p className={styles.lightEyebrow}><span>03</span> WHAT YOU BUILD</p>
             <h2 id="skills-title">What you learn <em>travels with you.</em></h2>
@@ -485,7 +527,7 @@ export default function HomePage() {
       </section>
 
       <section className={styles.feature} aria-labelledby="feature-title">
-        <div className={[styles.container, styles.featureLayout].join(" ")}>
+        <div className={[styles.container, styles.featureLayout].join(" ")} data-scroll-reveal>
           <figure className={styles.featureVisual}>
             <Image
               src="/images/vidwan-collaboration.jpg"
@@ -515,7 +557,7 @@ export default function HomePage() {
       <ScrollytellingExperience />
 
       <section className={styles.faq} id="faq" aria-labelledby="faq-title">
-        <div className={[styles.container, styles.faqLayout].join(" ")}>
+        <div className={[styles.container, styles.faqLayout].join(" ")} data-scroll-reveal>
           <div className={styles.faqIntro}>
             <p className={styles.eyebrow}><span className={styles.eyebrowLine} />GOOD QUESTIONS</p>
             <h2 id="faq-title">Before you <em>step in.</em></h2>
@@ -534,7 +576,7 @@ export default function HomePage() {
       </section>
 
       <section className={styles.finalCta} aria-labelledby="cta-title">
-        <div className={[styles.container, styles.finalCtaInner].join(" ")}>
+        <div className={[styles.container, styles.finalCtaInner].join(" ")} data-scroll-reveal>
           <p className={styles.lightEyebrow}><span>YOUR NEXT STEP</span></p>
           <h2 id="cta-title">Your next speech<br /><em>starts here.</em></h2>
           <p>Pick a starting point, build your first position and practise how to explain it.</p>
