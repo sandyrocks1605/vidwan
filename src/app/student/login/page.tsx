@@ -184,7 +184,7 @@ export default function StudentLoginPage() {
           {error && <p role="alert" className="text-sm text-red-200">{error}</p>}
           <button disabled={busy} className="min-h-12 w-full rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-[0.16em] text-[#071321] transition hover:bg-[#2387ff] hover:text-white disabled:opacity-60">{busy ? "Logging in..." : "Log in →"}</button>
         </form>
-        <p className="mt-7 text-center text-sm text-white/40">Student accounts are created by your Vidwan teacher. Need help? <Link href="/" className="text-[#78b8ff] hover:text-white">Contact Vidwan</Link></p>
+        <p className="mt-7 text-center text-sm text-white/40">Student accounts are created by your Vidwan teacher. Need help? <Link href="/" className="inline-flex min-h-11 items-center px-1 text-[#78b8ff] hover:text-white">Contact Vidwan</Link></p>
       </section>
     </main>
   );

@@ -51,7 +51,7 @@
   background: rgb(9 22 38 / 0.78);
 }
 
-.tabs button { min-height: 38px; }
+.tabs button { min-height: 44px; }
 .tabs button[aria-pressed="true"] { background: linear-gradient(135deg, #dceaff, #a8cbff); color: #10203b; box-shadow: 0 4px 16px rgb(88 143 232 / 0.18); }
 .tabs button[aria-pressed="true"] span { color: rgb(16 32 59 / 0.65); }
 

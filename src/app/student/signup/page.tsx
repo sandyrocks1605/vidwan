@@ -48,7 +48,7 @@ export default function StudentSignupPage() {
           Vidwan teachers?{" "}
           <Link
             href="/teacher/login"
-            className="text-[#78b8ff] hover:text-white"
+            className="inline-flex min-h-11 items-center px-1 text-[#78b8ff] hover:text-white"
           >
             Teacher login
           </Link>

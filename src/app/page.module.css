@@ -311,6 +311,7 @@
 .lightTextLink,
 .darkTextLink {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   gap: 9px;
   color: var(--ink);
@@ -974,8 +975,8 @@
   right: 25px;
   bottom: 21px;
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   place-items: center;
   border: 1px solid rgb(204 222 247 / 0.2);
   border-radius: 50%;
@@ -1339,6 +1340,9 @@
 }
 
 .ctaLogin {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   color: rgb(255 255 255 / 0.72);
   font-size: 10px;
   font-weight: 620;
@@ -1453,7 +1457,7 @@
 .staffAccessLink {
   display: inline-flex;
   align-items: center;
-  min-height: 24px;
+  min-height: 44px;
   padding: 0 9px;
   border: 1px solid rgb(255 255 255 / 0.08);
   border-radius: 999px;
@@ -3591,4 +3595,510 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sceneStoryCopy { animation: none !important; }
+}
+
+@media (max-width: 700px) {
+  .announcement { height: 44px; }
+  .announcement a { min-height: 44px; }
+}
+
+@media (max-width: 640px) {
+  .footerLinks a { display: inline-flex; min-height: 44px; align-items: center; }
+}
+
+/* Vidwan's visual system: editorial, specific, and quiet enough to let the work lead. */
+.site {
+  --ink: #f1eee8;
+  --ink-soft: #c6c0b6;
+  --paper: #101315;
+  --paper-bright: #15191b;
+  --blue: #c59a6c;
+  --blue-bright: #e1bd91;
+  --muted-ink: #99958e;
+  background: #0a0d0f;
+  color: var(--ink);
+}
+
+.container,
+.wordBandInner { width: min(1320px, calc(100% - 72px)); }
+
+.announcement {
+  min-height: 38px;
+  height: auto;
+  border-bottom: 1px solid rgb(230 224 213 / 0.08);
+  background: #101315;
+  color: #c8c1b5;
+  font-size: 10px;
+  letter-spacing: 0.015em;
+}
+
+.announcementDot { background: #c59a6c; box-shadow: none; }
+.announcement a { color: #e0bd93; }
+.header { background: rgb(10 13 15 / 0.95); border-bottom-color: rgb(230 224 213 / 0.1); }
+.brand { min-height: 44px; }
+.brandWords small { color: #969188; }
+.desktopLinks a,
+.loginLink { color: #c0bbb1; }
+.desktopLinks a:hover,
+.loginLink:hover { color: var(--blue-bright); }
+.navCta,
+.primaryButton,
+.ctaButton { border-radius: 3px; }
+.navCta { background: #d4ae80; color: #171512; }
+.navCta:hover,
+.primaryButton:hover,
+.ctaButton:hover { background: #e4c39c; color: #171512; box-shadow: none; }
+.menuButton { border-color: rgb(230 224 213 / 0.28); }
+.menuButton span { background: #e8e1d6; }
+.mobileMenu { background: rgb(10 13 15 / 0.985); border-bottom-color: rgb(230 224 213 / 0.12); }
+.mobileMenu a { color: var(--ink); border-bottom-color: rgb(230 224 213 / 0.1); }
+.mobileMenuCta { background: #d4ae80; color: #171512 !important; }
+
+.hero {
+  padding: 56px 0 76px;
+  background: #0a0d0f;
+}
+.heroHalo,
+.imageOrbit { display: none; }
+.heroGrid {
+  width: min(1320px, calc(100% - 72px));
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  align-items: center;
+  gap: clamp(36px, 6vw, 88px);
+}
+.heroCopy { max-width: 600px; padding: 0; animation: none; }
+.eyebrow { color: #d3b48f; letter-spacing: 0.14em; }
+.eyebrowLine { background: #c59a6c; }
+.heroTitle {
+  max-width: 630px;
+  margin-top: 27px;
+  font-size: clamp(4.2rem, 7vw, 7rem);
+  font-weight: 560;
+  line-height: 0.91;
+  letter-spacing: -0.085em;
+}
+.heroTitle em,
+.manifesto h2 em,
+.methodHead h2 em,
+.sectionHeader h2 em,
+.skillsIntro h2 em,
+.featureCopy h2 em,
+.faqIntro h2 em,
+.finalCta h2 em,
+.scrollyHeader h2 em { color: #d1a77a; }
+.heroText { max-width: 450px; color: #c0bbb1; line-height: 1.72; }
+.heroActions { gap: 18px; }
+.primaryButton,
+.ctaButton { background: #d4ae80; color: #171512; }
+.textButton { color: #ddd7ce; }
+.textButton span { color: #d1a77a; }
+.heroPrinciples { color: #b0aaa0; letter-spacing: 0.12em; }
+.heroPrinciples i { background: #c59a6c; }
+.heroVisual {
+  height: clamp(430px, 48vw, 640px);
+  min-height: 0;
+  overflow: hidden;
+  border: 0;
+  border-left: 1px solid rgb(231 218 199 / 0.22);
+  border-radius: 0;
+  background: #111517;
+  box-shadow: none;
+  animation: none;
+}
+.heroImage {
+  object-fit: cover;
+  object-position: 65% center;
+  filter: saturate(0.76) contrast(0.98);
+  transform: none;
+  animation: none;
+}
+.heroShade { display: block; background: linear-gradient(180deg, transparent 46%, rgb(5 7 8 / 0.68)); }
+.photoTopline { color: rgb(246 240 229 / 0.75); }
+.photoTopline span:last-child { color: #e2bf92; }
+.photoCaption span { color: #e2bf92; }
+.photoCaption strong { font-family: Georgia, "Times New Roman", serif; font-weight: 450; letter-spacing: -0.025em; }
+.heroIndex { display: none; }
+
+.wordBand {
+  border-block: 1px solid rgb(230 224 213 / 0.1);
+  padding-block: 18px;
+  background: #121618;
+  color: #e0d8cc;
+}
+.wordBandInner span { color: #c9b89f; font-size: 8px; letter-spacing: 0.16em; }
+.wordBandInner i { background: #9c7958; }
+
+.manifesto,
+.skills { background: #101315; }
+.manifesto { background-image: none; }
+.method,
+.feature { background: #0b0e10; }
+.programs,
+.faq { background: #15191b; }
+.manifesto h2,
+.methodHead h2,
+.sectionHeader h2,
+.skillsIntro h2,
+.featureCopy h2,
+.faqIntro h2 { color: #f1eee8; }
+.darkEyebrow,
+.lightEyebrow { color: #d1aa7e; }
+.darkEyebrow span,
+.lightEyebrow span:first-child { color: #b09a7f; }
+.manifesto h2 em,
+.methodHead h2 em,
+.sectionHeader h2 em,
+.skillsIntro h2 em,
+.featureCopy h2 em,
+.faqIntro h2 em { font-weight: 450; }
+.principleCards { border-color: rgb(230 224 213 / 0.16); }
+.principleCard + .principleCard { border-left-color: rgb(230 224 213 / 0.12); }
+.principleCard > span:first-child { color: #d1a77a; }
+.lightTextLink svg,
+.darkTextLink svg { color: #d1a77a; }
+
+.journeyCard {
+  border-color: rgb(230 224 213 / 0.14);
+  border-radius: 3px;
+  background: #121618;
+  box-shadow: none;
+}
+.stageRail,
+.journeyFooter { border-color: rgb(230 224 213 / 0.13); }
+.stageButtonActive > span,
+.stageKicker,
+.stageActions b { color: #d2aa7e; }
+.stageButtonActive i { background: #c59a6c; }
+.stageArtwork {
+  border-color: rgb(230 224 213 / 0.14);
+  border-radius: 2px;
+  background: #0f1315;
+}
+.stageOrb {
+  border-color: rgb(210 170 126 / 0.68);
+  background: transparent;
+  box-shadow: none;
+  color: #d7b38c;
+}
+.orbit { border-color: rgb(210 170 126 / 0.23); }
+.artLabel,
+.artCoordinate { color: #b8aa97; }
+
+.programCard {
+  min-height: 350px;
+  border-color: rgb(230 224 213 / 0.13);
+  border-radius: 3px;
+  background: #101416;
+  box-shadow: none;
+}
+.programCard:hover {
+  transform: translateY(-3px);
+  border-color: rgb(210 170 126 / 0.38);
+  box-shadow: none;
+}
+.programArtwork {
+  height: 145px;
+  margin: -28px -28px 23px;
+  overflow: hidden;
+  border-bottom: 1px solid rgb(230 224 213 / 0.1);
+  background: #14191b;
+  perspective: none;
+}
+.programArtwork::before {
+  right: 20%;
+  bottom: 22px;
+  left: 20%;
+  background: #44433f;
+}
+.programArtworkObject {
+  width: 66px;
+  border-color: rgb(212 177 137 / 0.58);
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  animation: none;
+}
+.programArtworkObject::before,
+.programArtworkObject::after { border-color: rgb(212 177 137 / 0.35); }
+.programArtworkObject > span { color: #e0c5a4; text-shadow: none; }
+.programArtworkOrbitOne,
+.programArtworkOrbitTwo { border-color: rgb(212 177 137 / 0.2); }
+.programArtworkSignal { background: #e0c19b; box-shadow: none; }
+.programArtworkDebate .programArtworkObject {
+  width: 90px;
+  height: 58px;
+  border: 1px solid rgb(212 177 137 / 0.52);
+  border-radius: 2px;
+  background: #1a1b19;
+  box-shadow: 13px 9px 0 -3px #101315, 13px 9px 0 -2px rgb(212 177 137 / 0.38);
+  transform: translate(-50%, -50%);
+}
+.programArtworkDebate .programArtworkObject::before,
+.programArtworkDebate .programArtworkObject::after { display: none; }
+.programArtworkLeadership .programArtworkObject {
+  width: 54px;
+  height: 69px;
+  border: 1px solid rgb(212 177 137 / 0.58);
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(180deg, #1a1b19, #111516);
+  box-shadow: none;
+  transform: translate(-50%, -50%);
+}
+.programArtworkLeadership .programArtworkOrbitOne,
+.programArtworkLeadership .programArtworkOrbitTwo { display: none; }
+.programCardTop { color: #d4b18b; }
+.programCardTop svg { color: #d4b18b; }
+.programCard h3 { margin-top: 16px; color: var(--ink); }
+.programCard p { color: #b8b4ac; }
+.programTag { color: #d5b18a; }
+.programCard > a {
+  border-color: rgb(230 224 213 / 0.22);
+  border-radius: 2px;
+  color: #e8e1d6;
+}
+.programCard > a:hover { background: #d4ae80; color: #151515; }
+
+.skills { background-image: none; }
+.skillGrid { border-color: rgb(230 224 213 / 0.14); }
+.skillCard {
+  border-color: rgb(230 224 213 / 0.14);
+  background: #121719;
+}
+.skillCard:hover { background: #1a1d1e; }
+.skillCardTop,
+.featureList li span { color: #d2aa7e; }
+.outlineButton { border-radius: 2px; border-color: rgb(230 224 213 / 0.36); }
+.featureVisual {
+  border: 1px solid rgb(230 224 213 / 0.12);
+  border-radius: 2px;
+  box-shadow: none;
+}
+.featureStamp { display: none; }
+.featureImage { filter: saturate(0.78); }
+.methodHead p:last-child,
+.sectionHeader > p,
+.skillsIntro > p:not(.lightEyebrow),
+.featureCopy > p:not(.darkEyebrow),
+.faqIntro > p:not(.eyebrow),
+.faqItem > p { color: #b6b1a9; }
+.faqItem,
+.faqList { border-color: rgb(230 224 213 / 0.14); }
+.faqItem summary { color: #eee9e1; }
+.faqItem summary i,
+.faqItem summary b { color: #d0a575; }
+
+.scrolly {
+  padding-top: 116px;
+  background: #090c0e;
+}
+.scrolly::before { display: none; }
+.scrollyHeader h2 { color: #f1eee8; }
+.scrollyHeader h2 em { color: #d1a77a; }
+.scrollyHeader > p { color: #b8b2a9; }
+.sceneFrame {
+  border-color: rgb(230 224 213 / 0.16);
+  background: #0b0e10;
+  box-shadow: none;
+}
+.sceneStars { display: none; }
+.sceneGrid { opacity: 0.12; }
+.sceneCoordinates { color: #d0b18e; }
+.sceneCoordinates span { color: #d0a575; }
+.sceneCoordinates::after { background: #d0a575; box-shadow: none; }
+.sceneArtwork { filter: saturate(0.78); }
+.sceneReadout > span,
+.sceneReadout > i > b { color: #d1a77a; }
+.sceneReadout > i > b { background: #c59a6c; }
+.sceneCaption { border-top-color: rgb(230 224 213 / 0.2); }
+.sceneCaption > span,
+.sceneCaption > strong { color: #d8d1c6; }
+.sceneCaption > strong > i,
+.storyStepIndex span { color: #d4af86; }
+.storyKicker { color: #d5b28d; }
+.storyStep h3,
+.sceneStoryCopy h3 { color: #f1eee8; }
+.storyDescription,
+.sceneStoryCopy .storyDescription { color: #d0cbc2; }
+.storyRule,
+.sceneStoryCopy .storyRule { color: #eee4d6; }
+.storyRule i,
+.sceneStoryCopy .storyRule i { background: #d0a575; box-shadow: none; }
+.sceneStoryCopy {
+  border-left: 1px solid rgb(210 170 126 / 0.55);
+  background: linear-gradient(90deg, rgb(5 7 8 / 0.88), rgb(5 7 8 / 0.5) 76%, transparent);
+  padding-left: 22px;
+}
+
+.finalCta {
+  background: #121618;
+  border-block: 1px solid rgb(230 224 213 / 0.1);
+}
+.finalCta h2 em { color: #d1a77a; }
+.finalCtaInner > p:not(.lightEyebrow) { color: #c2bdb4; }
+.ctaOrbit { display: none; }
+.ctaLogin { color: #d2cbc0; }
+.footer { background: #080b0d; }
+.footerLinks a:hover { color: #d3b18b; }
+.staffAccessLink { border-radius: 2px; color: rgb(255 255 255 / 0.4); }
+.staffAccessLink:hover,
+.staffAccessLink:focus-visible { border-color: rgb(210 170 126 / 0.4); color: #d7b48f; }
+
+@media (max-width: 920px) {
+  .heroGrid {
+    width: min(100% - 48px, 720px);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .hero { padding-block: 42px 58px; }
+  .heroCopy { padding: 0; }
+  .heroTitle { font-size: clamp(4rem, 11vw, 6.4rem); }
+  .heroVisual {
+    width: 100%;
+    height: clamp(320px, 58vw, 500px);
+    margin: 0;
+    border-left: 0;
+    border-top: 1px solid rgb(231 218 199 / 0.22);
+  }
+  .manifesto h2,
+  .methodHead h2,
+  .sectionHeader h2,
+  .skillsIntro h2,
+  .featureCopy h2,
+  .faqIntro h2 { max-width: 760px; }
+  .programCard,
+  .programCard:first-child,
+  .programCard:nth-child(2),
+  .programCard:nth-child(3) { min-height: 360px; }
+}
+
+@media (max-width: 640px) {
+  .container,
+  .wordBandInner { width: calc(100% - 36px); }
+  .announcement { min-height: 44px; justify-content: flex-start; gap: 7px; padding-inline: 12px; font-size: 8px; }
+  .announcement a { min-height: 44px; margin-left: auto; font-size: 8px; }
+  .nav { width: calc(100% - 28px); }
+  .brand { min-height: 44px; }
+  .brandLogo { width: 39px; height: 39px; }
+  .hero { padding-block: 34px 48px; }
+  .heroGrid { width: calc(100% - 36px); gap: 25px; }
+  .heroTitle { margin-top: 20px; font-size: clamp(3rem, 13vw, 4.4rem); line-height: 0.96; }
+  .heroText { margin-top: 17px; font-size: 14px; line-height: 1.65; }
+  .heroActions { align-items: flex-start; flex-direction: column; gap: 8px; margin-top: 20px; }
+  .primaryButton,
+  .ctaButton { min-height: 50px; }
+  .heroPrinciples { flex-wrap: wrap; gap: 9px; margin-top: 19px; font-size: 7px; }
+  .heroVisual { height: clamp(270px, 78vw, 390px); }
+  .heroImage { object-position: 69% center; }
+  .photoTopline { top: 13px; right: 13px; left: 13px; font-size: 6px; }
+  .photoCaption { right: 16px; bottom: 16px; left: 16px; width: min(75%, 280px); }
+  .photoCaption span { font-size: 6px; }
+  .photoCaption strong { font-size: 22px; }
+  .wordBand { padding-block: 15px; }
+  .wordBandInner { gap: 20px; }
+  .wordBandInner span { font-size: 7px; }
+  .manifesto,
+  .method,
+  .programs,
+  .skills,
+  .feature,
+  .faq { padding-block: 68px; }
+  .manifesto h2,
+  .methodHead h2,
+  .sectionHeader h2,
+  .skillsIntro h2,
+  .featureCopy h2,
+  .faqIntro h2 { font-size: clamp(2.4rem, 10vw, 3.5rem); line-height: 1.02; }
+  .manifestoGrid,
+  .methodHead,
+  .sectionHeader,
+  .skillsLayout,
+  .featureLayout,
+  .faqLayout { gap: 23px; }
+  .principleCards { margin-top: 28px; }
+  .principleCard { min-height: 108px; }
+  .journeyCard { margin-top: 28px; }
+  .stageRail { padding-inline: 12px; }
+  .stageButton { min-height: 64px; }
+  .stageContent { grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding: 25px 15px 18px; }
+  .stageNumber { font-size: 39px; }
+  .stageText h3 { font-size: clamp(30px, 9vw, 39px); }
+  .stageArtwork { min-height: 220px; }
+  .journeyFooter { padding-inline: 15px; }
+  .programGrid { gap: 12px; margin-top: 32px; }
+  .programCard,
+  .programCard:first-child,
+  .programCard:nth-child(2),
+  .programCard:nth-child(3) { min-height: 0; padding: 22px; }
+  .programArtwork { height: 126px; margin: -22px -22px 18px; }
+  .programCard h3 { margin-top: 15px; font-size: 23px; }
+  .programCard p { margin-top: 9px; padding-bottom: 45px; font-size: 12px; }
+  .programTag { padding-top: 14px; font-size: 7px; }
+  .programCard > a { right: 16px; bottom: 15px; }
+  .skillGrid { grid-template-columns: 1fr 1fr; }
+  .skillCard { min-height: 152px; padding: 15px 13px; }
+  .skillCard h3 { margin-top: 20px; font-size: 13px; }
+  .skillCard p { font-size: 10px; }
+  .featureVisual { min-height: 300px; }
+  .featureList { gap: 13px; }
+  .featureList li { align-items: flex-start; line-height: 1.55; }
+  .scrolly { padding: 72px 0 0; }
+  .scrollyHeader { margin-bottom: 27px; }
+  .scrollyHeader h2 { font-size: clamp(2.7rem, 10vw, 3.7rem); }
+  .scrollyHeader > p { font-size: 12px; }
+  .sceneSticky { top: 67px; height: 50svh; min-height: 310px; margin-bottom: -15svh; }
+  .sceneFrame { min-height: 0; }
+  .sceneCamera { inset: 0; }
+  .sceneArtwork,
+  .sceneFrame[data-active-story="1"] .sceneArtwork,
+  .sceneFrame[data-active-story="2"] .sceneArtwork,
+  .sceneFrame[data-active-story="3"] .sceneArtwork { transform: scale(1.18); filter: saturate(0.72); }
+  .sceneReadout { top: 13px; right: 15px; width: min(135px, 42vw); gap: 5px; }
+  .sceneReadout > span { font-size: 6px; }
+  .sceneReadout > strong { font-size: 8px; }
+  .sceneCoordinates { top: 14px; left: 15px; max-width: 38%; font-size: 6px; }
+  .sceneCoordinates::after { display: none; }
+  .sceneCaption { display: none; }
+  .sceneStoryCopy {
+    top: clamp(78px, 10vh, 92px);
+    left: 15px;
+    width: min(82%, 330px);
+    padding: 9px 12px 12px 13px;
+    background: linear-gradient(90deg, rgb(5 7 8 / 0.9), rgb(5 7 8 / 0.52) 86%, transparent);
+  }
+  .sceneStoryCopy .storyStepIndex { margin-bottom: 12px; }
+  .sceneStoryCopy .storyKicker { font-size: 7px; }
+  .sceneStoryCopy h3 { margin-top: 9px; font-size: clamp(26px, 7.4vw, 34px); line-height: 1; }
+  .sceneStoryCopy .storyDescription { margin-top: 10px; font-size: 11px; line-height: 1.5; }
+  .sceneStoryCopy .storyRule { margin-top: 12px; font-size: 6px; }
+  .storySteps { width: calc(100% - 36px); }
+  .storyStep,
+  .storyStep:nth-child(even),
+  .storyStep.storyStepActive,
+  .storyStep:nth-child(even).storyStepActive { min-height: 65svh; }
+  .faqItem summary { min-height: 68px; gap: 12px; font-size: 12px; }
+  .faqItem summary > span { gap: 10px; }
+  .faqItem > p { margin-inline: 26px; }
+  .finalCta { padding-block: 72px; }
+  .finalCta h2 { font-size: clamp(2.8rem, 11vw, 4rem); line-height: 1.04; }
+  .ctaActions { align-items: stretch; flex-direction: column; gap: 9px; }
+  .ctaActions > * { justify-content: center; }
+  .footerMain { gap: 18px; }
+  .footerLinks { justify-content: flex-start; gap: 5px 16px; }
+  .footerBottom { align-items: flex-start; flex-wrap: wrap; font-size: 7px; }
+}
+
+@media (max-width: 360px) {
+  .container,
+  .wordBandInner,
+  .heroGrid { width: calc(100% - 28px); }
+  .announcement { padding-inline: 9px; gap: 6px; }
+  .announcement p { max-width: 168px; line-height: 1.2; }
+  .announcement a { font-size: 7px; }
+  .nav { width: calc(100% - 22px); }
+  .heroTitle { font-size: clamp(2.8rem, 13vw, 3.6rem); }
+  .heroPrinciples { gap: 7px; letter-spacing: 0.08em; }
+  .skillCard { padding-inline: 10px; }
+  .sceneStoryCopy { width: calc(100% - 30px); }
+  .sceneStoryCopy h3 { font-size: 27px; }
+  .sceneStoryCopy .storyDescription { font-size: 10px; }
 }

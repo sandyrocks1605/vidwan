@@ -492,6 +492,7 @@ function StudentShell({
           <Link
             href="/student/dashboard"
             aria-label="Vidwan student dashboard"
+            className="inline-flex min-h-11 min-w-11 items-center"
           >
             <Image
               src="/images/vidwan-logo.png"
@@ -502,24 +503,24 @@ function StudentShell({
             />
           </Link>
 
-          <div className="flex gap-4 text-xs text-white/50">
+          <div role="group" aria-label="Student pages" className="flex gap-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/50 sm:gap-2 sm:text-xs sm:normal-case sm:tracking-normal">
             <Link
               href="/student/dashboard"
-              className="transition hover:text-white"
+              className="inline-flex min-h-11 items-center rounded-full border border-white/10 px-2.5 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white sm:px-3"
             >
               Dashboard
             </Link>
 
             <Link
               href="/student/meetings"
-              className="transition hover:text-white"
+              className="inline-flex min-h-11 items-center rounded-full border border-white/10 px-2.5 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white sm:px-3"
             >
               Meetings
             </Link>
 
             <Link
               href="/student/profile"
-              className="transition hover:text-white"
+              className="inline-flex min-h-11 items-center rounded-full border border-white/10 px-2.5 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white sm:px-3"
             >
               Profile
             </Link>

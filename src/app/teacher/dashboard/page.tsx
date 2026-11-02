@@ -286,7 +286,7 @@ export default function TeacherDashboardPage() {
         <button onClick={logOut} className="min-h-11 self-start rounded-full border border-white/15 px-5 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/65 transition hover:border-[#2387ff]/50 hover:text-white">Log out</button>
       </header>
 
-      <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 lg:grid-cols-4">
         <Stat label="Total registrations" value={totalCount} />
         <Stat label="Unread" value={unreadCount} />
         <Stat label="Archived" value={archivedCount} />
@@ -339,12 +339,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="relative mx-auto w-full max-w-7xl">
 
         {/* Top bar */}
-        <nav className="flex flex-col gap-5 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <nav aria-label="Teacher workspace navigation" className="flex flex-col gap-5 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
 
           <Link
             href="/"
             aria-label="Vidwan home"
-            className="flex items-center"
+            className="inline-flex min-h-11 min-w-11 items-center"
           >
             <Image
               src="/images/vidwan-logo.png"
@@ -356,31 +356,31 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Teacher navigation */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div role="group" aria-label="Teacher workspace links" className="flex w-full flex-nowrap items-center gap-2 overflow-x-auto overflow-y-hidden pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:w-auto sm:flex-wrap sm:overflow-visible sm:pb-0">
             <Link
               href="/teacher/dashboard"
-              className="rounded-full bg-[#2387ff]/15 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8bc3ff] transition hover:bg-[#2387ff]/25"
+              className="min-h-11 shrink-0 rounded-full bg-[#2387ff]/15 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8bc3ff] transition hover:bg-[#2387ff]/25"
             >
               Dashboard
             </Link>
 
             <Link
               href="/teacher/students"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+              className="min-h-11 shrink-0 rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
             >
               Students
             </Link>
 
             <Link
               href="/teacher/meetings"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+              className="min-h-11 shrink-0 rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
             >
               Meetings
             </Link>
 
             <Link
               href="/teacher/announcements"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+              className="min-h-11 shrink-0 rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
             >
               Announcements
             </Link>
@@ -408,7 +408,7 @@ function Stat({ label, value }: { label: string; value: number }) {
 }
 
 function TabButton({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
-  return <button onClick={onClick} className={`rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] transition ${active ? "bg-[#2387ff]/20 text-[#8bc3ff]" : "text-white/40 hover:bg-white/[0.05] hover:text-white"}`}>{children}</button>;
+  return <button onClick={onClick} className={`min-h-11 rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] transition ${active ? "bg-[#2387ff]/20 text-[#8bc3ff]" : "text-white/40 hover:bg-white/[0.05] hover:text-white"}`}>{children}</button>;
 }
 
 function RegistrationRow({ registration, tab, onView, onStatusChange, onDelete, busy }: { registration: Registration; tab: Tab; onView: () => void; onStatusChange: () => void; onDelete: () => void; busy: boolean }) {

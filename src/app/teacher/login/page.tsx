@@ -241,7 +241,7 @@ export default function TeacherLoginPage() {
         <Link
           href="/"
           aria-label="Vidwan home"
-          className="group flex items-center gap-3"
+          className="group flex min-h-11 min-w-11 items-center gap-3"
         >
           <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] transition duration-500 group-hover:border-[#2387ff]/50 group-hover:bg-[#2387ff]/10">
             <Image
@@ -260,7 +260,7 @@ export default function TeacherLoginPage() {
 
         <Link
           href="/"
-          className="text-[9px] font-medium uppercase tracking-[0.22em] text-white/35 transition hover:text-white sm:text-[10px]"
+          className="inline-flex min-h-11 items-center text-[9px] font-medium uppercase tracking-[0.22em] text-white/50 transition hover:text-white sm:text-[10px]"
         >
           ← Back to Vidwan
         </Link>

@@ -420,7 +420,7 @@ export default function AdminDashboardPage() {
 
       {tab === "overview" && (
         <section className="mt-8">
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
             <Stat label="Students" value={stats?.totalStudents ?? 0} detail={`${stats?.activeStudents ?? 0} active · ${stats?.inactiveStudents ?? 0} inactive`} />
             <Stat label="Teachers" value={stats?.totalTeachers ?? 0} detail={`${stats?.activeTeachers ?? 0} active · ${stats?.inactiveTeachers ?? 0} inactive`} />
             <Stat label="Upcoming meetings" value={stats?.upcomingMeetings ?? 0} detail="Scheduled from today onward" />
@@ -609,7 +609,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(700px_circle_at_80%_15%,rgba(35,135,255,0.14),transparent_55%)]" />
 
       <div className={`relative mx-auto w-full max-w-7xl ${styles.workspace}`}>
-        <nav className={`${styles.topbar} flex flex-col gap-5 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6`}>
+        <nav aria-label="Owner workspace navigation" className={`${styles.topbar} flex flex-col gap-5 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6`}>
           <Link href="/" aria-label="Vidwan home" className={`${styles.brand} flex items-center gap-3`}>
             <Image src="/images/vidwan-logo.png" alt="Vidwan" width={128} height={128} className="h-10 w-10 object-contain" />
             <span className="flex flex-col gap-1">
@@ -618,9 +618,9 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             </span>
           </Link>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Link href="/teacher/meetings" className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white">Meetings</Link>
-            <Link href="/teacher/announcements" className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white">Announcements</Link>
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            <Link href="/teacher/meetings" className="inline-flex min-h-11 items-center rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white">Meetings</Link>
+            <Link href="/teacher/announcements" className="inline-flex min-h-11 items-center rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white">Announcements</Link>
           </div>
 
           <span className="hidden text-right text-[9px] uppercase tracking-[0.2em] text-white/35 sm:block sm:text-[10px] sm:tracking-[0.28em]">
@@ -649,7 +649,7 @@ function Stat({ label, value, detail }: { label: string; value: number; detail: 
 }
 
 function TabButton({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
-  return <button type="button" aria-pressed={active} onClick={onClick} className={`min-h-10 rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78b8ff] ${active ? "bg-[#2387ff]/20 text-[#8bc3ff]" : "text-white/50 hover:bg-white/[0.05] hover:text-white"}`}>{children}</button>;
+  return <button type="button" aria-pressed={active} onClick={onClick} className={`min-h-11 rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78b8ff] ${active ? "bg-[#2387ff]/20 text-[#8bc3ff]" : "text-white/50 hover:bg-white/[0.05] hover:text-white"}`}>{children}</button>;
 }
 
 function StatusPill({ status }: { status: string }) {

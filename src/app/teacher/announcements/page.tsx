@@ -296,12 +296,12 @@ export default function TeacherAnnouncementsPage() {
       <div className="relative mx-auto w-full max-w-7xl">
 
         {/* Navigation */}
-        <nav className="flex flex-col gap-5 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <nav aria-label="Teacher workspace navigation" className="flex flex-col gap-5 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
 
           <Link
             href="/"
             aria-label="Vidwan home"
-            className="flex items-center"
+            className="inline-flex min-h-11 min-w-11 items-center"
           >
             <Image
               src="/images/vidwan-logo.png"
@@ -312,11 +312,11 @@ export default function TeacherAnnouncementsPage() {
             />
           </Link>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full flex-nowrap items-center gap-2 overflow-x-auto overflow-y-hidden pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:w-auto sm:flex-wrap sm:overflow-visible sm:pb-0">
             {isAdmin ? (
               <Link
                 href="/admin/dashboard"
-                className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+                className="min-h-11 shrink-0 rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
               >
                 Owner dashboard
               </Link>
@@ -324,14 +324,14 @@ export default function TeacherAnnouncementsPage() {
               <>
                 <Link
                   href="/teacher/dashboard"
-                  className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+                  className="min-h-11 shrink-0 rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
                 >
                   Dashboard
                 </Link>
 
                 <Link
                   href="/teacher/students"
-                  className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+                  className="min-h-11 shrink-0 rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
                 >
                   Students
                 </Link>
@@ -340,14 +340,14 @@ export default function TeacherAnnouncementsPage() {
 
             <Link
               href="/teacher/meetings"
-              className="rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
+              className="min-h-11 shrink-0 rounded-full border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50 transition hover:border-[#2387ff]/40 hover:bg-[#2387ff]/10 hover:text-white"
             >
               Meetings
             </Link>
 
             <Link
               href="/teacher/announcements"
-              className="rounded-full bg-[#2387ff]/15 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8bc3ff] transition hover:bg-[#2387ff]/25"
+              className="min-h-11 shrink-0 rounded-full bg-[#2387ff]/15 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8bc3ff] transition hover:bg-[#2387ff]/25"
             >
               Announcements
             </Link>
@@ -355,7 +355,7 @@ export default function TeacherAnnouncementsPage() {
 
           <button
             onClick={logOut}
-            className="self-start rounded-full border border-white/15 px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/55 transition hover:border-[#2387ff]/50 hover:text-white sm:self-auto"
+            className="min-h-11 self-start rounded-full border border-white/15 px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/55 transition hover:border-[#2387ff]/50 hover:text-white sm:self-auto"
           >
             Log out
           </button>

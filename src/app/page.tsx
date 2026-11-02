@@ -209,15 +209,14 @@ function ScrollytellingExperience() {
       <div className={[styles.container, styles.scrollyHeader].join(" ")}>
         <div>
           <p className={styles.lightEyebrow}><span>05</span> A JOURNEY IN MOTION</p>
-          <h2 id="scrolly-title">One idea can change <em>the room.</em></h2>
+          <h2 id="scrolly-title">From the brief <em>to the floor.</em></h2>
         </div>
-        <p>Follow the path from first question to shared progress. Scroll to move through the story.</p>
+        <p>Follow a delegate from the first read to the final resolution. Scroll to move through the preparation.</p>
       </div>
 
       <div className={[styles.container, styles.scrollyLayout].join(" ")}>
         <div className={styles.sceneSticky}>
           <div className={styles.sceneFrame} data-active-story={activeStory} aria-hidden="true">
-            <div className={styles.sceneStars} />
             <div className={styles.sceneGrid} />
             <div className={styles.sceneCoordinates}>VIDWAN FIELD NOTES <span>·</span> {activeBeat.number} / 04</div>
             <div className={styles.sceneCamera}>
@@ -280,8 +279,8 @@ export default function HomePage() {
     <main className={styles.site}>
       <div className={styles.announcement}>
         <span className={styles.announcementDot} />
-        <p>Ideas worth hearing deserve a voice prepared to lead.</p>
-        <a href="#journey-3d">Discover the journey <span aria-hidden="true">↗</span></a>
+        <p>Model UN and debate begin with the work behind the speech.</p>
+        <a href="#journey-3d">See the process <span aria-hidden="true">↗</span></a>
       </div>
 
       <header className={styles.header}>
@@ -334,50 +333,45 @@ export default function HomePage() {
       </header>
 
       <section className={styles.hero} aria-labelledby="hero-title">
-        <div className={styles.heroHalo} aria-hidden="true" />
         <div className={[styles.container, styles.heroGrid].join(" ")}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}><span className={styles.eyebrowLine} />MUN · DEBATE · YOUTH LEADERSHIP</p>
-            <h1 id="hero-title" className={styles.heroTitle}>Make your<br /><em>voice matter.</em></h1>
+            <p className={styles.eyebrow}><span className={styles.eyebrowLine} />MODEL UNITED NATIONS · DEBATE · LEADERSHIP</p>
+            <h1 id="hero-title" className={styles.heroTitle}>Take the floor.<br /><em>Be ready.</em></h1>
             <p className={styles.heroText}>
-              Build the research, communication and leadership skills to contribute with confidence—in the room and beyond it.
+              Learn to research an issue, represent a position and make a clear case—in a Model UN committee, a debate round and beyond.
             </p>
             <div className={styles.heroActions}>
               <Link href="/register" className={styles.primaryButton}>Find your starting point <span aria-hidden="true">↗</span></Link>
-              <a href="#method" className={styles.textButton}>Explore the Vidwan method <span aria-hidden="true">↓</span></a>
+              <a href="#method" className={styles.textButton}>See how it works <span aria-hidden="true">↓</span></a>
             </div>
-            <div className={styles.heroPrinciples} aria-label="Research, speak and lead">
-              <span>RESEARCH</span><i aria-hidden="true" /><span>SPEAK</span><i aria-hidden="true" /><span>LEAD</span>
+            <div className={styles.heroPrinciples} aria-label="Read the brief, make your case, listen well">
+              <span>READ THE BRIEF</span><i aria-hidden="true" /><span>MAKE YOUR CASE</span><i aria-hidden="true" /><span>LISTEN WELL</span>
             </div>
           </div>
 
           <figure className={styles.heroVisual}>
             <Image
-              src="/images/vidwan-stage.png"
-              alt="A sculptural 3D globe, research pages and microphone above a delegate podium"
+              src="/images/vidwan-hero-conference.jpg"
+              alt="A student delegate addresses a Model United Nations committee from the podium"
               fill
               priority
               sizes="(max-width: 920px) 100vw, 52vw"
               className={styles.heroImage}
             />
             <div className={styles.heroShade} />
-            <div className={styles.photoTopline}><span>VIDWAN · IDEAS INTO IMPACT</span><span aria-hidden="true">01 / 05</span></div>
+            <div className={styles.photoTopline}><span>VIDWAN · MODEL UN & DEBATE</span><span aria-hidden="true">01 / 05</span></div>
             <figcaption className={styles.photoCaption}>
-              <span>THE WORLD IS ALREADY IN THE ROOM</span>
-              <strong>Prepare your voice to move it.</strong>
+              <span>THE WORK STARTS BEFORE YOU SPEAK</span>
+              <strong>Make the preparation count.</strong>
             </figcaption>
-            <div className={styles.imageOrbit} aria-hidden="true"><span>V</span></div>
           </figure>
-          <div className={styles.heroIndex}>
-            <span>01</span><span>05</span><div><i /></div><span className={styles.heroIndexLabel}>A clearer way to grow</span>
-          </div>
         </div>
       </section>
 
       <div className={styles.wordBand} aria-label="Vidwan learning principles">
         <div className={styles.wordBandInner}>
-          <span>CURIOUS MINDS</span><i /><span>STRONGER VOICES</span><i />
-          <span>BETTER CONVERSATIONS</span><i /><span>THOUGHTFUL LEADERS</span>
+          <span>PREPARE THE CASE</span><i /><span>REPRESENT A POSITION</span><i />
+          <span>LISTEN BEFORE YOU RESPOND</span><i /><span>WRITE THE RESOLUTION</span>
         </div>
       </div>
 
@@ -385,19 +379,19 @@ export default function HomePage() {
         <div className={[styles.container, styles.manifestoGrid].join(" ")}>
           <div className={styles.manifestoLead}>
             <p className={styles.darkEyebrow}><span>01</span> WHY VIDWAN</p>
-            <h2 id="manifesto-title">Confidence is built <em>before</em> the microphone.</h2>
+            <h2 id="manifesto-title">The work starts <em>before</em> you speak.</h2>
           </div>
           <div className={styles.manifestoCopy}>
-            <p className={styles.manifestoLede}>Vidwan is a learning platform for students exploring Model United Nations, debate and leadership.</p>
-            <p>We focus on the work behind the performance: understanding an issue, shaping a position, expressing it clearly and finding a way forward with others.</p>
+            <p className={styles.manifestoLede}>Vidwan helps students practise the parts of Model UN and debate that happen before the speech.</p>
+            <p>Read closely. Build a position you can explain. Take questions seriously. Then work with other people to find a way forward.</p>
             <a className={styles.lightTextLink} href="#method">See how the journey works <Icon name="arrow" /></a>
           </div>
         </div>
         <div className={[styles.container, styles.principleCards].join(" ")}>
           {[
-            ["A", "Think with depth", "Question the first answer. Find the facts that change the conversation."],
-            ["B", "Speak with clarity", "Shape your ideas so people can understand them, challenge them and build on them."],
-            ["C", "Lead with purpose", "Bring different perspectives together and help a group take its next step."],
+            ["A", "Ask a better question", "Look past the headline and find the facts that shape the issue."],
+            ["B", "Make your case", "Give people a clear reason to understand—and challenge—your position."],
+            ["C", "Move the discussion", "Bring different views into the work and help a group take its next step."],
           ].map(([mark, title, text]) => (
             <article className={styles.principleCard} key={mark}>
               <span>{mark}</span><div><h3>{title}</h3><p>{text}</p></div><span className={styles.cardCorner} aria-hidden="true">↗</span>
@@ -410,9 +404,9 @@ export default function HomePage() {
         <div className={[styles.container, styles.methodHead].join(" ")}>
           <div>
             <p className={styles.eyebrow}><span className={styles.eyebrowLine} />THE VIDWAN METHOD</p>
-            <h2 id="method-title">A strong delegate is <em>made in stages.</em></h2>
+            <h2 id="method-title">Five skills. <em>One step at a time.</em></h2>
           </div>
-          <p>Every room asks for more than a speech. Move through the skills that make research, debate and collaboration work together.</p>
+          <p>Start with research, then move from an initial position to speaking, negotiation and leadership.</p>
         </div>
         <div className={[styles.container, styles.journeyCard].join(" ")}>
           <div className={styles.stageRail} role="group" aria-label="Five stages of the Vidwan journey">
@@ -455,9 +449,9 @@ export default function HomePage() {
         <div className={[styles.container, styles.sectionHeader].join(" ")}>
           <div>
             <p className={styles.darkEyebrow}><span>02</span> WHERE YOU PRACTISE</p>
-            <h2 id="programs-title">Skills for more than <em>one room.</em></h2>
+            <h2 id="programs-title">Choose your <em>starting point.</em></h2>
           </div>
-          <p>Start with the format that excites you. Carry the skills into every conversation that comes after.</p>
+          <p>Model UN, debate and leadership ask different things of you. The preparation travels between them.</p>
         </div>
         <div className={[styles.container, styles.programGrid].join(" ")}>
           {programCards.map((program) => (
@@ -475,8 +469,8 @@ export default function HomePage() {
         <div className={[styles.container, styles.skillsLayout].join(" ")}>
           <div className={styles.skillsIntro}>
             <p className={styles.lightEyebrow}><span>03</span> WHAT YOU BUILD</p>
-            <h2 id="skills-title">A toolkit that travels <em>with you.</em></h2>
-            <p>Great moments matter. So do the habits you carry into the next meeting, classroom, team and decision.</p>
+            <h2 id="skills-title">What you learn <em>travels with you.</em></h2>
+            <p>Use these habits in class, at a conference, in a team or the next time you need to make a case.</p>
             <Link href="/register" className={styles.outlineButton}>Start building your toolkit <span aria-hidden="true">↗</span></Link>
           </div>
           <div className={styles.skillGrid}>
@@ -495,7 +489,7 @@ export default function HomePage() {
           <figure className={styles.featureVisual}>
             <Image
               src="/images/vidwan-collaboration.jpg"
-              alt="Student delegates working together on research and debate notes"
+              alt="Student delegates comparing research and notes around a conference table"
               fill
               sizes="(max-width: 900px) 100vw, 52vw"
               className={styles.featureImage}
@@ -506,8 +500,8 @@ export default function HomePage() {
           </figure>
           <div className={styles.featureCopy}>
             <p className={styles.darkEyebrow}><span>04</span> THE WORK BEHIND THE MOMENT</p>
-            <h2 id="feature-title">Prepared for the <em>conversation.</em></h2>
-            <p>Strong performance starts long before the microphone turns on. Vidwan brings research, communication and leadership into one practical learning experience.</p>
+            <h2 id="feature-title">The speech is the moment. <em>Preparation is the work.</em></h2>
+            <p>Understand the issue before taking a position. Practise explaining it. Learn to keep working when another delegate sees things differently.</p>
             <ul className={styles.featureList}>
               <li><span>01</span>Understand the issue before taking a position</li>
               <li><span>02</span>Practice expressing and defending your ideas</li>
@@ -541,10 +535,9 @@ export default function HomePage() {
 
       <section className={styles.finalCta} aria-labelledby="cta-title">
         <div className={[styles.container, styles.finalCtaInner].join(" ")}>
-          <div className={styles.ctaOrbit} aria-hidden="true"><span>V</span></div>
           <p className={styles.lightEyebrow}><span>YOUR NEXT STEP</span></p>
-          <h2 id="cta-title">The room is waiting.<br /><em>Come prepared.</em></h2>
-          <p>Choose your starting point and begin building a voice that moves ideas forward.</p>
+          <h2 id="cta-title">Your next speech<br /><em>starts here.</em></h2>
+          <p>Pick a starting point, build your first position and practise how to explain it.</p>
           <div className={styles.ctaActions}>
             <Link href="/register" className={styles.ctaButton}>Get started with Vidwan <span aria-hidden="true">↗</span></Link>
             <Link href="/student/login" className={styles.ctaLogin}>Already a student? Sign in</Link>
@@ -558,7 +551,7 @@ export default function HomePage() {
             <Image src="/images/vidwan-logo.png" alt="" width={52} height={52} />
             <span><strong>VIDWAN</strong><small>THINK · SPEAK · LEAD</small></span>
           </Link>
-          <p>Helping students think deeper, communicate better and lead with purpose.</p>
+          <p>Model UN, debate and leadership for students learning to research, represent and make their case.</p>
           <nav className={styles.footerLinks} aria-label="Footer navigation">
             <a href="#method">The method</a><a href="#programs">Programs</a><a href="#faq">FAQ</a>
             <Link href="/student/login">Student sign in</Link>

@@ -189,7 +189,7 @@ export default function RegisterPage() {
           <Link
             href="/"
             aria-label="Vidwan home"
-            className="group flex items-center text-white"
+            className="group flex min-h-11 min-w-11 items-center text-white"
           >
             <Image
               src="/images/vidwan-logo.png"
@@ -202,7 +202,7 @@ export default function RegisterPage() {
 
           <Link
             href="/"
-            className="text-[10px] uppercase tracking-[0.2em] text-white/45 transition hover:text-white"
+            className="inline-flex min-h-11 items-center text-[10px] uppercase tracking-[0.2em] text-white/55 transition hover:text-white"
           >
             ← Back to Vidwan
           </Link>

@@ -26,7 +26,7 @@ export default function StaffAccessPage() {
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[650px] w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2387ff]/[0.07]" />
 
       <header className="relative z-10 flex items-center justify-between px-5 py-6 sm:px-10 sm:py-8">
-        <Link href="/" aria-label="Vidwan home">
+        <Link href="/" aria-label="Vidwan home" className="inline-flex min-h-11 min-w-11 items-center">
           <Image
             src="/images/vidwan-logo.png"
             alt="Vidwan"
@@ -38,7 +38,7 @@ export default function StaffAccessPage() {
 
         <Link
           href="/"
-          className="text-[9px] uppercase tracking-[0.22em] text-white/30 transition hover:text-white"
+          className="inline-flex min-h-11 items-center text-[9px] uppercase tracking-[0.22em] text-white/45 transition hover:text-white"
         >
           ← Back to Vidwan
         </Link>
